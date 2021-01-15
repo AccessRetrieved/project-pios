@@ -1,7 +1,7 @@
 # project-pios
 Project-pios(python-os). 安卓和苹果结合的简单操作系统。
 
-### 暂时只支持Macbook Air 2017+ 或更好的电脑(原因？因为老的电脑屏幕太小这软件装不下)
+### 暂时只支持Macbook Air 2017+ 或更好的电脑，比如macbook pro(原因？因为老的电脑屏幕太小这软件装不下)
 用PC的也别过来了，只支持macbook air 2017+或更高
 
 ## Installation and executing/下载和运行
