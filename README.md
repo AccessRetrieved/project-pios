@@ -1,5 +1,6 @@
 # project-pios
 Project-pios(python-os). 安卓和苹果结合的简单操作系统。
+窗口大小：400x800
 
 ### 暂时只支持Macbook Air 2017+ 或更好的电脑，比如macbook pro(原因？因为老的电脑屏幕太小这软件装不下)
 用PC的暂时不支持
