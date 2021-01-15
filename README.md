@@ -14,6 +14,7 @@ Project-pios(python-os). 安卓和苹果结合的简单操作系统。
    - 换了蓝牙模块
    - 可以选择桌面布局和壁纸
    - 添加了浏览器
+   - 可选择隐私设置：开/关 摄像头，麦克风，和系统通知
 
 ## 下载和运行
 1. [下载](https://www.python.org/ftp/python/3.9.1/python-3.9.1-macosx10.9.pkg) python3.9
