@@ -4,7 +4,7 @@ Project-pios(python-os). 安卓和苹果结合的简单操作系统。
 ## Installation and executing/下载和运行
 1. [下载](https://www.python.org/ftp/python/3.9.1/python-3.9.1-macosx10.9.pkg) python3.9
 2. 打开终端
-3. 运行以下载（不下载的话没法控制蓝牙）：`/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
+3. 运行以下载：`/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
 4. 运行：`brew install blueutil`
 3. 运行：`git clone https://github.com/AccessRetrieved/project-pios`
 4. 运行：`cd project-pios`
