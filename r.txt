@@ -4,5 +4,4 @@ tkmacosx==0.1.6
 psutil==5.8.0
 pywebview==3.4
 rumps==0.3.0
-pyobjc==7.1
 arrow==0.17.0
