@@ -15,7 +15,6 @@ import sys
 import shutil
 import rumps
 import arrow
-import objc
 
 root = Tk()
 root.geometry('400x800')
