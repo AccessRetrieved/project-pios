@@ -691,7 +691,7 @@ def close_experimental_alert():
     APPClock.place(relx=0.8, rely=0.85, anchor=CENTER)
 
 def shutdown():
-    rumps.notification(title='Project-Pios', subtitle='关机', message='Project-Pios已关机了')
+    rumps.notification(title='Project-Pios', subtitle='关机', message='Project-Pios已关机')
     NSCanvas.destroy()
     root.destroy()
     sys.exit(0)
