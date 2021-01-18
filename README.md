@@ -1,4 +1,4 @@
-# project-pios
+# Project-pios
 Operating system with python.
 Project-pios(python-os). 安卓和苹果结合的简单操作系统。
 窗口大小：400x800
@@ -6,7 +6,7 @@ Project-pios(python-os). 安卓和苹果结合的简单操作系统。
 ### 暂时只支持Macbook Air 2018+ 或更好的电脑，比如macbook pro(原因？因为老的电脑屏幕太小这软件装不下)
 用PC的暂时不支持
 
-## 版本
+## 版本/Versions
 1. 版本1.0
    - 网络
    - 蓝牙
@@ -20,7 +20,7 @@ Project-pios(python-os). 安卓和苹果结合的简单操作系统。
    - 添加了”时间“软件
    - 可在快捷菜单里选择时间选项
 
-## 下载和运行
+## 下载和运行/Installing an executing
 1. [下载](https://www.python.org/ftp/python/3.9.1/python-3.9.1-macosx10.9.pkg) python3.9
 2. 打开终端
 3. 运行以下载(复制黏贴不然会出错)：`/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
