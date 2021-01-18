@@ -5,3 +5,4 @@ psutil==5.8.0
 pywebview==3.4
 rumps==0.3.0
 arrow==0.17.0
+dvrvv
