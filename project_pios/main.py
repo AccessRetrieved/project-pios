@@ -19,7 +19,6 @@ import arrow
 root = Tk()
 root.geometry('400x800')
 root.title('')
-#root.config(cursor='none')
 #root.tk.call("::tk::unsupported::MacWindowStyle", "style", root._w, "plain", "none")
 root.resizable(0, 0)
 
