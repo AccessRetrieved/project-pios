@@ -1,11 +1,10 @@
-# Project-pios
-Operating system with python.
-Project-pios(python-os). 安卓和苹果结合的简单操作系统。
+# Project-pios [切换到英文介绍](https://github.com/AccessRetrieved/project-pios/blob/main/English_readme.md)
+安卓和苹果结合的简单操作系统。
 
 ## 目录
-1. [版本/Versions](#version)
-2. [下载和运行/Installing and executing](#install)
-3. [已知Bugs](#bugs)
+1. [版本](#version)
+2. [下载和运行](#install)
+3. [已知问题](#bugs)
 4. [图片介绍](#images)
 ***
 
@@ -13,7 +12,7 @@ Project-pios(python-os). 安卓和苹果结合的简单操作系统。
 用PC的暂时不支持
 
 <a name="version"></a>
-## 版本/Versions
+## 版本
 1. 版本1.0
    - 网络
    - 蓝牙
@@ -33,7 +32,7 @@ Project-pios(python-os). 安卓和苹果结合的简单操作系统。
    - 修复了一些bugs
 
 <a name="install"></a>
-## 下载和运行/Installing an executing
+## 下载和运行
 1. [下载](https://www.python.org/ftp/python/3.9.1/python-3.9.1-macosx10.9.pkg) python3.9
 2. 打开终端
 3. 运行以下载(复制黏贴不然会出错)：`/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
@@ -45,7 +44,7 @@ Project-pios(python-os). 安卓和苹果结合的简单操作系统。
 7. 所需的模块都下载完了，现在运行：`python3 main.py` - 如果出错，打`python main.py`
 
 <a name="bugs"></a>
-## 已知Bugs
+## 已知问题
 1. 切换到暗模式的时候蓝牙模块和wifi模块需要新的图片资源
 2. 设置里的隐私选项需要添加暗模式
 
