@@ -1,7 +1,8 @@
 # Project-pios
 Operating system with python.
+
+
 Project-pios(python-os). 安卓和苹果结合的简单操作系统。
-窗口大小：400x800
 
 ## 目录
 1. [版本/Versions](#version)
