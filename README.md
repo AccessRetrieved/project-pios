@@ -1,7 +1,6 @@
 # Project-pios
 Operating system with python.
-
-
+<br>
 Project-pios(python-os). 安卓和苹果结合的简单操作系统。
 
 ## 目录
