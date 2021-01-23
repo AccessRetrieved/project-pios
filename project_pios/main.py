@@ -15,16 +15,31 @@ import sys
 import shutil
 import rumps
 import arrow
+import webbrowser
+import objc
 
 root = Tk()
 root.geometry('400x800')
 root.title('')
+#root.config(cursor='none')
 #root.tk.call("::tk::unsupported::MacWindowStyle", "style", root._w, "plain", "none")
 root.resizable(0, 0)
+
+dark_theme = {
+    "bg": "black",
+    "fg": "white"
+}
+
+theme = {
+    "bg": "white",
+    "fg": "black"
+}
 
 NSWifiValue = IntVar()
 NSWifiCount = 0
 os.system('networksetup -setairportpower en0 on')
+
+NSDarkModeStat = IntVar()
 
 NSBluetoothValue = IntVar()
 NSBluetoothCount = 0
@@ -137,6 +152,7 @@ def pulldown_menu(event):
         NSClockLabel.place_forget()
         NSControlMenu.place_forget()
         pass
+
 
 def manage_wifi():
     global NSWifiCount
@@ -512,6 +528,47 @@ def settings(event):
     def return_home(event):
         NSSettingsView.destroy()
 
+    def change_mode():
+        if NSDarkModeStat.get() == 1:
+            NSSettingsMenuBar.config(bg=dark_theme['bg'])
+            NSSettingsView.config(bg=dark_theme['bg'])
+            NSSettingsDisplayDate['bg'] = dark_theme['bg']
+            NSSettingsDisplayDate['fg'] = dark_theme['fg']
+            NSSettingsDisplayTime['bg'] = dark_theme['bg']
+            NSSettingsDisplayTime['fg'] = dark_theme['fg']
+
+            NSSettingsSearchEngine['bg'] = dark_theme['bg']
+            NSSettingsSearchEngine['fg'] = dark_theme['fg']
+            NSSettingsWallpaper['bg'] = dark_theme['bg']
+            NSSettingsWallpaper['fg'] = dark_theme['fg']
+            NSSettingsPrivacy['bg'] = dark_theme['bg']
+            NSSettingsPrivacy['fg'] = dark_theme['fg']
+            NSSettingsAbout['bg'] = dark_theme['bg']
+            NSSettingsAbout['fg'] = dark_theme['fg']
+            pass
+        else:
+            NSSettingsMenuBar.config(bg=theme['bg'])
+            NSSettingsView.config(bg=theme['bg'])
+            NSSettingsDisplayDate['bg'] = theme['bg']
+            NSSettingsDisplayDate['fg'] = theme['fg']
+            NSSettingsDisplayTime['bg'] = theme['bg']
+            NSSettingsDisplayTime['fg'] = theme['fg']
+
+            NSSettingsSearchEngine['bg'] = theme['bg']
+            NSSettingsSearchEngine['fg'] = theme['fg']
+            NSSettingsWallpaper['bg'] = theme['bg']
+            NSSettingsWallpaper['fg'] = theme['fg']
+            NSSettingsPrivacy['bg'] = theme['bg']
+            NSSettingsPrivacy['fg'] = theme['fg']
+            NSSettingsAbout['bg'] = theme['bg']
+            NSSettingsAbout['fg'] = theme['fg']
+            pass
+
+        NSSettingsView.after(ms=10, func=change_mode)
+
+    def open_page():
+        webbrowser.open('https://github.com/AccessRetrieved')
+
     NSSettingsView.after(ms=1000, func=update_date)
 
     NSSettingsMenuBar = Frame(NSSettingsView, height=20, width=400)
@@ -526,7 +583,7 @@ def settings(event):
     NSSettingsProfileimg = NSSettingsProfileimg.resize((50, 50), Image.ANTIALIAS)
     NSSettingsProfilepic = ImageTk.PhotoImage(NSSettingsProfileimg)
 
-    NSSettingsProfile = tkmacosx.Button(NSSettingsView, text='   胡家睿', borderless=1, font=("Futura", 20), height=80, width=400, activebackground='white', activeforeground='black', image=NSSettingsProfilepic, compound=LEFT)
+    NSSettingsProfile = tkmacosx.Button(NSSettingsView, text='   胡家睿', borderless=1, font=("Futura", 20), height=80, width=400, activebackground='white', activeforeground='black', image=NSSettingsProfilepic, compound=LEFT, command=open_page)
     NSSettingsProfile.image = NSSettingsProfilepic
     NSSettingsProfile.place(relx=0.5, rely=0.1, anchor=CENTER)
 
@@ -548,6 +605,7 @@ def settings(event):
 
     update_date()
     update_time()
+    change_mode()
     NSSettingsView.mainloop()
 
 def browser(event):
@@ -643,6 +701,44 @@ def browser(event):
     def return_home(event):
         NSBrowserView.destroy()
 
+    def change_mode():
+        if NSDarkModeStat.get() == 1:
+            NSBrowserView.config(bg=dark_theme['bg'])
+            NSBrowserIconLabel['bg'] = dark_theme['bg']
+            NSBrowserIconLabel['fg'] = dark_theme['fg']
+            NSBrowserURLQuery['bg'] = dark_theme['bg']
+            NSBrowserURLQuery['fg'] = dark_theme['fg']
+            NSBrowserURLQuery['highlightbackground'] = dark_theme['bg']
+            NSBrowserURLQuery['highlightcolor'] = dark_theme['fg']
+            NSBrowserURLLaunch['bg'] = dark_theme['bg']
+            NSBrowserURLLaunch['fg'] = dark_theme['fg']
+
+            NSBrowserMenuBar.config(bg=dark_theme['bg'])
+            NSBrowserDisplayDate['bg'] = dark_theme['bg']
+            NSBrowserDisplayDate['fg'] = dark_theme['fg']
+            NSBrowserDisplayTime['bg'] = dark_theme['bg']
+            NSBrowserDisplayTime['fg'] = dark_theme['fg']
+            pass
+        else:
+            NSBrowserView.config(bg=theme['bg'])
+            NSBrowserIconLabel['bg'] = theme['bg']
+            NSBrowserIconLabel['fg'] = theme['fg']
+            NSBrowserURLQuery['bg'] = theme['bg']
+            NSBrowserURLQuery['fg'] = theme['fg']
+            NSBrowserURLQuery['highlightbackground'] = theme['bg']
+            NSBrowserURLQuery['highlightcolor'] = theme['fg']
+            NSBrowserURLLaunch['bg'] = theme['bg']
+            NSBrowserURLLaunch['fg'] = theme['fg']
+
+            NSBrowserMenuBar.config(bg=theme['bg'])
+            NSBrowserDisplayDate['bg'] = theme['bg']
+            NSBrowserDisplayDate['fg'] = theme['fg']
+            NSBrowserDisplayTime['bg'] = theme['bg']
+            NSBrowserDisplayTime['fg'] = theme['fg']
+            pass
+
+        NSBrowserView.after(ms=500, func=change_mode)
+
     NSBrowserIconimg = Image.open(os.getcwd() + '/browser.png')
     NSBrowserIconimg = NSBrowserIconimg.resize((100, 100), Image.ANTIALIAS)
     NSBrowserIconpic = ImageTk.PhotoImage(NSBrowserIconimg)
@@ -663,11 +759,11 @@ def browser(event):
 
     NSBrowserURLQuery = Entry(NSBrowserView, width=33)
     NSBrowserURLQuery.insert(0, '网址: ')
-    NSBrowserURLQuery.place(relx=0.41, rely=0.04, anchor=CENTER)
+    NSBrowserURLQuery.place(relx=0.41, rely=0.045, anchor=CENTER)
     NSBrowserURLQuery.bind('<FocusIn>', on)
 
     NSBrowserURLLaunch = tkmacosx.Button(NSBrowserView, text='→', width=70, font=("Futura", 14), borderless=1, activeforeground='white', activebackground='black', command=launch_url)
-    NSBrowserURLLaunch.place(relx=0.9, rely=0.04, anchor=CENTER)
+    NSBrowserURLLaunch.place(relx=0.9, rely=0.045, anchor=CENTER)
 
     NSSettingsReturnHome = Label(NSBrowserView, text=' ', font=("Futura", 1), height=0, width=200, bg='#dddddd')
     NSSettingsReturnHome.place(relx=0.5, rely=0.97, anchor=CENTER)
@@ -677,6 +773,7 @@ def browser(event):
     update_date()
     update_time()
     launch_effect()
+    change_mode()
     NSBrowserView.bind('<Return>', launch_url_key)
     NSBrowserView.mainloop()
 
@@ -871,6 +968,44 @@ def clock(event):
 
         NSClockView.after(ms=1000, func=update_beijing)
 
+    def change_mode():
+        if NSDarkModeStat.get() == 1:
+            NSClockView.config(bg=dark_theme['bg'])
+            NSClockVancouver['bg'] = dark_theme['bg']
+            NSClockVancouver['fg'] = dark_theme['fg']
+            NSClockVancouverTime['bg'] = dark_theme['bg']
+            NSClockVancouverTime['fg'] = dark_theme['fg']
+            NSClockBeijing['bg'] = dark_theme['bg']
+            NSClockBeijing['fg'] = dark_theme['fg']
+            NSClockBeijingTime['bg'] = dark_theme['bg']
+            NSClockBeijingTime['fg'] = dark_theme['fg']
+
+            NSClockMenuBar.config(bg=dark_theme['bg'])
+            NSClockDisplayDate['bg'] = dark_theme['bg']
+            NSClockDisplayDate['fg'] = dark_theme['fg']
+            NSClockDisplayTime['bg'] = dark_theme['bg']
+            NSClockDisplayTime['fg'] = dark_theme['fg']
+            pass
+        else:
+            NSClockView.config(bg='white')
+            NSClockVancouver['bg'] = theme['bg']
+            NSClockVancouver['fg'] = theme['fg']
+            NSClockVancouverTime['bg'] = theme['bg']
+            NSClockVancouverTime['fg'] = theme['fg']
+            NSClockBeijing['bg'] = theme['bg']
+            NSClockBeijing['fg'] = theme['fg']
+            NSClockBeijingTime['bg'] = theme['bg']
+            NSClockBeijingTime['fg'] = theme['fg']
+
+            NSClockMenuBar.config(bg=theme['bg'])
+            NSClockDisplayDate['bg'] = theme['bg']
+            NSClockDisplayDate['fg'] = theme['fg']
+            NSClockDisplayTime['bg'] = theme['bg']
+            NSClockDisplayTime['fg'] = theme['fg']
+            pass
+
+        NSClockView.after(ms=500, func=change_mode)
+
     NSClockMenuBar = Frame(NSClockView, height=20, width=400)
     NSClockMenuBar.place(relx=0.5, rely=0.012, anchor=CENTER)
 
@@ -878,7 +1013,6 @@ def clock(event):
     NSClockDisplayTime.place(relx=0.5, rely=0.5, anchor=CENTER)
     NSClockDisplayDate = Label(NSClockMenuBar, text='', bg=NSMenuBar['bg'], font=("Futura", 12))
     NSClockDisplayDate.place(relx=0.9, rely=0.5, anchor=CENTER)
-
 
     NSClockVancouver = Label(NSClockView, text='Vancouver', bg=NSClockView['bg'], font=("Futura", 20), height=4, width=20)
     NSClockVancouver.place(relx=0.19, rely=0.1, anchor=CENTER)
@@ -900,6 +1034,7 @@ def clock(event):
     update_date()
     update_vancouver()
     update_beijing()
+    change_mode()
     NSClockView.mainloop()
 
 def control_clock():
@@ -921,6 +1056,32 @@ def control_clock():
 
         NSCanvas.after(ms=1000, func=update_beijing)
 
+    def change_mode():
+        if NSDarkModeStat.get() == 1:
+            NSPopupAlert.config(bg=dark_theme['bg'])
+            NSClockVancouver['bg'] = dark_theme['bg']
+            NSClockVancouver['fg'] = dark_theme['fg']
+            NSClockVancouverTime['bg'] = dark_theme['bg']
+            NSClockVancouverTime['fg'] = dark_theme['fg']
+            NSClockBeijing['bg'] = dark_theme['bg']
+            NSClockBeijing['fg'] = dark_theme['fg']
+            NSClockBeijingTime['bg'] = dark_theme['bg']
+            NSClockBeijingTime['fg'] = dark_theme['fg']
+            pass
+        else:
+            NSPopupAlert.config(bg=theme['bg'])
+            NSClockVancouver['bg'] = theme['bg']
+            NSClockVancouver['fg'] = theme['fg']
+            NSClockVancouverTime['bg'] = theme['bg']
+            NSClockVancouverTime['fg'] = theme['fg']
+            NSClockBeijing['bg'] = theme['bg']
+            NSClockBeijing['fg'] = theme['fg']
+            NSClockBeijingTime['bg'] = theme['bg']
+            NSClockBeijingTime['fg'] = theme['fg']
+            pass
+
+        NSPopupAlert.after(ms=500, func=change_mode)
+
     NSPopupAlert = Frame(NSControlMenu, width=380, height=400)
     NSPopupAlert.place(relx=0.5, rely=0.7, anchor=CENTER)
 
@@ -938,9 +1099,63 @@ def control_clock():
 
     update_vancouver()
     update_beijing()
+    change_mode()
 
     NSPopupAlertClose = tkmacosx.Button(NSPopupAlert, text='关闭', bg='white', fg='black', font=("Futura", 15), borderless=1, activebackground='white', activeforeground='black', command=close_popup)
     NSPopupAlertClose.place(relx=0.5, rely=0.65, anchor=CENTER)
+
+def detect_darkmode():
+    response = os.popen('defaults read -g AppleInterfaceStyle').read()
+    if 'Dark\n' == response:
+        NSDarkModeStat.set(1)
+        NSMenuBar.config(bg=dark_theme['bg'])
+        NSDisplayDate['bg'] = dark_theme['bg']
+        NSDisplayDate['fg'] = dark_theme['fg']
+        NSDisplayTime['bg'] = dark_theme['bg']
+        NSDisplayTime['fg'] = dark_theme['fg']
+        NSSignalWidget['bg'] = dark_theme['bg']
+        NSSignalWidget['fg'] = dark_theme['fg']
+        NSBlueSignalWidget['bg'] = dark_theme['bg']
+        NSBlueSignalWidget['fg'] = dark_theme['fg']
+
+        NSControlMenu.config(bg=dark_theme['bg'])
+        NSBluetoothLabel['bg'] = dark_theme['bg']
+        NSBluetoothLabel['fg'] = dark_theme['fg']
+        NSWifiLabel['bg'] = dark_theme['bg']
+        NSWifiLabel['fg'] = dark_theme['fg']
+        NSWallpaperLabel['bg'] = dark_theme['bg']
+        NSWallpaperLabel['fg'] = dark_theme['fg']
+        NSShutdownLabel['bg'] = dark_theme['bg']
+        NSShutdownLabel['fg'] = dark_theme['fg']
+        NSClockLabel['bg'] = dark_theme['bg']
+        NSClockLabel['fg'] = dark_theme['fg']
+        pass
+    else:
+        NSDarkModeStat.set(0)
+        NSMenuBar.config(bg=theme['bg'])
+        NSDisplayDate['bg'] = theme['bg']
+        NSDisplayDate['fg'] = theme['fg']
+        NSDisplayTime['bg'] = theme['bg']
+        NSDisplayTime['fg'] = theme['fg']
+        NSSignalWidget['bg'] = theme['bg']
+        NSSignalWidget['fg'] = theme['fg']
+        NSBlueSignalWidget['bg'] = theme['bg']
+        NSBlueSignalWidget['fg'] = theme['fg']
+
+        NSControlMenu.config(bg=theme['bg'])
+        NSBluetoothLabel['bg'] = theme['bg']
+        NSBluetoothLabel['fg'] = theme['fg']
+        NSWifiLabel['bg'] = theme['bg']
+        NSWifiLabel['fg'] = theme['fg']
+        NSWallpaperLabel['bg'] = theme['bg']
+        NSWallpaperLabel['fg'] = theme['fg']
+        NSShutdownLabel['bg'] = theme['bg']
+        NSShutdownLabel['fg'] = theme['fg']
+        NSClockLabel['bg'] = theme['bg']
+        NSClockLabel['fg'] = theme['fg']
+        pass
+    
+    root.after(ms=500, func=detect_darkmode)
 
 NSCanvas = Canvas(root)
 NSCanvas.pack(fill=BOTH, expand=True)
@@ -1056,4 +1271,5 @@ update_time()
 update_date()
 update_wifi()
 update_bluetooth()
+detect_darkmode()
 root.mainloop()

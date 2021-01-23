@@ -19,6 +19,11 @@ Project-pios(python-os). 安卓和苹果结合的简单操作系统。
 3. 版本2.5（需要重新运行`pip3 instal -r r.txt` 或 `pip install -r r.txt`)
    - 添加了”时间“软件
    - 可在快捷菜单里选择时间选项
+4. 版本3.0（需要重新运行`pip3 instal -r r.txt` 或 `pip install -r r.txt`)
+   - 添加了暗模式
+   - 支持实时切换暗模式（需要macos Big sur - 11.1以上）
+   - 设置里的用户添加了功能
+   - 修复了一些bugs
 
 ## 下载和运行/Installing an executing
 1. [下载](https://www.python.org/ftp/python/3.9.1/python-3.9.1-macosx10.9.pkg) python3.9
@@ -30,3 +35,7 @@ Project-pios(python-os). 安卓和苹果结合的简单操作系统。
 5. 运行： `pip3 install -r r.txt` - 如果出错，打`pip install -r r.txt`
 6. 运行： `cd project_pios`
 7. 所需的模块都下载完了，现在运行：`python3 main.py` - 如果出错，打`python main.py`
+
+## 已知Bugs
+1. 切换到暗模式的时候蓝牙模块和wifi模块需要新的图片资源
+2. 设置里的隐私选项需要添加暗模式
