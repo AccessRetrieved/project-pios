@@ -1,7 +1,7 @@
-# Project-pios [Switch to Chinese Readme](https://github.com/AccessRetrieved/project-pios/blob/main/README.md)
-Operating system with python.
+# Project-pios
+Operating system with python. [Switch to Chinese Readme](https://github.com/AccessRetrieved/project-pios/blob/main/README.md)
 
-## 目录
+## Table of contents
 1. [Versions](#version)
 2. [Installing and executing](#install)
 3. [Known Bugs](#bugs)

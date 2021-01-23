@@ -1,5 +1,5 @@
-# Project-pios [切换到英文介绍](https://github.com/AccessRetrieved/project-pios/blob/main/English_readme.md)
-安卓和苹果结合的简单操作系统。
+# Project-pios
+安卓和苹果结合的简单操作系统。 [切换到英文介绍](https://github.com/AccessRetrieved/project-pios/blob/main/English_readme.md)
 
 ## 目录
 1. [版本](#version)
