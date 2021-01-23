@@ -4,13 +4,13 @@ Project-pios(python-os). 安卓和苹果结合的简单操作系统。
 窗口大小：400x800
 
 ## 图片
-![1](https://ibb.co/Jz6YKcn)
-![2](https://ibb.co/C9PsP3W)
-![3](https://ibb.co/2sVzQxM)
-![4](https://ibb.co/b31Bdyt)
-![5](https://ibb.co/pXZVdZd)
-![6](https://ibb.co/wsHMLmJ)
-![7](https://ibb.co/wrZYjHY)
+![1](https://i.ibb.co/NLD0sFx/Screen-Shot-2021-01-23-at-1-10-48-PM.png)
+![2](https://i.ibb.co/KsKzKpm/Screen-Shot-2021-01-23-at-1-10-52-PM.png)
+![3](https://i.ibb.co/gPq0pNW/Screen-Shot-2021-01-23-at-1-10-59-PM.png)
+![4](https://i.ibb.co/0XqMJW5/Screen-Shot-2021-01-23-at-1-11-18-PM.png)
+![5](https://i.ibb.co/Lp6j161/Screen-Shot-2021-01-23-at-1-11-25-PM.png)
+![6](https://i.ibb.co/2N2g648/Screen-Shot-2021-01-23-at-1-11-32-PM.png)
+![7](https://i.ibb.co/FqknCvn/Screen-Shot-2021-01-23-at-1-11-36-PM.png)
 
 ### 暂时只支持Macbook Air 2018+ 或更好的电脑，比如macbook pro(原因？因为老的电脑屏幕太小这软件装不下)
 用PC的暂时不支持
