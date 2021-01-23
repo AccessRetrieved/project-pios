@@ -13,10 +13,11 @@ import psutil
 import webview
 import sys
 import shutil
-import rumps
 import arrow
 import webbrowser
 import objc
+
+#change all path from "/project_pios/FILE" to "/FILE" for github
 
 root = Tk()
 root.geometry('400x800')
@@ -152,7 +153,6 @@ def pulldown_menu(event):
         NSClockLabel.place_forget()
         NSControlMenu.place_forget()
         pass
-
 
 def manage_wifi():
     global NSWifiCount
@@ -427,6 +427,18 @@ def settings(event):
             pic = ImageTk.PhotoImage(img)
             NSWallpaper.config(image = pic)
             NSWallpaper.image = pic
+        def w9(event):
+            img = Image.open(os.getcwd() + '/wallpaper/9.jpg')
+            shutil.copy(src=os.getcwd() + '/wallpaper/9.jpg', dst=os.getcwd() + '/wallpaper.jpg')
+            pic = ImageTk.PhotoImage(img)
+            NSWallpaper.config(image = pic)
+            NSWallpaper.image = pic
+        def w10(event):
+            img = Image.open(os.getcwd() + '/wallpaper/10.jpg')
+            shutil.copy(src=os.getcwd() + '/wallpaper/10.jpg', dst=os.getcwd() + '/wallpaper.jpg')
+            pic = ImageTk.PhotoImage(img)
+            NSWallpaper.config(image = pic)
+            NSWallpaper.image = pic
 
         wall1img = Image.open(os.getcwd() + '/wallpaper/1.jpg')
         wall2img = Image.open(os.getcwd() + '/wallpaper/2.jpg')
@@ -436,6 +448,8 @@ def settings(event):
         wall6img = Image.open(os.getcwd() + '/wallpaper/6.jpg')
         wall7img = Image.open(os.getcwd() + '/wallpaper/7.jpg')
         wall8img = Image.open(os.getcwd() + '/wallpaper/8.jpg')
+        wall9img = Image.open(os.getcwd() + '/wallpaper/9.jpg')
+        wall10img = Image.open(os.getcwd() + '/wallpaper/10.jpg')
         wall1img = wall1img.resize((40, 70), Image.ANTIALIAS)
         wall2img = wall2img.resize((40, 70), Image.ANTIALIAS)
         wall3img = wall3img.resize((40, 70), Image.ANTIALIAS)
@@ -444,6 +458,8 @@ def settings(event):
         wall6img = wall6img.resize((40, 70), Image.ANTIALIAS)
         wall7img = wall7img.resize((40, 70), Image.ANTIALIAS)
         wall8img = wall8img.resize((40, 70), Image.ANTIALIAS)
+        wall9img = wall9img.resize((40, 70), Image.ANTIALIAS)
+        wall10img = wall10img.resize((40, 70), Image.ANTIALIAS)
         wall1pic = ImageTk.PhotoImage(wall1img)
         wall2pic = ImageTk.PhotoImage(wall2img)
         wall3pic = ImageTk.PhotoImage(wall3img)
@@ -452,6 +468,8 @@ def settings(event):
         wall6pic = ImageTk.PhotoImage(wall6img)
         wall7pic = ImageTk.PhotoImage(wall7img)
         wall8pic = ImageTk.PhotoImage(wall8img)
+        wall9pic = ImageTk.PhotoImage(wall9img)
+        wall10pic = ImageTk.PhotoImage(wall10img)
         wall1 = Label(NSPopupAlert, text='', image=wall1pic)
         wall2 = Label(NSPopupAlert, text='', image=wall2pic)
         wall3 = Label(NSPopupAlert, text='', image=wall3pic)
@@ -460,6 +478,8 @@ def settings(event):
         wall6 = Label(NSPopupAlert, text='', image=wall6pic)
         wall7 = Label(NSPopupAlert, text='', image=wall7pic)
         wall8 = Label(NSPopupAlert, text='', image=wall8pic)
+        wall9 = Label(NSPopupAlert, text='', image=wall9pic)
+        wall10 = Label(NSPopupAlert, text='', image=wall10pic)
         wall1.image = wall1pic
         wall2.image = wall2pic
         wall3.image = wall3pic
@@ -468,6 +488,8 @@ def settings(event):
         wall6.image = wall6pic
         wall7.image = wall7pic
         wall8.image = wall8pic
+        wall9.image = wall9pic
+        wall10.image = wall10pic
         wall1.place(relx=0.15, rely=0.25, anchor=CENTER)
         wall2.place(relx=0.3, rely=0.25, anchor=CENTER)
         wall3.place(relx=0.45, rely=0.25, anchor=CENTER)
@@ -476,6 +498,8 @@ def settings(event):
         wall6.place(relx=0.9, rely=0.25, anchor=CENTER)
         wall7.place(relx=0.15, rely=0.5, anchor=CENTER)
         wall8.place(relx=0.3, rely=0.5, anchor=CENTER)
+        wall9.place(relx=0.45, rely=0.5, anchor=CENTER)
+        wall10.place(relx=0., rely=0.5, anchor=CENTER)
         wall1.bind('<Button-1>', w1)
         wall2.bind('<Button-1>', w2)
         wall3.bind('<Button-1>', w3)
@@ -484,6 +508,8 @@ def settings(event):
         wall6.bind('<Button-1>', w6)
         wall7.bind('<Button-1>', w7)
         wall8.bind('<Button-1>', w8)
+        wall9.bind('<Button-1>', w9)
+        wall10.bind('<Button-1>', w10)
 
         NSPopupAlertClose = tkmacosx.Button(NSPopupAlert, text='关闭', bg='white', fg='black', font=("Futura", 15), borderless=1, activebackground='white', activeforeground='black', command=close_popup)
         NSPopupAlertClose.place(relx=0.5, rely=0.85, anchor=CENTER)
@@ -787,7 +813,6 @@ def close_experimental_alert():
     APPClock.place(relx=0.8, rely=0.85, anchor=CENTER)
 
 def shutdown():
-    rumps.notification(title='Project-Pios', subtitle='关机', message='Project-Pios已关机')
     NSCanvas.destroy()
     root.destroy()
     sys.exit(0)
@@ -850,6 +875,18 @@ def wallpaper():
         pic = ImageTk.PhotoImage(img)
         NSWallpaper.config(image = pic)
         NSWallpaper.image = pic
+    def w9(event):
+        img = Image.open(os.getcwd() + '/wallpaper/9.jpg')
+        shutil.copy(src=os.getcwd() + '/wallpaper/9.jpg', dst=os.getcwd() + '/wallpaper.jpg')
+        pic = ImageTk.PhotoImage(img)
+        NSWallpaper.config(image = pic)
+        NSWallpaper.image = pic
+    def w10(event):
+        img = Image.open(os.getcwd() + '/wallpaper/10.jpg')
+        shutil.copy(src=os.getcwd() + '/wallpaper/10.jpg', dst=os.getcwd() + '/wallpaper.jpg')
+        pic = ImageTk.PhotoImage(img)
+        NSWallpaper.config(image = pic)
+        NSWallpaper.image = pic
 
     wall1img = Image.open(os.getcwd() + '/wallpaper/1.jpg')
     wall2img = Image.open(os.getcwd() + '/wallpaper/2.jpg')
@@ -859,6 +896,8 @@ def wallpaper():
     wall6img = Image.open(os.getcwd() + '/wallpaper/6.jpg')
     wall7img = Image.open(os.getcwd() + '/wallpaper/7.jpg')
     wall8img = Image.open(os.getcwd() + '/wallpaper/8.jpg')
+    wall9img = Image.open(os.getcwd() + '/wallpaper/9.jpg')
+    wall10img = Image.open(os.getcwd() + '/wallpaper/10.jpg')
     wall1img = wall1img.resize((40, 70), Image.ANTIALIAS)
     wall2img = wall2img.resize((40, 70), Image.ANTIALIAS)
     wall3img = wall3img.resize((40, 70), Image.ANTIALIAS)
@@ -867,6 +906,8 @@ def wallpaper():
     wall6img = wall6img.resize((40, 70), Image.ANTIALIAS)
     wall7img = wall7img.resize((40, 70), Image.ANTIALIAS)
     wall8img = wall8img.resize((40, 70), Image.ANTIALIAS)
+    wall9img = wall9img.resize((40, 70), Image.ANTIALIAS)
+    wall10img = wall10img.resize((40, 70), Image.ANTIALIAS)
     wall1pic = ImageTk.PhotoImage(wall1img)
     wall2pic = ImageTk.PhotoImage(wall2img)
     wall3pic = ImageTk.PhotoImage(wall3img)
@@ -875,6 +916,8 @@ def wallpaper():
     wall6pic = ImageTk.PhotoImage(wall6img)
     wall7pic = ImageTk.PhotoImage(wall7img)
     wall8pic = ImageTk.PhotoImage(wall8img)
+    wall9pic = ImageTk.PhotoImage(wall9img)
+    wall10pic = ImageTk.PhotoImage(wall10img)
     wall1 = Label(NSPopupAlert, text='', image=wall1pic)
     wall2 = Label(NSPopupAlert, text='', image=wall2pic)
     wall3 = Label(NSPopupAlert, text='', image=wall3pic)
@@ -883,6 +926,8 @@ def wallpaper():
     wall6 = Label(NSPopupAlert, text='', image=wall6pic)
     wall7 = Label(NSPopupAlert, text='', image=wall7pic)
     wall8 = Label(NSPopupAlert, text='', image=wall8pic)
+    wall9 = Label(NSPopupAlert, text='', image=wall9pic)
+    wall10 = Label(NSPopupAlert, text='', image=wall10pic)
     wall1.image = wall1pic
     wall2.image = wall2pic
     wall3.image = wall3pic
@@ -891,6 +936,8 @@ def wallpaper():
     wall6.image = wall6pic
     wall7.image = wall7pic
     wall8.image = wall8pic
+    wall9.image = wall9pic
+    wall10.image = wall10pic
     wall1.place(relx=0.15, rely=0.25, anchor=CENTER)
     wall2.place(relx=0.3, rely=0.25, anchor=CENTER)
     wall3.place(relx=0.45, rely=0.25, anchor=CENTER)
@@ -899,6 +946,8 @@ def wallpaper():
     wall6.place(relx=0.9, rely=0.25, anchor=CENTER)
     wall7.place(relx=0.15, rely=0.5, anchor=CENTER)
     wall8.place(relx=0.3, rely=0.5, anchor=CENTER)
+    wall9.place(relx=0.45, rely=0.5, anchor=CENTER)
+    wall10.place(relx=0.6, rely=0.5, anchor=CENTER)
     wall1.bind('<Button-1>', w1)
     wall2.bind('<Button-1>', w2)
     wall3.bind('<Button-1>', w3)
@@ -907,6 +956,8 @@ def wallpaper():
     wall6.bind('<Button-1>', w6)
     wall7.bind('<Button-1>', w7)
     wall8.bind('<Button-1>', w8)
+    wall9.bind('<Button-1>', w9)
+    wall10.bind('<Button-1>', w10)
 
     NSPopupAlertClose = tkmacosx.Button(NSPopupAlert, text='关闭', bg='white', fg='black', font=("Futura", 15), borderless=1, activebackground='white', activeforeground='black', command=close_popup)
     NSPopupAlertClose.place(relx=0.5, rely=0.65, anchor=CENTER)
@@ -1020,7 +1071,7 @@ def clock(event):
     NSClockVancouverTime = Label(NSClockView, text='', bg=NSClockView['bg'], font=("Futura", 18))
     NSClockVancouverTime.place(relx=0.85, rely=0.1, anchor=CENTER)
 
-    NSClockBeijing = Label(NSClockView, text='Beijing', bg=NSClockView['bg'], font=("Futura", 20), height=4, width=20)
+    NSClockBeijing = Label(NSClockView, text='北京', bg=NSClockView['bg'], font=("Futura", 20), height=4, width=20)
     NSClockBeijing.place(relx=0.15, rely=0.2, anchor=CENTER)
 
     NSClockBeijingTime = Label(NSClockView, text='', bg=NSClockView['bg'], font=("Futura", 18))
@@ -1091,7 +1142,7 @@ def control_clock():
     NSClockVancouverTime = Label(NSPopupAlert, text='', bg=NSControlMenu['bg'], font=("Futura", 13))
     NSClockVancouverTime.place(relx=0.8, rely=0.2, anchor=CENTER)
 
-    NSClockBeijing = Label(NSPopupAlert, text='Beijing', bg=NSControlMenu['bg'], font=("Futura", 15), height=4, width=20)
+    NSClockBeijing = Label(NSPopupAlert, text='北京', bg=NSControlMenu['bg'], font=("Futura", 15), height=4, width=20)
     NSClockBeijing.place(relx=0.12, rely=0.35, anchor=CENTER)
 
     NSClockBeijingTime = Label(NSPopupAlert, text='', bg=NSControlMenu['bg'], font=("Futura", 13))
