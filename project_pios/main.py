@@ -16,7 +16,6 @@ import shutil
 import arrow
 import webbrowser
 import objc
-efeeeve
 
 #change all path from "/project_pios/FILE" to "/FILE" for github
 
