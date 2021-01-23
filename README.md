@@ -21,7 +21,7 @@ Project-pios(python-os). 安卓和苹果结合的简单操作系统。
    - 可在快捷菜单里选择时间选项
 4. 版本3.0（需要重新运行`pip3 instal -r r.txt` 或 `pip install -r r.txt`)
    - 添加了暗模式
-   - 支持实时切换暗模式（需要macos Big sur - 11.1以上）
+   - 支持实时切换暗模式（需要macos Big sur - 11.1以上开启手动切换/macos Catalina支持自动切换）
    - 设置里的用户添加了功能
    - 修复了一些bugs
 
