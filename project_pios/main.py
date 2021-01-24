@@ -1534,7 +1534,7 @@ def autoswitch_wallpaper():
             NSWallpaper.image = pic
             pass
 
-    NSCanvas.after(ms=1000, func=autoswitch_wallpaper)
+    NSCanvas.after(ms=500, func=autoswitch_wallpaper)
 
 NSCanvas = Canvas(root)
 NSCanvas.pack(fill=BOTH, expand=True)
