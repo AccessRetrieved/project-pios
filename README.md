@@ -13,11 +13,11 @@
 
 <a name="version"></a>
 ## 版本
-- 版本1.0
+- **版本1.0**
    - 网络
    - 蓝牙
    - 设置
-- 版本1.5 （还在用版本1.0的需要重新运行`pip3 install -r r.txt` 或 `pip instal -r r.txt`)
+- **版本1.5** （还在用版本1.0的需要重新运行`pip3 install -r r.txt` 或 `pip instal -r r.txt`)
    - 换了蓝牙模块
    - 可以选择桌面布局和壁纸
    - 添加了浏览器
