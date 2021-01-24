@@ -16,7 +16,8 @@ import shutil
 import arrow
 import webbrowser
 import pyscreenshot
-import objc
+from textblob import TextBlob
+import objc #Add this to github to make it look better
 
 #change all path from "/project_pios/FILE" to "/FILE" for github
 
@@ -44,9 +45,11 @@ os.system('networksetup -setairportpower en0 on')
 NSDarkModeStat = IntVar()
 NSAutoSwitchWallpaperStat = IntVar()
 
+NSSettingsFrame = IntVar()
+
 NSLanguageValue = StringVar()
 try:
-    with open(os.getcwd() + '/language.txt', 'r') as file:
+    with open(os.getcwd() + '/project_pios/language.txt', 'r') as file:
         if file.read() == 'en':
             NSLanguageValue.set('en')
             pass
@@ -74,7 +77,7 @@ NSMenuCounter = 1
 NSAutoSwitchCounter = 1
 
 NSBrowserSearchEngine = IntVar()
-NSBrowserSearchEngine.set(0)
+NSBrowserSearchEngine.set(2)
 
 def update_time():
     orig = str(datetime.now())
@@ -99,7 +102,7 @@ def update_wifi():
     url = 'http://google.com'
     try:
         response = requests.get(url, timeout=timeout)
-        pic = Image.open(os.getcwd() + '/wifi.png')
+        pic = Image.open(os.getcwd() + '/project_pios/wifi.png')
         pic = pic.resize((25, 25), Image.ANTIALIAS)
         img = ImageTk.PhotoImage(pic)
         NSSignalWidget.config(image = img)
@@ -116,7 +119,7 @@ def update_bluetooth():
     status = os.popen('blueutil -p').read()
     
     if status == '1\n':
-        bimg = Image.open(os.getcwd() + '/bluetooth.png')
+        bimg = Image.open(os.getcwd() + '/project_pios/bluetooth.png')
         bimg = bimg.resize((15, 15), Image.ANTIALIAS)
         bpic = ImageTk.PhotoImage(bimg)
         NSBlueSignalWidget.config(image = bpic)
@@ -230,6 +233,7 @@ def clicked(event):
     print('true')
 
 def return_home(event):
+    NSSettingsFrame.set(0)
     NSWifiControl.place_forget()
     NSWifiLabel.place_forget()
     NSBluetoothControl.place_forget()
@@ -294,30 +298,22 @@ def settings(event):
         machine_ram = '缓存: ' + str(round(psutil.virtual_memory().total / (1024.0 **3))) + ' GB'
 
         def close_about():
-            NSSettingsAbout.config(state = NORMAL)
-            NSSettingsWallpaper.config(state = NORMAL)
-            NSSettingsSearchEngine.config(state = NORMAL)
-            NSSettingsPrivacy.config(state = NORMAL)
+            NSSettingsFrame.set(0)
             NSSettingsView['bg'] = 'white'
-            NSSettingsProfile['bg'] = 'white'
-            NSSettingsAbout['bg'] = 'white'
-            NSSettingsWallpaper['bg'] = 'white'
-            NSSettingsSearchEngine['bg'] = 'white'
-            NSSettingsPrivacy['bg'] = 'white'
+            NSSettingsSearchEngine.place(relx=0.5, rely=0.2, anchor=CENTER)
+            NSSettingsWallpaper.place(relx=0.5, rely=0.27, anchor=CENTER)
+            NSSettingsPrivacy.place(relx=0.5, rely=0.34, anchor=CENTER)
+            NSSettingsAbout.place(relx=0.5, rely=0.41, anchor=CENTER)
+            NSSettingsProfile.place(relx=0.5, rely=0.1, anchor=CENTER)
 
             NSPopupAlert.destroy()
 
+        NSSettingsProfile.place_forget()
+        NSSettingsSearchEngine.place_forget()
+        NSSettingsWallpaper.place_forget()
+        NSSettingsPrivacy.place_forget()
+        NSSettingsAbout.place_forget()
         NSSettingsView['bg'] = '#b3b3b3'
-        NSSettingsProfile['bg'] = '#b3b3b3'
-        NSSettingsAbout['bg'] = '#b3b3b3'
-        NSSettingsSearchEngine['bg'] = '#b3b3b3'
-        NSSettingsWallpaper['bg'] = '#b3b3b3'
-        NSSettingsPrivacy['bg'] = '#b3b3b3'
-
-        NSSettingsAbout.config(state = DISABLED)
-        NSSettingsWallpaper.config(state = DISABLED)
-        NSSettingsSearchEngine.config(state = DISABLED)
-        NSSettingsPrivacy.config(state = DISABLED)
 
         NSPopupAlert = Frame(NSSettingsView, width=380, height=300)
         NSPopupAlert.place(relx=0.5, rely=0.5, anchor=CENTER)
@@ -345,44 +341,37 @@ def settings(event):
         NSPopupAlertClose.place(relx=0.5, rely=0.85, anchor=CENTER)
 
     def choose_search_engine():
+        NSSettingsFrame.set(1)
         NSSettingsView['bg'] = '#b3b3b3'
-        NSSettingsProfile['bg'] = '#b3b3b3'
-        NSSettingsAbout['bg'] = '#b3b3b3'
-        NSSettingsSearchEngine['bg'] = '#b3b3b3'
-        NSSettingsWallpaper['bg'] = '#b3b3b3'
-        NSSettingsPrivacy['bg'] = '#b3b3b3'
 
-        NSSettingsAbout.config(state = DISABLED)
-        NSSettingsSearchEngine.config(state = DISABLED)
-        NSSettingsWallpaper.config(state = DISABLED)
-        NSSettingsPrivacy.config(state = DISABLED)
+        NSSettingsProfile.place_forget()
+        NSSettingsSearchEngine.place_forget()
+        NSSettingsWallpaper.place_forget()
+        NSSettingsPrivacy.place_forget()
+        NSSettingsAbout.place_forget()
 
         def close_popup():
             if NSBrowserSearchEngineBox.get() == 'Google':
                 NSBrowserSearchEngine.set(0)
-                NSSettingsAbout.config(state = NORMAL)
-                NSSettingsSearchEngine.config(state = NORMAL)
-                NSSettingsWallpaper.config(state = NORMAL)
-                NSSettingsPrivacy.config(state = NORMAL)
+                NSSettingsFrame.set(0)
                 NSSettingsView['bg'] = 'white'
-                NSSettingsProfile['bg'] = 'white'
-                NSSettingsAbout['bg'] = 'white'
-                NSSettingsWallpaper['bg'] = 'white'
-                NSSettingsSearchEngine['bg'] = 'white'
-                NSSettingsPrivacy['bg'] = 'white'
-                
+                NSSettingsProfile.place(relx=0.5, rely=0.1, anchor=CENTER)
+                NSSettingsSearchEngine.place(relx=0.5, rely=0.2, anchor=CENTER)
+                NSSettingsWallpaper.place(relx=0.5, rely=0.27, anchor=CENTER)
+                NSSettingsPrivacy.place(relx=0.5, rely=0.34, anchor=CENTER)
+                NSSettingsAbout.place(relx=0.5, rely=0.41, anchor=CENTER)
+                NSSettingsProfile.place(relx=0.5, rely=0.1, anchor=CENTER)
+
                 NSPopupAlert.destroy()
             else:
                 NSBrowserSearchEngine.set(1)
-                NSSettingsAbout.config(state = NORMAL)
-                NSSettingsSearchEngine.config(state = NORMAL)
-                NSSettingsWallpaper.config(state = NORMAL)
-                NSSettingsPrivacy.config(state = NORMAL)
+                NSSettingsFrame.set(0)
                 NSSettingsView['bg'] = 'white'
-                NSSettingsProfile['bg'] = 'white'
-                NSSettingsAbout['bg'] = 'white'
-                NSSettingsWallpaper['bg'] = 'white'
-                NSSettingsPrivacy['bg'] = 'white'
+                NSSettingsSearchEngine.place(relx=0.5, rely=0.2, anchor=CENTER)
+                NSSettingsWallpaper.place(relx=0.5, rely=0.27, anchor=CENTER)
+                NSSettingsPrivacy.place(relx=0.5, rely=0.34, anchor=CENTER)
+                NSSettingsAbout.place(relx=0.5, rely=0.41, anchor=CENTER)
+                NSSettingsProfile.place(relx=0.5, rely=0.1, anchor=CENTER)
 
                 NSPopupAlert.destroy()
 
@@ -412,11 +401,10 @@ def settings(event):
 
         NSBrowserSearchEngineBox = ttk.Combobox(NSPopupAlert, value=['Google', '百度'])
         NSBrowserSearchEngineBox.place(relx=0.5, rely=0.4, anchor=CENTER)
-        if NSBrowserSearchEngine.get() == 1:
-            NSBrowserSearchEngineBox.current(1)
-        else:
+        if NSBrowserSearchEngine.get() == 0:
             NSBrowserSearchEngineBox.current(0)
-            pass
+        else:
+            NSBrowserSearchEngineBox.current(1)
 
         NSPopupAlertClose = tkmacosx.Button(NSPopupAlert, text='关闭', bg='white', fg='black', font=("Futura", 15), borderless=1, activebackground='white', activeforeground='black', command=close_popup)
         NSPopupAlertClose.place(relx=0.5, rely=0.85, anchor=CENTER)
@@ -424,24 +412,22 @@ def settings(event):
         change_language()
 
     def choose_wallpaper():
+        NSSettingsFrame.set(1)
         NSSettingsView['bg'] = '#b3b3b3'
-        NSSettingsProfile['bg'] = '#b3b3b3'
-        NSSettingsAbout['bg'] = '#b3b3b3'
-        NSSettingsSearchEngine['bg'] = '#b3b3b3'
-        NSSettingsWallpaper['bg'] = '#b3b3b3'
-        NSSettingsPrivacy['bg'] = '#b3b3b3'
+        NSSettingsProfile.place_forget()
+        NSSettingsSearchEngine.place_forget()
+        NSSettingsWallpaper.place_forget()
+        NSSettingsPrivacy.place_forget()
+        NSSettingsAbout.place_forget()
 
         def close_popup():
-            NSSettingsWallpaper.config(state = NORMAL)
-            NSSettingsAbout.config(state = NORMAL)
-            NSSettingsSearchEngine.config(state = NORMAL)
-            NSSettingsPrivacy.config(state = NORMAL)
+            NSSettingsFrame.set(1)
             NSSettingsView['bg'] = 'white'
-            NSSettingsProfile['bg'] = 'white'
-            NSSettingsAbout['bg'] = 'white'
-            NSSettingsWallpaper['bg'] = 'white'
-            NSSettingsSearchEngine['bg'] = 'white'
-            NSSettingsPrivacy['bg'] = 'white'
+            NSSettingsSearchEngine.place(relx=0.5, rely=0.2, anchor=CENTER)
+            NSSettingsWallpaper.place(relx=0.5, rely=0.27, anchor=CENTER)
+            NSSettingsPrivacy.place(relx=0.5, rely=0.34, anchor=CENTER)
+            NSSettingsAbout.place(relx=0.5, rely=0.41, anchor=CENTER)
+            NSSettingsProfile.place(relx=0.5, rely=0.1, anchor=CENTER)
 
             NSPopupAlert.destroy()
 
@@ -462,11 +448,6 @@ def settings(event):
 
             NSSettingsView.after(ms=1, func=change_language)
 
-        NSSettingsAbout.config(state = DISABLED)
-        NSSettingsSearchEngine.config(state = DISABLED)
-        NSSettingsWallpaper.config(state = DISABLED)
-        NSSettingsPrivacy.config(state = DISABLED)
-
         NSPopupAlert = Frame(NSSettingsView, width=380, height=400)
         NSPopupAlert.place(relx=0.5, rely=0.5, anchor=CENTER)
 
@@ -474,76 +455,76 @@ def settings(event):
         NSPopupTitle.place(relx=0.17, rely=0.05, anchor=CENTER)
 
         def w1(event):
-            img = Image.open(os.getcwd() + '/wallpaper/1.jpg')
-            shutil.copy(src=os.getcwd() + '/wallpaper/1.jpg', dst=os.getcwd() + '/wallpaper.jpg')
+            img = Image.open(os.getcwd() + '/project_pios/wallpaper/1.jpg')
+            shutil.copy(src=os.getcwd() + '/project_pios/wallpaper/1.jpg', dst=os.getcwd() + '/project_pios/wallpaper.jpg')
             pic = ImageTk.PhotoImage(img)
             NSWallpaper.config(image = pic)
             NSWallpaper.image = pic
         def w2(event):
-            img = Image.open(os.getcwd() + '/wallpaper/2.jpg')
-            shutil.copy(src=os.getcwd() + '/wallpaper/2.jpg', dst=os.getcwd() + '/wallpaper.jpg')
+            img = Image.open(os.getcwd() + '/project_pios/wallpaper/2.jpg')
+            shutil.copy(src=os.getcwd() + '/project_pios/wallpaper/2.jpg', dst=os.getcwd() + '/project_pios/wallpaper.jpg')
             pic = ImageTk.PhotoImage(img)
             NSWallpaper.config(image = pic)
             NSWallpaper.image = pic
         def w3(event):
-            img = Image.open(os.getcwd() + '/wallpaper/3.jpg')
-            shutil.copy(src=os.getcwd() + '/wallpaper/3.jpg', dst=os.getcwd() + '/wallpaper.jpg')
+            img = Image.open(os.getcwd() + '/project_pios/wallpaper/3.jpg')
+            shutil.copy(src=os.getcwd() + '/project_pios/wallpaper/3.jpg', dst=os.getcwd() + '/project_pios/wallpaper.jpg')
             pic = ImageTk.PhotoImage(img)
             NSWallpaper.config(image = pic)
             NSWallpaper.image = pic
         def w4(event):
-            img = Image.open(os.getcwd() + '/wallpaper/4.jpg')
-            shutil.copy(src=os.getcwd() + '/wallpaper/4.jpg', dst=os.getcwd() + '/wallpaper.jpg')
+            img = Image.open(os.getcwd() + '/project_pios/wallpaper/4.jpg')
+            shutil.copy(src=os.getcwd() + '/project_pios/wallpaper/4.jpg', dst=os.getcwd() + '/project_pios/wallpaper.jpg')
             pic = ImageTk.PhotoImage(img)
             NSWallpaper.config(image = pic)
             NSWallpaper.image = pic
         def w5(event):
-            img = Image.open(os.getcwd() + '/wallpaper/5.jpg')
-            shutil.copy(src=os.getcwd() + '/wallpaper/5.jpg', dst=os.getcwd() + '/wallpaper.jpg')
+            img = Image.open(os.getcwd() + '/project_pios/wallpaper/5.jpg')
+            shutil.copy(src=os.getcwd() + '/project_pios/wallpaper/5.jpg', dst=os.getcwd() + '/project_pios/wallpaper.jpg')
             pic = ImageTk.PhotoImage(img)
             NSWallpaper.config(image = pic)
             NSWallpaper.image = pic
         def w6(event):
-            img = Image.open(os.getcwd() + '/wallpaper/6.jpg')
-            shutil.copy(src=os.getcwd() + '/wallpaper/6.jpg', dst=os.getcwd() + '/wallpaper.jpg')
+            img = Image.open(os.getcwd() + '/project_pios/wallpaper/6.jpg')
+            shutil.copy(src=os.getcwd() + '/project_pios/wallpaper/6.jpg', dst=os.getcwd() + '/project_pios/wallpaper.jpg')
             pic = ImageTk.PhotoImage(img)
             NSWallpaper.config(image = pic)
             NSWallpaper.image = pic
         def w7(event):
-            img = Image.open(os.getcwd() + '/wallpaper/7.jpg')
-            shutil.copy(src=os.getcwd() + '/wallpaper/7.jpg', dst=os.getcwd() + '/wallpaper.jpg')
+            img = Image.open(os.getcwd() + '/project_pios/wallpaper/7.jpg')
+            shutil.copy(src=os.getcwd() + '/project_pios/wallpaper/7.jpg', dst=os.getcwd() + '/project_pios/wallpaper.jpg')
             pic = ImageTk.PhotoImage(img)
             NSWallpaper.config(image = pic)
             NSWallpaper.image = pic
         def w8(event):
-            img = Image.open(os.getcwd() + '/wallpaper/8.jpg')
-            shutil.copy(src=os.getcwd() + '/wallpaper/8.jpg', dst=os.getcwd() + '/wallpaper.jpg')
+            img = Image.open(os.getcwd() + '/project_pios/wallpaper/8.jpg')
+            shutil.copy(src=os.getcwd() + '/project_pios/wallpaper/8.jpg', dst=os.getcwd() + '/project_pios/wallpaper.jpg')
             pic = ImageTk.PhotoImage(img)
             NSWallpaper.config(image = pic)
             NSWallpaper.image = pic
         def w9(event):
-            img = Image.open(os.getcwd() + '/wallpaper/9.jpg')
-            shutil.copy(src=os.getcwd() + '/wallpaper/9.jpg', dst=os.getcwd() + '/wallpaper.jpg')
+            img = Image.open(os.getcwd() + '/project_pios/wallpaper/9.jpg')
+            shutil.copy(src=os.getcwd() + '/project_pios/wallpaper/9.jpg', dst=os.getcwd() + '/project_pios/wallpaper.jpg')
             pic = ImageTk.PhotoImage(img)
             NSWallpaper.config(image = pic)
             NSWallpaper.image = pic
         def w10(event):
-            img = Image.open(os.getcwd() + '/wallpaper/10.jpg')
-            shutil.copy(src=os.getcwd() + '/wallpaper/10.jpg', dst=os.getcwd() + '/wallpaper.jpg')
+            img = Image.open(os.getcwd() + '/project_pios/wallpaper/10.jpg')
+            shutil.copy(src=os.getcwd() + '/project_pios/wallpaper/10.jpg', dst=os.getcwd() + '/project_pios/wallpaper.jpg')
             pic = ImageTk.PhotoImage(img)
             NSWallpaper.config(image = pic)
             NSWallpaper.image = pic
 
-        wall1img = Image.open(os.getcwd() + '/wallpaper/1.jpg')
-        wall2img = Image.open(os.getcwd() + '/wallpaper/2.jpg')
-        wall3img = Image.open(os.getcwd() + '/wallpaper/3.jpg')
-        wall4img = Image.open(os.getcwd() + '/wallpaper/4.jpg')
-        wall5img = Image.open(os.getcwd() + '/wallpaper/5.jpg')
-        wall6img = Image.open(os.getcwd() + '/wallpaper/6.jpg')
-        wall7img = Image.open(os.getcwd() + '/wallpaper/7.jpg')
-        wall8img = Image.open(os.getcwd() + '/wallpaper/8.jpg')
-        wall9img = Image.open(os.getcwd() + '/wallpaper/9.jpg')
-        wall10img = Image.open(os.getcwd() + '/wallpaper/10.jpg')
+        wall1img = Image.open(os.getcwd() + '/project_pios/wallpaper/1.jpg')
+        wall2img = Image.open(os.getcwd() + '/project_pios/wallpaper/2.jpg')
+        wall3img = Image.open(os.getcwd() + '/project_pios/wallpaper/3.jpg')
+        wall4img = Image.open(os.getcwd() + '/project_pios/wallpaper/4.jpg')
+        wall5img = Image.open(os.getcwd() + '/project_pios/wallpaper/5.jpg')
+        wall6img = Image.open(os.getcwd() + '/project_pios/wallpaper/6.jpg')
+        wall7img = Image.open(os.getcwd() + '/project_pios/wallpaper/7.jpg')
+        wall8img = Image.open(os.getcwd() + '/project_pios/wallpaper/8.jpg')
+        wall9img = Image.open(os.getcwd() + '/project_pios/wallpaper/9.jpg')
+        wall10img = Image.open(os.getcwd() + '/project_pios/wallpaper/10.jpg')
         wall1img = wall1img.resize((40, 70), Image.ANTIALIAS)
         wall2img = wall2img.resize((40, 70), Image.ANTIALIAS)
         wall3img = wall3img.resize((40, 70), Image.ANTIALIAS)
@@ -611,24 +592,22 @@ def settings(event):
         change_language()
 
     def privacy():
+        NSSettingsFrame.set(1)
         NSSettingsView['bg'] = '#b3b3b3'
-        NSSettingsProfile['bg'] = '#b3b3b3'
-        NSSettingsAbout['bg'] = '#b3b3b3'
-        NSSettingsSearchEngine['bg'] = '#b3b3b3'
-        NSSettingsWallpaper['bg'] = '#b3b3b3'
-        NSSettingsPrivacy['bg'] = '#b3b3b3'
+        NSSettingsProfile.place_forget()
+        NSSettingsSearchEngine.place_forget()
+        NSSettingsWallpaper.place_forget()
+        NSSettingsPrivacy.place_forget()
+        NSSettingsAbout.place_forget()
 
         def close_popup():
-            NSSettingsWallpaper.config(state = NORMAL)
-            NSSettingsAbout.config(state = NORMAL)
-            NSSettingsSearchEngine.config(state = NORMAL)
-            NSSettingsPrivacy.config(state = NORMAL)
+            NSSettingsFrame.set(0)
             NSSettingsView['bg'] = 'white'
-            NSSettingsProfile['bg'] = 'white'
-            NSSettingsAbout['bg'] = 'white'
-            NSSettingsWallpaper['bg'] = 'white'
-            NSSettingsSearchEngine['bg'] = 'white'
-            NSSettingsPrivacy['bg'] = 'white'
+            NSSettingsSearchEngine.place(relx=0.5, rely=0.2, anchor=CENTER)
+            NSSettingsWallpaper.place(relx=0.5, rely=0.27, anchor=CENTER)
+            NSSettingsPrivacy.place(relx=0.5, rely=0.34, anchor=CENTER)
+            NSSettingsAbout.place(relx=0.5, rely=0.41, anchor=CENTER)
+            NSSettingsProfile.place(relx=0.5, rely=0.1, anchor=CENTER)
 
             NSPopupAlert.destroy()
 
@@ -652,11 +631,6 @@ def settings(event):
         NSPopupAlert = Frame(NSSettingsView, width=380, height=400)
         NSPopupAlert.place(relx=0.5, rely=0.5, anchor=CENTER)
 
-        NSSettingsAbout.config(state = DISABLED)
-        NSSettingsSearchEngine.config(state = DISABLED)
-        NSSettingsWallpaper.config(state = DISABLED)
-        NSSettingsPrivacy.config(state = DISABLED)
-
         NSPopupTitle = Label(NSPopupAlert, text='隐私: ', fg='#949494', font=("Futura", 20))
         NSPopupTitle.place(relx=0.1, rely=0.05, anchor=CENTER)
 
@@ -669,12 +643,17 @@ def settings(event):
         change_language()
 
     def return_home(event):
+        NSSettingsFrame.set(0)
         NSSettingsView.destroy()
 
     def change_mode():
         if NSDarkModeStat.get() == 1:
             NSSettingsMenuBar.config(bg=dark_theme['bg'])
-            NSSettingsView.config(bg=dark_theme['bg'])
+            if NSSettingsFrame.get() == 1:
+                pass
+            else:
+                NSSettingsView.config(bg=dark_theme['bg'])
+                pass
             NSSettingsDisplayDate['bg'] = dark_theme['bg']
             NSSettingsDisplayDate['fg'] = dark_theme['fg']
             NSSettingsDisplayTime['bg'] = dark_theme['bg']
@@ -691,7 +670,11 @@ def settings(event):
             pass
         else:
             NSSettingsMenuBar.config(bg=theme['bg'])
-            NSSettingsView.config(bg=theme['bg'])
+            if NSSettingsFrame.get() == 1:
+                pass
+            else:
+                NSSettingsView.config(bg=theme['bg'])
+                pass
             NSSettingsDisplayDate['bg'] = theme['bg']
             NSSettingsDisplayDate['fg'] = theme['fg']
             NSSettingsDisplayTime['bg'] = theme['bg']
@@ -740,7 +723,7 @@ def settings(event):
     NSSettingsDisplayDate = Label(NSSettingsMenuBar, text='', bg=NSMenuBar['bg'], font=("Futura", 12))
     NSSettingsDisplayDate.place(relx=0.9, rely=0.5, anchor=CENTER)
 
-    NSSettingsProfileimg = Image.open(os.getcwd() + '/profile.png')
+    NSSettingsProfileimg = Image.open(os.getcwd() + '/project_pios/profile.png')
     NSSettingsProfileimg = NSSettingsProfileimg.resize((50, 50), Image.ANTIALIAS)
     NSSettingsProfilepic = ImageTk.PhotoImage(NSSettingsProfileimg)
 
@@ -809,7 +792,7 @@ def browser(event):
     def launch_url():
         url = str(NSBrowserURLQuery.get())
         if 'https://' in url or '.com' in url:
-            webview.create_window(title='', url=url, confirm_close=False, text_select=True)
+            webview.create_window(title='', url=url, confirm_close=False, text_select=True, width=400, height=820)
             webview.start()
         elif url == '网址: ':
             pass
@@ -818,7 +801,7 @@ def browser(event):
                 fil = 'https://www.google.com/search?q={}'.format(url)
                 webview.create_window(title='', url=fil, confirm_close=False, text_select=True, width=400, height=820)
                 webview.start()
-            else:
+            elif NSBrowserSearchEngine.get() == 1:
                 fil = 'https://www.baidu.com/s?wd={}'.format(url)
                 webview.create_window(title='', url=fil, confirm_close=False, text_select=True, width=400, height=820)
                 webview.start()
@@ -912,7 +895,7 @@ def browser(event):
         NSBrowserView.after(ms=1000, func=change_language)
 
 
-    NSBrowserIconimg = Image.open(os.getcwd() + '/browser.png')
+    NSBrowserIconimg = Image.open(os.getcwd() + '/project_pios/browser.png')
     NSBrowserIconimg = NSBrowserIconimg.resize((100, 100), Image.ANTIALIAS)
     NSBrowserIconpic = ImageTk.PhotoImage(NSBrowserIconimg)
 
@@ -982,7 +965,7 @@ def wallpaper():
         if NSLanguageValue.get() == 'en':
             NSPopupTitle['text'] = 'Select:'
             NSPopupAlertClose['text'] = 'Close'
-            with open(os.getcwd() + '/wallpaper.txt', 'r') as file:
+            with open(os.getcwd() + '/project_pios/wallpaper.txt', 'r') as file:
                 if file.read() == 'true':
                     NSSetupAutoSwitchWallpaper['text'] = '✓'
                 else:
@@ -992,7 +975,7 @@ def wallpaper():
         else:
             NSPopupTitle['text'] = '选择壁纸: '
             NSPopupAlertClose['text'] = '关闭'
-            with open(os.getcwd() + '/wallpaper.txt', 'r') as file:
+            with open(os.getcwd() + '/project_pios/wallpaper.txt', 'r') as file:
                 if file.read() == 'true':
                     NSSetupAutoSwitchWallpaper['text'] = '✓'
                 else:
@@ -1008,90 +991,90 @@ def wallpaper():
 
         if NSAutoSwitchCounter % 2 == 0:
             NSSetupAutoSwitchWallpaper['text'] = '✓'
-            with open(os.getcwd() + '/wallpaper.txt', 'w') as file:
+            with open(os.getcwd() + '/project_pios/wallpaper.txt', 'w') as file:
                 file.truncate(0)
                 file.write('true')
                 pass
             pass
         else:
             NSSetupAutoSwitchWallpaper['text'] = '自动调整'
-            with open(os.getcwd() + '/wallpaper.txt', 'w') as file:
+            with open(os.getcwd() + '/project_pios/wallpaper.txt', 'w') as file:
                 file.truncate(0)
                 file.write('false')
                 pass
             pass
 
     def w1(event):
-        img = Image.open(os.getcwd() + '/wallpaper/1.jpg')
-        shutil.copy(src=os.getcwd() + '/wallpaper/1.jpg', dst=os.getcwd() + '/wallpaper.jpg')
+        img = Image.open(os.getcwd() + '/project_pios/wallpaper/1.jpg')
+        shutil.copy(src=os.getcwd() + '/project_pios/wallpaper/1.jpg', dst=os.getcwd() + '/project_pios/wallpaper.jpg')
         pic = ImageTk.PhotoImage(img)
         NSWallpaper.config(image = pic)
         NSWallpaper.image = pic
     def w2(event):
-        img = Image.open(os.getcwd() + '/wallpaper/2.jpg')
-        shutil.copy(src=os.getcwd() + '/wallpaper/2.jpg', dst=os.getcwd() + '/wallpaper.jpg')
+        img = Image.open(os.getcwd() + '/project_pios/wallpaper/2.jpg')
+        shutil.copy(src=os.getcwd() + '/project_pios/wallpaper/2.jpg', dst=os.getcwd() + '/project_pios/wallpaper.jpg')
         pic = ImageTk.PhotoImage(img)
         NSWallpaper.config(image = pic)
         NSWallpaper.image = pic
     def w3(event):
-        img = Image.open(os.getcwd() + '/wallpaper/3.jpg')
-        shutil.copy(src=os.getcwd() + '/wallpaper/3.jpg', dst=os.getcwd() + '/wallpaper.jpg')
+        img = Image.open(os.getcwd() + '/project_pios/wallpaper/3.jpg')
+        shutil.copy(src=os.getcwd() + '/project_pios/wallpaper/3.jpg', dst=os.getcwd() + '/project_pios/wallpaper.jpg')
         pic = ImageTk.PhotoImage(img)
         NSWallpaper.config(image = pic)
         NSWallpaper.image = pic
     def w4(event):
-        img = Image.open(os.getcwd() + '/wallpaper/4.jpg')
-        shutil.copy(src=os.getcwd() + '/wallpaper/4.jpg', dst=os.getcwd() + '/wallpaper.jpg')
+        img = Image.open(os.getcwd() + '/project_pios/wallpaper/4.jpg')
+        shutil.copy(src=os.getcwd() + '/project_pios/wallpaper/4.jpg', dst=os.getcwd() + '/project_pios/wallpaper.jpg')
         pic = ImageTk.PhotoImage(img)
         NSWallpaper.config(image = pic)
         NSWallpaper.image = pic
     def w5(event):
-        img = Image.open(os.getcwd() + '/wallpaper/5.jpg')
-        shutil.copy(src=os.getcwd() + '/wallpaper/5.jpg', dst=os.getcwd() + '/wallpaper.jpg')
+        img = Image.open(os.getcwd() + '/project_pios/wallpaper/5.jpg')
+        shutil.copy(src=os.getcwd() + '/project_pios/wallpaper/5.jpg', dst=os.getcwd() + '/project_pios/wallpaper.jpg')
         pic = ImageTk.PhotoImage(img)
         NSWallpaper.config(image = pic)
         NSWallpaper.image = pic
     def w6(event):
-        img = Image.open(os.getcwd() + '/wallpaper/6.jpg')
-        shutil.copy(src=os.getcwd() + '/wallpaper/6.jpg', dst=os.getcwd() + '/wallpaper.jpg')
+        img = Image.open(os.getcwd() + '/project_pios/wallpaper/6.jpg')
+        shutil.copy(src=os.getcwd() + '/project_pios/wallpaper/6.jpg', dst=os.getcwd() + '/project_pios/wallpaper.jpg')
         pic = ImageTk.PhotoImage(img)
         NSWallpaper.config(image = pic)
         NSWallpaper.image = pic
     def w7(event):
-        img = Image.open(os.getcwd() + '/wallpaper/7.jpg')
-        shutil.copy(src=os.getcwd() + '/wallpaper/7.jpg', dst=os.getcwd() + '/wallpaper.jpg')
+        img = Image.open(os.getcwd() + '/project_pios/wallpaper/7.jpg')
+        shutil.copy(src=os.getcwd() + '/project_pios/wallpaper/7.jpg', dst=os.getcwd() + '/project_pios/wallpaper.jpg')
         pic = ImageTk.PhotoImage(img)
         NSWallpaper.config(image = pic)
         NSWallpaper.image = pic
     def w8(event):
-        img = Image.open(os.getcwd() + '/wallpaper/8.jpg')
-        shutil.copy(src=os.getcwd() + '/wallpaper/8.jpg', dst=os.getcwd() + '/wallpaper.jpg')
+        img = Image.open(os.getcwd() + '/project_pios/wallpaper/8.jpg')
+        shutil.copy(src=os.getcwd() + '/project_pios/wallpaper/8.jpg', dst=os.getcwd() + '/project_pios/wallpaper.jpg')
         pic = ImageTk.PhotoImage(img)
         NSWallpaper.config(image = pic)
         NSWallpaper.image = pic
     def w9(event):
-        img = Image.open(os.getcwd() + '/wallpaper/9.jpg')
-        shutil.copy(src=os.getcwd() + '/wallpaper/9.jpg', dst=os.getcwd() + '/wallpaper.jpg')
+        img = Image.open(os.getcwd() + '/project_pios/wallpaper/9.jpg')
+        shutil.copy(src=os.getcwd() + '/project_pios/wallpaper/9.jpg', dst=os.getcwd() + '/project_pios/wallpaper.jpg')
         pic = ImageTk.PhotoImage(img)
         NSWallpaper.config(image = pic)
         NSWallpaper.image = pic
     def w10(event):
-        img = Image.open(os.getcwd() + '/wallpaper/10.jpg')
-        shutil.copy(src=os.getcwd() + '/wallpaper/10.jpg', dst=os.getcwd() + '/wallpaper.jpg')
+        img = Image.open(os.getcwd() + '/project_pios/wallpaper/10.jpg')
+        shutil.copy(src=os.getcwd() + '/project_pios/wallpaper/10.jpg', dst=os.getcwd() + '/project_pios/wallpaper.jpg')
         pic = ImageTk.PhotoImage(img)
         NSWallpaper.config(image = pic)
         NSWallpaper.image = pic
 
-    wall1img = Image.open(os.getcwd() + '/wallpaper/1.jpg')
-    wall2img = Image.open(os.getcwd() + '/wallpaper/2.jpg')
-    wall3img = Image.open(os.getcwd() + '/wallpaper/3.jpg')
-    wall4img = Image.open(os.getcwd() + '/wallpaper/4.jpg')
-    wall5img = Image.open(os.getcwd() + '/wallpaper/5.jpg')
-    wall6img = Image.open(os.getcwd() + '/wallpaper/6.jpg')
-    wall7img = Image.open(os.getcwd() + '/wallpaper/7.jpg')
-    wall8img = Image.open(os.getcwd() + '/wallpaper/8.jpg')
-    wall9img = Image.open(os.getcwd() + '/wallpaper/9.jpg')
-    wall10img = Image.open(os.getcwd() + '/wallpaper/10.jpg')
+    wall1img = Image.open(os.getcwd() + '/project_pios/wallpaper/1.jpg')
+    wall2img = Image.open(os.getcwd() + '/project_pios/wallpaper/2.jpg')
+    wall3img = Image.open(os.getcwd() + '/project_pios/wallpaper/3.jpg')
+    wall4img = Image.open(os.getcwd() + '/project_pios/wallpaper/4.jpg')
+    wall5img = Image.open(os.getcwd() + '/project_pios/wallpaper/5.jpg')
+    wall6img = Image.open(os.getcwd() + '/project_pios/wallpaper/6.jpg')
+    wall7img = Image.open(os.getcwd() + '/project_pios/wallpaper/7.jpg')
+    wall8img = Image.open(os.getcwd() + '/project_pios/wallpaper/8.jpg')
+    wall9img = Image.open(os.getcwd() + '/project_pios/wallpaper/9.jpg')
+    wall10img = Image.open(os.getcwd() + '/project_pios/wallpaper/10.jpg')
     wall1img = wall1img.resize((40, 70), Image.ANTIALIAS)
     wall2img = wall2img.resize((40, 70), Image.ANTIALIAS)
     wall3img = wall3img.resize((40, 70), Image.ANTIALIAS)
@@ -1472,7 +1455,7 @@ def change_language():
     NSCanvas.after(ms=1000, func=change_language)
 
 def update_languages():
-    with open(os.getcwd() + '/language.txt', 'r') as file:
+    with open(os.getcwd() + '/project_pios/language.txt', 'r') as file:
         if file.read() == 'en':
             NSLanguageValue.set('en')
         elif file.read() == 'en\n':
@@ -1511,35 +1494,35 @@ def screenshot():
     NSCanvas.after(1000, wait)
 
 def autoswitch_wallpaper():
-    with open(os.getcwd() + '/wallpaper.txt', 'r') as file:
+    with open(os.getcwd() + '/project_pios/wallpaper.txt', 'r') as file:
         if file.read() == 'true':
             NSAutoSwitchWallpaperStat.set(1)
             if NSDarkModeStat.get() == 1:
-                wallimg = Image.open(os.getcwd() + '/wallpaper/9.jpg')
-                shutil.copy(src=os.getcwd() + '/wallpaper/9.jpg', dst=os.getcwd() + '/dark_wallpaper.jpg')
+                wallimg = Image.open(os.getcwd() + '/project_pios/wallpaper/9.jpg')
+                shutil.copy(src=os.getcwd() + '/project_pios/wallpaper/9.jpg', dst=os.getcwd() + '/project_pios/dark_wallpaper.jpg')
                 pic = ImageTk.PhotoImage(wallimg)
                 NSWallpaper.config(image = pic)
                 NSWallpaper.image = pic
             else:
-                wallimg = Image.open(os.getcwd() + '/wallpaper/6.jpg')
-                shutil.copy(src=os.getcwd() + '/wallpaper/6.jpg', dst=os.getcwd() + '/light_wallpaper.jpg')
+                wallimg = Image.open(os.getcwd() + '/project_pios/wallpaper/6.jpg')
+                shutil.copy(src=os.getcwd() + '/project_pios/wallpaper/6.jpg', dst=os.getcwd() + '/project_pios/light_wallpaper.jpg')
                 pic = ImageTk.PhotoImage(wallimg)
                 NSWallpaper.config(image = pic)
                 NSWallpaper.image = pic
         else:
             NSAutoSwitchWallpaperStat.set(0)
-            wallimg = Image.open(os.getcwd() + '/wallpaper.jpg')
+            wallimg = Image.open(os.getcwd() + '/project_pios/wallpaper.jpg')
             pic = ImageTk.PhotoImage(wallimg)
             NSWallpaper.config(image = pic)
             NSWallpaper.image = pic
             pass
 
-    NSCanvas.after(ms=1, func=autoswitch_wallpaper)
+    NSCanvas.after(ms=1000, func=autoswitch_wallpaper)
 
 NSCanvas = Canvas(root)
 NSCanvas.pack(fill=BOTH, expand=True)
 
-wallpic = Image.open(os.getcwd() + '/wallpaper.jpg')
+wallpic = Image.open(os.getcwd() + '/project_pios/wallpaper.jpg')
 pic = ImageTk.PhotoImage(wallpic)
 
 NSWallpaper = Label(NSCanvas, text='', image=pic)
@@ -1565,7 +1548,7 @@ NSSignalWidget.place(relx=0.05, rely=0.5, anchor=CENTER)
 NSBlueSignalWidget = Label(NSMenuBar, text='', bg=NSMenuBar['bg'])
 NSBlueSignalWidget.place(relx=0.1, rely=0.5, anchor=CENTER)
 
-img = Image.open(os.getcwd() + '/wifi.png')
+img = Image.open(os.getcwd() + '/project_pios/wifi.png')
 img = img.resize((25, 25), Image.ANTIALIAS)
 pic = ImageTk.PhotoImage(img)
 
@@ -1574,35 +1557,35 @@ NSControlMenu = Frame(NSCanvas, height=300, width=400, bg='white')
 NSWifiControl = tkmacosx.CircleButton(NSControlMenu, image=pic, borderless=1, radius=20, command=manage_wifi)
 NSWifiLabel = Label(NSControlMenu, text='网络', bg=NSControlMenu['bg'])
 
-blueimg = Image.open(os.getcwd() + '/bluetooth.png')
+blueimg = Image.open(os.getcwd() + '/project_pios/bluetooth.png')
 blueimg = blueimg.resize((20, 20), Image.ANTIALIAS)
 bluepic = ImageTk.PhotoImage(blueimg)
 
 NSBluetoothControl = tkmacosx.CircleButton(NSControlMenu, image=bluepic, borderless=1, radius=20, command=manage_bluetooth)
 NSBluetoothLabel = Label(NSControlMenu, text='蓝牙', bg=NSControlMenu['bg'])
 
-shutimg = Image.open(os.getcwd() + '/shutdown.png')
+shutimg = Image.open(os.getcwd() + '/project_pios/shutdown.png')
 shutimg = shutimg.resize((25, 25), Image.ANTIALIAS)
 shutpic = ImageTk.PhotoImage(shutimg)
 
 NSShutdownControl = tkmacosx.CircleButton(NSControlMenu, image=shutpic, borderless=1, radius=20, command=shutdown)
 NSShutdownLabel = Label(NSControlMenu, text='关机', bg=NSControlMenu['bg'])
 
-wallimg = Image.open(os.getcwd() + '/wallpaper_icon.png')
+wallimg = Image.open(os.getcwd() + '/project_pios/wallpaper_icon.png')
 wallimg = wallimg.resize((25, 25), Image.ANTIALIAS)
 wallpic = ImageTk.PhotoImage(wallimg)
 
 NSWallpaperControl = tkmacosx.CircleButton(NSControlMenu, image=wallpic, borderless=1, radius=20, command=wallpaper)
 NSWallpaperLabel = Label(NSControlMenu, text='壁纸', bg=NSControlMenu['bg'])
 
-clockimg = Image.open(os.getcwd() + '/clock.png')
+clockimg = Image.open(os.getcwd() + '/project_pios/clock.png')
 clockimg = clockimg.resize((25, 25), Image.ANTIALIAS)
 clockpic = ImageTk.PhotoImage(clockimg)
 
 NSClockControl = tkmacosx.CircleButton(NSControlMenu, image=clockpic, borderless=1, radius=20, command=control_clock)
 NSClockLabel = Label(NSControlMenu, text='时间', bg=NSControlMenu['bg'])
 
-shotimg = Image.open(os.getcwd() + '/screenshot.png')
+shotimg = Image.open(os.getcwd() + '/project_pios/screenshot.png')
 shotimg = shotimg.resize((25, 25), Image.ANTIALIAS)
 shotpic = ImageTk.PhotoImage(shotimg)
 
@@ -1613,21 +1596,21 @@ NSHomeView = Label(NSCanvas, text=' ', font=("Futura", 1), height=0, width=200)
 NSHomeView.place(relx=0.5, rely=0.97, anchor=CENTER)
 NSHomeView.bind('<Button-1>', return_home)
 
-appsettingsimg = Image.open(os.getcwd() + '/settings.png')
+appsettingsimg = Image.open(os.getcwd() + '/project_pios/settings.png')
 appsettingsimg = appsettingsimg.resize((40, 40), Image.ANTIALIAS)
 appsettingspic = ImageTk.PhotoImage(appsettingsimg)
 APPSettings = Label(NSCanvas, text='', image=appsettingspic, border=0)
 APPSettings.place(relx=0.2, rely=0.85, anchor=CENTER)
 APPSettings.bind('<Button-1>', settings)
 
-appbrowserimg = Image.open(os.getcwd() + '/browser.png')
+appbrowserimg = Image.open(os.getcwd() + '/project_pios/browser.png')
 appbrowserimg = appbrowserimg.resize((40, 40), Image.ANTIALIAS)
 appbrowserpic = ImageTk.PhotoImage(appbrowserimg)
 APPBrowser = Label(NSCanvas, text='', image=appbrowserpic, border=0)
 APPBrowser.place(relx=0.5, rely=0.85, anchor=CENTER)
 APPBrowser.bind('<Button-1>', browser)
 
-appclockimg = Image.open(os.getcwd() + '/clock.png')
+appclockimg = Image.open(os.getcwd() + '/project_pios/clock.png')
 appclockimg = appclockimg.resize((40, 40), Image.ANTIALIAS)
 appclockpic = ImageTk.PhotoImage(appclockimg)
 APPClock = Label(NSCanvas, text='', image=appclockpic, border=0)
