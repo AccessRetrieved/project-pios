@@ -15,7 +15,8 @@ import sys
 import shutil
 import arrow
 import webbrowser
-import objc
+import pyscreenshot
+import objc #Add this to github to make it look better
 
 #change all path from "/project_pios/FILE" to "/FILE" for github
 
@@ -41,6 +42,24 @@ NSWifiCount = 0
 os.system('networksetup -setairportpower en0 on')
 
 NSDarkModeStat = IntVar()
+
+NSLanguageValue = StringVar()
+try:
+    with open(os.getcwd() + '/language.txt', 'r') as file:
+        print(file.read())
+        if file.read() == 'en':
+            NSLanguageValue.set('en')
+            pass
+        elif file.read() == 'en\n':
+            NSLanguageValue.set('en')
+            pass
+        elif file.read() == 'zh-cn':
+            NSLanguageValue.set('zh-cn')
+        elif file.read() == 'zh-cn\n':
+            NSLanguageValue.set('zh-cn')
+            pass
+except:
+    NSLanguageValue.set('en')
 
 NSBluetoothValue = IntVar()
 NSBluetoothCount = 0
@@ -112,6 +131,29 @@ def update_bluetooth():
 def pulldown_menu(event):
     global NSMenuCounter
     NSMenuCounter += 1
+
+    def change_language():
+        if NSLanguageValue.get() == 'en':
+            NSWifiLabel['text'] = 'Wifi'
+            NSBluetoothLabel['text'] = 'Bluetooth'
+            NSShutdownLabel['text'] = 'Shutdown'
+            NSWallpaperLabel['text'] = 'Wallpaper'
+            NSClockLabel['text'] = 'Clock'
+            NSScreenshotLabel['text'] = 'Screenshot'
+            pass
+        else:
+            NSWifiLabel['text'] = '网络'
+            NSBluetoothLabel['text'] = '蓝牙'
+            NSShutdownLabel['text'] = '关机'
+            NSWallpaperLabel['text'] = '壁纸'
+            NSClockLabel['text'] = '时间'
+            NSScreenshotLabel['text'] = '截屏'
+            pass
+
+        NSCanvas.after(ms=1000, func=change_language)
+
+    change_language()
+
     if NSMenuCounter % 2 == 0:
         NSCanvas['bg'] = '#4d4d4d'
         NSControlMenu.place(relx=0.5, rely=0.2125, anchor=CENTER)
@@ -130,6 +172,9 @@ def pulldown_menu(event):
 
         NSClockControl.place(relx=0.9, rely=0.1, anchor=CENTER)
         NSClockLabel.place(relx=0.9, rely=0.2, anchor=CENTER)
+
+        NSScreenshotControl.place(relx=0.1, rely=0.4, anchor=CENTER)
+        NSScreenshotLabel.place(relx=0.1, rely=0.5, anchor=CENTER)
 
         if NSWifiValue.get() == 1:
             NSWifiControl['bg'] = '#1b73e9'
@@ -152,6 +197,8 @@ def pulldown_menu(event):
         NSClockControl.place_forget()
         NSClockLabel.place_forget()
         NSControlMenu.place_forget()
+        NSScreenshotControl.place_forget()
+        NSScreenshotLabel.place_forget()
         pass
 
 def manage_wifi():
@@ -192,6 +239,8 @@ def return_home(event):
     NSWallpaperLabel.place_forget()
     NSClockControl.place_forget()
     NSClockLabel.place_forget()
+    NSScreenshotControl.place_forget()
+    NSScreenshotLabel.place_forget()
     NSControlMenu.place_forget()
 
     try:
@@ -244,6 +293,7 @@ def settings(event):
         machine_ram = '缓存: ' + str(round(psutil.virtual_memory().total / (1024.0 **3))) + ' GB'
 
         def close_about():
+            NSSettingsAbout.config(state = NORMAL)
             NSSettingsWallpaper.config(state = NORMAL)
             NSSettingsSearchEngine.config(state = NORMAL)
             NSSettingsPrivacy.config(state = NORMAL)
@@ -263,9 +313,10 @@ def settings(event):
         NSSettingsWallpaper['bg'] = '#b3b3b3'
         NSSettingsPrivacy['bg'] = '#b3b3b3'
 
+        NSSettingsAbout.config(state = DISABLED)
         NSSettingsWallpaper.config(state = DISABLED)
         NSSettingsSearchEngine.config(state = DISABLED)
-        NSSettingsPrivacy.config(state = NORMAL)
+        NSSettingsPrivacy.config(state = DISABLED)
 
         NSPopupAlert = Frame(NSSettingsView, width=380, height=300)
         NSPopupAlert.place(relx=0.5, rely=0.5, anchor=CENTER)
@@ -301,6 +352,7 @@ def settings(event):
         NSSettingsPrivacy['bg'] = '#b3b3b3'
 
         NSSettingsAbout.config(state = DISABLED)
+        NSSettingsSearchEngine.config(state = DISABLED)
         NSSettingsWallpaper.config(state = DISABLED)
         NSSettingsPrivacy.config(state = DISABLED)
 
@@ -308,6 +360,7 @@ def settings(event):
             if NSBrowserSearchEngineBox.get() == 'Google':
                 NSBrowserSearchEngine.set(0)
                 NSSettingsAbout.config(state = NORMAL)
+                NSSettingsSearchEngine.config(state = NORMAL)
                 NSSettingsWallpaper.config(state = NORMAL)
                 NSSettingsPrivacy.config(state = NORMAL)
                 NSSettingsView['bg'] = 'white'
@@ -317,18 +370,38 @@ def settings(event):
                 NSSettingsSearchEngine['bg'] = 'white'
                 NSSettingsPrivacy['bg'] = 'white'
                 
-                
                 NSPopupAlert.destroy()
             else:
                 NSBrowserSearchEngine.set(1)
                 NSSettingsAbout.config(state = NORMAL)
+                NSSettingsSearchEngine.config(state = NORMAL)
                 NSSettingsWallpaper.config(state = NORMAL)
+                NSSettingsPrivacy.config(state = NORMAL)
                 NSSettingsView['bg'] = 'white'
                 NSSettingsProfile['bg'] = 'white'
                 NSSettingsAbout['bg'] = 'white'
                 NSSettingsWallpaper['bg'] = 'white'
+                NSSettingsPrivacy['bg'] = 'white'
 
                 NSPopupAlert.destroy()
+
+        def change_language():
+            if NSLanguageValue.get() == 'en':
+                NSSettingsProfile['text'] = '    Jerry Hu'
+                NSSettingsSearchEngine['text'] = 'Browser'
+                NSSettingsWallpaper['text'] = 'Wallpaper'
+                NSSettingsPrivacy['text'] = 'Privacy'
+                NSSettingsAbout['text'] = 'About'
+                pass
+            else:
+                NSSettingsProfile['text'] = '    胡家睿'
+                NSSettingsWallpaper['text'] = '壁纸'
+                NSSettingsPrivacy['text'] = '隐私'
+                NSSettingsAbout['text'] = '关于本机'
+
+                pass
+
+            NSSettingsView.after(ms=1, func=change_language)
 
         NSPopupAlert = Frame(NSSettingsView, width=380, height=300)
         NSPopupAlert.place(relx=0.5, rely=0.5, anchor=CENTER)
@@ -346,6 +419,8 @@ def settings(event):
 
         NSPopupAlertClose = tkmacosx.Button(NSPopupAlert, text='关闭', bg='white', fg='black', font=("Futura", 15), borderless=1, activebackground='white', activeforeground='black', command=close_popup)
         NSPopupAlertClose.place(relx=0.5, rely=0.85, anchor=CENTER)
+
+        change_language()
 
     def choose_wallpaper():
         NSSettingsView['bg'] = '#b3b3b3'
@@ -369,8 +444,26 @@ def settings(event):
 
             NSPopupAlert.destroy()
 
+        def change_language():
+            if NSLanguageValue.get() == 'en':
+                NSSettingsProfile['text'] = '    Jerry Hu'
+                NSSettingsSearchEngine['text'] = 'Browser'
+                NSSettingsWallpaper['text'] = 'Wallpaper'
+                NSSettingsPrivacy['text'] = 'Privacy'
+                NSSettingsAbout['text'] = 'About'
+                pass
+            else:
+                NSSettingsProfile['text'] = '    胡家睿'
+                NSSettingsWallpaper['text'] = '壁纸'
+                NSSettingsPrivacy['text'] = '隐私'
+                NSSettingsAbout['text'] = '关于本机'
+                pass
+
+            NSSettingsView.after(ms=1, func=change_language)
+
         NSSettingsAbout.config(state = DISABLED)
         NSSettingsSearchEngine.config(state = DISABLED)
+        NSSettingsWallpaper.config(state = DISABLED)
         NSSettingsPrivacy.config(state = DISABLED)
 
         NSPopupAlert = Frame(NSSettingsView, width=380, height=400)
@@ -499,7 +592,7 @@ def settings(event):
         wall7.place(relx=0.15, rely=0.5, anchor=CENTER)
         wall8.place(relx=0.3, rely=0.5, anchor=CENTER)
         wall9.place(relx=0.45, rely=0.5, anchor=CENTER)
-        wall10.place(relx=0., rely=0.5, anchor=CENTER)
+        wall10.place(relx=0.6, rely=0.5, anchor=CENTER)
         wall1.bind('<Button-1>', w1)
         wall2.bind('<Button-1>', w2)
         wall3.bind('<Button-1>', w3)
@@ -514,6 +607,8 @@ def settings(event):
         NSPopupAlertClose = tkmacosx.Button(NSPopupAlert, text='关闭', bg='white', fg='black', font=("Futura", 15), borderless=1, activebackground='white', activeforeground='black', command=close_popup)
         NSPopupAlertClose.place(relx=0.5, rely=0.85, anchor=CENTER)
 
+        change_language()
+
     def privacy():
         NSSettingsView['bg'] = '#b3b3b3'
         NSSettingsProfile['bg'] = '#b3b3b3'
@@ -526,6 +621,7 @@ def settings(event):
             NSSettingsWallpaper.config(state = NORMAL)
             NSSettingsAbout.config(state = NORMAL)
             NSSettingsSearchEngine.config(state = NORMAL)
+            NSSettingsPrivacy.config(state = NORMAL)
             NSSettingsView['bg'] = 'white'
             NSSettingsProfile['bg'] = 'white'
             NSSettingsAbout['bg'] = 'white'
@@ -535,12 +631,30 @@ def settings(event):
 
             NSPopupAlert.destroy()
 
+        def change_language():
+            if NSLanguageValue.get() == 'en':
+                NSSettingsProfile['text'] = '    Jerry Hu'
+                NSSettingsSearchEngine['text'] = 'Browser'
+                NSSettingsWallpaper['text'] = 'Wallpaper'
+                NSSettingsPrivacy['text'] = 'Privacy'
+                NSSettingsAbout['text'] = 'About'
+                pass
+            else:
+                NSSettingsProfile['text'] = '    胡家睿'
+                NSSettingsWallpaper['text'] = '壁纸'
+                NSSettingsPrivacy['text'] = '隐私'
+                NSSettingsAbout['text'] = '关于本机'
+                pass
+
+                NSSettingsView.after(ms=1, func=change_language)
+
         NSPopupAlert = Frame(NSSettingsView, width=380, height=400)
         NSPopupAlert.place(relx=0.5, rely=0.5, anchor=CENTER)
 
         NSSettingsAbout.config(state = DISABLED)
         NSSettingsSearchEngine.config(state = DISABLED)
         NSSettingsWallpaper.config(state = DISABLED)
+        NSSettingsPrivacy.config(state = DISABLED)
 
         NSPopupTitle = Label(NSPopupAlert, text='隐私: ', fg='#949494', font=("Futura", 20))
         NSPopupTitle.place(relx=0.1, rely=0.05, anchor=CENTER)
@@ -550,6 +664,8 @@ def settings(event):
 
         NSPopupClose = tkmacosx.Button(NSPopupAlert, text='关闭', font=("Futura", 12), borderless=1, activeforeground='black', activebackground='white', command=close_popup)
         NSPopupClose.place(relx=0.5, rely=0.85, anchor=CENTER)
+
+        change_language()
 
     def return_home(event):
         NSSettingsView.destroy()
@@ -595,6 +711,24 @@ def settings(event):
     def open_page():
         webbrowser.open('https://github.com/AccessRetrieved')
 
+    def change_language():
+        if NSLanguageValue.get() == 'en':
+            NSSettingsProfile['text'] = '    Jerry Hu'
+            NSSettingsSearchEngine['text'] = 'Browser'
+            NSSettingsWallpaper['text'] = 'Wallpaper'
+            NSSettingsPrivacy['text'] = 'Privacy'
+            NSSettingsAbout['text'] = 'About'
+            pass
+        else:
+            NSSettingsProfile['text'] = '    胡家睿'
+            NSSettingsSearchEngine['text'] = '浏览器'
+            NSSettingsWallpaper['text'] = '壁纸'
+            NSSettingsPrivacy['text'] = '隐私'
+            NSSettingsAbout['text'] = '关于本机'
+            pass
+
+        NSSettingsView.after(ms=1000, func=change_language)
+
     NSSettingsView.after(ms=1000, func=update_date)
 
     NSSettingsMenuBar = Frame(NSSettingsView, height=20, width=400)
@@ -609,20 +743,20 @@ def settings(event):
     NSSettingsProfileimg = NSSettingsProfileimg.resize((50, 50), Image.ANTIALIAS)
     NSSettingsProfilepic = ImageTk.PhotoImage(NSSettingsProfileimg)
 
-    NSSettingsProfile = tkmacosx.Button(NSSettingsView, text='   胡家睿', borderless=1, font=("Futura", 20), height=80, width=400, activebackground='white', activeforeground='black', image=NSSettingsProfilepic, compound=LEFT, command=open_page)
+    NSSettingsProfile = tkmacosx.Button(NSSettingsView, text='    胡家睿', borderless=1, font=("Futura", 20), height=80, width=400, activebackground='white', activeforeground='black', image=NSSettingsProfilepic, compound=LEFT, command=open_page)
     NSSettingsProfile.image = NSSettingsProfilepic
     NSSettingsProfile.place(relx=0.5, rely=0.1, anchor=CENTER)
 
-    NSSettingsSearchEngine = tkmacosx.Button(NSSettingsView, text='浏览器                                              >', borderless=1, font=("Futura", 15), height=50, width=400, activebackground='white', activeforeground='black', command=choose_search_engine)
+    NSSettingsSearchEngine = tkmacosx.Button(NSSettingsView, text='浏览器', borderless=1, font=("Futura", 15), height=50, width=400, activebackground='white', activeforeground='black', command=choose_search_engine)
     NSSettingsSearchEngine.place(relx=0.5, rely=0.2, anchor=CENTER)
 
-    NSSettingsWallpaper = tkmacosx.Button(NSSettingsView, text='壁纸                                                >', borderless=1, font=("Futura", 15), height=50, width=400, activebackground='white', activeforeground='black', command=choose_wallpaper)
+    NSSettingsWallpaper = tkmacosx.Button(NSSettingsView, text='壁纸', borderless=1, font=("Futura", 15), height=50, width=400, activebackground='white', activeforeground='black', command=choose_wallpaper)
     NSSettingsWallpaper.place(relx=0.5, rely=0.27, anchor=CENTER)
 
-    NSSettingsPrivacy = tkmacosx.Button(NSSettingsView, text='隐私                                                >', borderless=1, font=("Futura", 15), height=50, width=400, activebackground='white', activeforeground='black', command=privacy)
+    NSSettingsPrivacy = tkmacosx.Button(NSSettingsView, text='隐私', borderless=1, font=("Futura", 15), height=50, width=400, activebackground='white', activeforeground='black', command=privacy)
     NSSettingsPrivacy.place(relx=0.5, rely=0.34, anchor=CENTER)
 
-    NSSettingsAbout = tkmacosx.Button(NSSettingsView, text='关于本机                                            >', borderless=1, font=("Futura", 15), height=50, width=400, activebackground='white', activeforeground='black', command=about_this_mac)
+    NSSettingsAbout = tkmacosx.Button(NSSettingsView, text='关于本机', borderless=1, font=("Futura", 15), height=50, width=400, activebackground='white', activeforeground='black', command=about_this_mac)
     NSSettingsAbout.place(relx=0.5, rely=0.41, anchor=CENTER)
 
     NSSettingsReturnHome = Label(NSSettingsView, text=' ', font=("Futura", 1), height=0, width=200, bg='#dddddd')
@@ -632,6 +766,7 @@ def settings(event):
     update_date()
     update_time()
     change_mode()
+    change_language()
     NSSettingsView.mainloop()
 
 def browser(event):
@@ -765,6 +900,21 @@ def browser(event):
 
         NSBrowserView.after(ms=500, func=change_mode)
 
+    def change_language():
+        if NSLanguageValue.get() == 'en':
+            NSBrowserIconLabel['text'] = 'Browser'
+            NSBrowserURLQuery.delete(0, END)
+            NSBrowserURLQuery.insert(0, 'URL:')
+            pass
+        else:
+            NSBrowserIconLabel['text'] = '浏览器'
+            NSBrowserURLQuery.delete(0, END)
+            NSBrowserURLQuery.insert(0, '网址:')
+            pass
+
+        NSBrowserView.after(ms=1000, func=change_language)
+
+
     NSBrowserIconimg = Image.open(os.getcwd() + '/browser.png')
     NSBrowserIconimg = NSBrowserIconimg.resize((100, 100), Image.ANTIALIAS)
     NSBrowserIconpic = ImageTk.PhotoImage(NSBrowserIconimg)
@@ -784,9 +934,12 @@ def browser(event):
     NSBrowserDisplayDate.place(relx=0.9, rely=0.5, anchor=CENTER)
 
     NSBrowserURLQuery = Entry(NSBrowserView, width=33)
-    NSBrowserURLQuery.insert(0, '网址: ')
     NSBrowserURLQuery.place(relx=0.41, rely=0.045, anchor=CENTER)
     NSBrowserURLQuery.bind('<FocusIn>', on)
+    if NSLanguageValue.get() == 'en':
+        NSBrowserURLQuery.insert(0, 'URL:')
+    else:
+        NSBrowserURLQuery.insert(0, '网址:')
 
     NSBrowserURLLaunch = tkmacosx.Button(NSBrowserView, text='→', width=70, font=("Futura", 14), borderless=1, activeforeground='white', activebackground='black', command=launch_url)
     NSBrowserURLLaunch.place(relx=0.9, rely=0.045, anchor=CENTER)
@@ -795,11 +948,12 @@ def browser(event):
     NSSettingsReturnHome.place(relx=0.5, rely=0.97, anchor=CENTER)
     NSSettingsReturnHome.bind('<Button-1>', return_home)
 
-    # Initialize time on date on menu bar4
+    # Initialize time on date on menu bar
     update_date()
     update_time()
     launch_effect()
     change_mode()
+    change_language()
     NSBrowserView.bind('<Return>', launch_url_key)
     NSBrowserView.mainloop()
 
@@ -826,6 +980,18 @@ def wallpaper():
 
     NSPopupTitle = Label(NSPopupAlert, text='选择壁纸: ', fg='#949494', font=("Futura", 20))
     NSPopupTitle.place(relx=0.17, rely=0.05, anchor=CENTER)
+
+    def change_language():
+        if NSLanguageValue.get() == 'en':
+            NSPopupTitle['text'] = 'Select:'
+            NSPopupAlertClose['text'] = 'Close'
+            pass
+        else:
+            NSPopupTitle['text'] = '选择壁纸: '
+            NSPopupAlertClose['text'] = '关闭'
+            pass
+
+        NSPopupAlert.after(ms=1000, func=change_language)
 
     def w1(event):
         img = Image.open(os.getcwd() + '/wallpaper/1.jpg')
@@ -962,6 +1128,8 @@ def wallpaper():
     NSPopupAlertClose = tkmacosx.Button(NSPopupAlert, text='关闭', bg='white', fg='black', font=("Futura", 15), borderless=1, activebackground='white', activeforeground='black', command=close_popup)
     NSPopupAlertClose.place(relx=0.5, rely=0.65, anchor=CENTER)
 
+    change_language()
+
 def takedown_pulldown_menu(event):
     try:
         NSWifiControl.place_forget()
@@ -973,6 +1141,24 @@ def takedown_pulldown_menu(event):
         NSWallpaperControl.place_forget()
         NSWallpaperLabel.place_forget()
         NSControlMenu.place_forget()
+        NSScreenshotControl.place_forget()
+        NSScreenshotLabel.place_forget()
+    except:
+        pass
+
+def screenshot_takedown_pulldown_menu():
+    try:
+        NSWifiControl.place_forget()
+        NSWifiLabel.place_forget()
+        NSBluetoothControl.place_forget()
+        NSBluetoothLabel.place_forget()
+        NSShutdownControl.place_forget()
+        NSShutdownLabel.place_forget()
+        NSWallpaperControl.place_forget()
+        NSWallpaperLabel.place_forget()
+        NSControlMenu.place_forget()
+        NSScreenshotControl.place_forget()
+        NSScreenshotLabel.place_forget()
     except:
         pass
 
@@ -1057,6 +1243,18 @@ def clock(event):
 
         NSClockView.after(ms=500, func=change_mode)
 
+    def change_language():
+        if NSLanguageValue.get() == 'en':
+            NSClockVancouver['text'] = 'Vancouver'
+            NSClockBeijing['text'] = 'Beijing'
+            pass
+        else:
+            NSClockVancouver['text'] = '温哥华'
+            NSClockBeijing['text'] = '北京'
+            pass
+
+        NSClockView.after(ms=1000, func=change_language)
+
     NSClockMenuBar = Frame(NSClockView, height=20, width=400)
     NSClockMenuBar.place(relx=0.5, rely=0.012, anchor=CENTER)
 
@@ -1072,7 +1270,7 @@ def clock(event):
     NSClockVancouverTime.place(relx=0.85, rely=0.1, anchor=CENTER)
 
     NSClockBeijing = Label(NSClockView, text='北京', bg=NSClockView['bg'], font=("Futura", 20), height=4, width=20)
-    NSClockBeijing.place(relx=0.15, rely=0.2, anchor=CENTER)
+    NSClockBeijing.place(relx=0.17, rely=0.2, anchor=CENTER)
 
     NSClockBeijingTime = Label(NSClockView, text='', bg=NSClockView['bg'], font=("Futura", 18))
     NSClockBeijingTime.place(relx=0.85, rely=0.2, anchor=CENTER)
@@ -1086,6 +1284,7 @@ def clock(event):
     update_vancouver()
     update_beijing()
     change_mode()
+    change_language()
     NSClockView.mainloop()
 
 def control_clock():
@@ -1133,6 +1332,20 @@ def control_clock():
 
         NSPopupAlert.after(ms=500, func=change_mode)
 
+    def change_language():
+        if NSLanguageValue.get() == 'en':
+            NSPopupAlertClose['text'] = 'Close'
+            NSClockVancouver['text'] = 'Vancouver'
+            NSClockBeijing['text'] = 'Beijing'
+            pass
+        else:
+            NSPopupAlertClose['text'] = '关闭'
+            NSClockVancouver['text'] = '温哥华'
+            NSClockBeijing['text'] = '北京'
+            pass
+
+        NSCanvas.after(ms=1000, func=change_language)
+
     NSPopupAlert = Frame(NSControlMenu, width=380, height=400)
     NSPopupAlert.place(relx=0.5, rely=0.7, anchor=CENTER)
 
@@ -1148,12 +1361,13 @@ def control_clock():
     NSClockBeijingTime = Label(NSPopupAlert, text='', bg=NSControlMenu['bg'], font=("Futura", 13))
     NSClockBeijingTime.place(relx=0.8, rely=0.35, anchor=CENTER)
 
+    NSPopupAlertClose = tkmacosx.Button(NSPopupAlert, text='关闭', bg='white', fg='black', font=("Futura", 15), borderless=1, activebackground='white', activeforeground='black', command=close_popup)
+    NSPopupAlertClose.place(relx=0.5, rely=0.65, anchor=CENTER)
+
     update_vancouver()
     update_beijing()
     change_mode()
-
-    NSPopupAlertClose = tkmacosx.Button(NSPopupAlert, text='关闭', bg='white', fg='black', font=("Futura", 15), borderless=1, activebackground='white', activeforeground='black', command=close_popup)
-    NSPopupAlertClose.place(relx=0.5, rely=0.65, anchor=CENTER)
+    change_language()
 
 def detect_darkmode():
     response = os.popen('defaults read -g AppleInterfaceStyle').read()
@@ -1180,6 +1394,8 @@ def detect_darkmode():
         NSShutdownLabel['fg'] = dark_theme['fg']
         NSClockLabel['bg'] = dark_theme['bg']
         NSClockLabel['fg'] = dark_theme['fg']
+        NSScreenshotLabel['bg'] = dark_theme['bg']
+        NSScreenshotLabel['fg'] = dark_theme['fg']
         pass
     else:
         NSDarkModeStat.set(0)
@@ -1204,9 +1420,64 @@ def detect_darkmode():
         NSShutdownLabel['fg'] = theme['fg']
         NSClockLabel['bg'] = theme['bg']
         NSClockLabel['fg'] = theme['fg']
+        NSScreenshotLabel['bg'] = theme['bg']
+        NSScreenshotLabel['fg'] = theme['fg']
         pass
     
     root.after(ms=500, func=detect_darkmode)
+
+def change_language():
+    if NSLanguageValue.get() == 'en':
+        NSPopupTitle['text'] = 'Alert: '
+        NSPopupBody['text'] = 'Project-Pios is still developing,\n\nSome Features may not work.'
+        NSPopupClose['text'] = 'Dismiss'
+        pass
+    else:
+        NSPopupTitle['text'] = '通知: '
+        NSPopupBody['text'] = 'Project-Pios 还在开发中，\n\n部分功能会失效。'
+        NSPopupClose['text'] = '好'
+        pass
+
+    NSCanvas.after(ms=1000, func=change_language)
+
+def update_languages():
+    with open(os.getcwd() + '/language.txt', 'r') as file:
+        if file.read() == 'en':
+            NSLanguageValue.set('en')
+        elif file.read() == 'en\n':
+            NSLanguageValue.set('en')
+        elif file.read() == 'zh-cn':
+            NSLanguageValue.set('zh-cn')
+        elif file.read() == 'zh-cn\n':
+            NSLanguageValue.set('zh-cn')
+        else:
+            NSLanguageValue.set('zh-cn')
+            pass
+    
+    NSCanvas.after(ms=1000, func=update_languages)
+
+def screenshot():
+    screenshot_takedown_pulldown_menu()
+    def wait():
+        img = pyscreenshot.grab(bbox=(root.winfo_x(), root.winfo_y(), 400, 800))
+        img.show()
+
+        NSCanvas['bg'] = '#4d4d4d'
+        NSControlMenu.place(relx=0.5, rely=0.2125, anchor=CENTER)
+        NSWifiControl.place(relx=0.1, rely=0.1, anchor=CENTER)
+        NSWifiLabel.place(relx=0.1, rely=0.2, anchor=CENTER)
+        NSBluetoothControl.place(relx=0.3, rely=0.1, anchor=CENTER)
+        NSBluetoothLabel.place(relx=0.3, rely=0.2, anchor=CENTER)
+        NSShutdownControl.place(relx=0.5, rely=0.1, anchor=CENTER)
+        NSShutdownLabel.place(relx=0.5, rely=0.2, anchor=CENTER)
+        NSWallpaperControl.place(relx=0.7, rely=0.1, anchor=CENTER)
+        NSWallpaperLabel.place(relx=0.7, rely=0.2, anchor=CENTER)
+        NSClockControl.place(relx=0.9, rely=0.1, anchor=CENTER)
+        NSClockLabel.place(relx=0.9, rely=0.2, anchor=CENTER)
+        NSScreenshotControl.place(relx=0.1, rely=0.4, anchor=CENTER)
+        NSScreenshotLabel.place(relx=0.1, rely=0.5, anchor=CENTER)
+    
+    NSCanvas.after(1, wait)
 
 NSCanvas = Canvas(root)
 NSCanvas.pack(fill=BOTH, expand=True)
@@ -1274,6 +1545,13 @@ clockpic = ImageTk.PhotoImage(clockimg)
 NSClockControl = tkmacosx.CircleButton(NSControlMenu, image=clockpic, borderless=1, radius=20, command=control_clock)
 NSClockLabel = Label(NSControlMenu, text='时间', bg=NSControlMenu['bg'])
 
+shotimg = Image.open(os.getcwd() + '/screenshot.png')
+shotimg = shotimg.resize((25, 25), Image.ANTIALIAS)
+shotpic = ImageTk.PhotoImage(shotimg)
+
+NSScreenshotControl = tkmacosx.CircleButton(NSControlMenu, image=shotpic, borderless=1, radius=20, command=screenshot)
+NSScreenshotLabel = Label(NSControlMenu, text='截屏', bg=NSControlMenu['bg'])
+
 NSHomeView = Label(NSCanvas, text=' ', font=("Futura", 1), height=0, width=200)
 NSHomeView.place(relx=0.5, rely=0.97, anchor=CENTER)
 NSHomeView.bind('<Button-1>', return_home)
@@ -1323,4 +1601,6 @@ update_date()
 update_wifi()
 update_bluetooth()
 detect_darkmode()
+change_language()
+update_languages()
 root.mainloop()

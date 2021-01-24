@@ -30,6 +30,10 @@
    - 支持实时切换暗模式（需要macos Big sur - 11.1以上开启手动切换/macos Catalina支持自动切换）
    - 设置里的用户添加了功能
    - 修复了一些bugs
+5. 版本3.5（需要重新运行`pip3 instal -r r.txt` 或 `pip install -r r.txt`)
+   - 可选择语言：英语和中文
+   - 添加了截屏功能
+   - 修复了一些bugs
 
 <a name="install"></a>
 ## 下载和运行
@@ -46,7 +50,6 @@
 <a name="bugs"></a>
 ## 已知问题
 1. 切换到暗模式的时候蓝牙模块和wifi模块需要新的图片资源
-2. 设置里的隐私选项需要添加暗模式
 
 <a name="images"></a>
 ## 图片介绍

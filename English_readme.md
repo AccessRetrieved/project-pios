@@ -30,6 +30,10 @@ PC Users currently not supported
    - Support real-time switching between dark and light (Need MacOS Big sur - 11.1 or up to switch manually)
    - Added support for user in settings profile.
    - Fixed some bugs
+5. Version 3.5 (Need to reinstall modules: `pip3 instsll -r r.txt` or `pip install -r r.txt`)
+   - Added option for language: English and Chinese
+   - Added screenshot function
+   - Fixed some bugs
 
 <a name="install"></a>
 ## Installing an executing
