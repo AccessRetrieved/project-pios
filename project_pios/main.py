@@ -16,7 +16,7 @@ import shutil
 import arrow
 import webbrowser
 import pyscreenshot
-import objc #Add this to github to make it look better
+import objc
 
 #change all path from "/project_pios/FILE" to "/FILE" for github
 
@@ -46,7 +46,6 @@ NSDarkModeStat = IntVar()
 NSLanguageValue = StringVar()
 try:
     with open(os.getcwd() + '/language.txt', 'r') as file:
-        print(file.read())
         if file.read() == 'en':
             NSLanguageValue.set('en')
             pass
@@ -1477,7 +1476,7 @@ def screenshot():
         NSScreenshotControl.place(relx=0.1, rely=0.4, anchor=CENTER)
         NSScreenshotLabel.place(relx=0.1, rely=0.5, anchor=CENTER)
     
-    NSCanvas.after(1, wait)
+    NSCanvas.after(1000, wait)
 
 NSCanvas = Canvas(root)
 NSCanvas.pack(fill=BOTH, expand=True)
