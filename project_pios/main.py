@@ -16,8 +16,7 @@ import shutil
 import arrow
 import webbrowser
 import pyscreenshot
-from textblob import TextBlob
-import objc #Add this to github to make it look better
+import objc
 
 #change all path from "/project_pios/FILE" to "/FILE" for github
 
