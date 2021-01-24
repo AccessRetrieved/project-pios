@@ -35,6 +35,7 @@ PC Users currently not supported
    - Added screenshot function
    - Fixed some bugs
 - **Version 3.5.1**
+   - Added auto-switch wallpaper between light and dark mode
    - Fixed some bugs regarding to Dark Mode
    - Fixed some bugs in Settings.
 
