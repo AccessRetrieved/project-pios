@@ -42,6 +42,7 @@ NSWifiCount = 0
 os.system('networksetup -setairportpower en0 on')
 
 NSDarkModeStat = IntVar()
+NSAutoSwitchWallpaperStat = IntVar()
 
 NSLanguageValue = StringVar()
 try:
@@ -70,6 +71,7 @@ else:
     pass
 
 NSMenuCounter = 1
+NSAutoSwitchCounter = 1
 
 NSBrowserSearchEngine = IntVar()
 NSBrowserSearchEngine.set(0)
@@ -902,13 +904,9 @@ def browser(event):
     def change_language():
         if NSLanguageValue.get() == 'en':
             NSBrowserIconLabel['text'] = 'Browser'
-            NSBrowserURLQuery.delete(0, END)
-            NSBrowserURLQuery.insert(0, 'URL:')
             pass
         else:
             NSBrowserIconLabel['text'] = '浏览器'
-            NSBrowserURLQuery.delete(0, END)
-            NSBrowserURLQuery.insert(0, '网址:')
             pass
 
         NSBrowserView.after(ms=1000, func=change_language)
@@ -974,7 +972,7 @@ def wallpaper():
     def close_popup():
         NSPopupAlert.destroy()
 
-    NSPopupAlert = Frame(NSControlMenu, width=380, height=400)
+    NSPopupAlert = Frame(NSControlMenu, width=400, height=400)
     NSPopupAlert.place(relx=0.5, rely=0.7, anchor=CENTER)
 
     NSPopupTitle = Label(NSPopupAlert, text='选择壁纸: ', fg='#949494', font=("Futura", 20))
@@ -984,13 +982,44 @@ def wallpaper():
         if NSLanguageValue.get() == 'en':
             NSPopupTitle['text'] = 'Select:'
             NSPopupAlertClose['text'] = 'Close'
+            with open(os.getcwd() + '/wallpaper.txt', 'r') as file:
+                if file.read() == 'true':
+                    NSSetupAutoSwitchWallpaper['text'] = '✓'
+                else:
+                    NSSetupAutoSwitchWallpaper['text'] = 'Auto'
+                    pass
             pass
         else:
             NSPopupTitle['text'] = '选择壁纸: '
             NSPopupAlertClose['text'] = '关闭'
+            with open(os.getcwd() + '/wallpaper.txt', 'r') as file:
+                if file.read() == 'true':
+                    NSSetupAutoSwitchWallpaper['text'] = '✓'
+                else:
+                    NSSetupAutoSwitchWallpaper['text'] = '自动调整'
+                    pass
             pass
 
         NSPopupAlert.after(ms=1000, func=change_language)
+
+    def auto():
+        global NSAutoSwitchCounter
+        NSAutoSwitchCounter += 1
+
+        if NSAutoSwitchCounter % 2 == 0:
+            NSSetupAutoSwitchWallpaper['text'] = '✓'
+            with open(os.getcwd() + '/wallpaper.txt', 'w') as file:
+                file.truncate(0)
+                file.write('true')
+                pass
+            pass
+        else:
+            NSSetupAutoSwitchWallpaper['text'] = '自动调整'
+            with open(os.getcwd() + '/wallpaper.txt', 'w') as file:
+                file.truncate(0)
+                file.write('false')
+                pass
+            pass
 
     def w1(event):
         img = Image.open(os.getcwd() + '/wallpaper/1.jpg')
@@ -1123,6 +1152,9 @@ def wallpaper():
     wall8.bind('<Button-1>', w8)
     wall9.bind('<Button-1>', w9)
     wall10.bind('<Button-1>', w10)
+
+    NSSetupAutoSwitchWallpaper = tkmacosx.Button(NSPopupAlert, text='自动调整', bg='white', fg='black', font=("Futura", 12), borderless=1, activebackground='white', activeforeground='black', width=75, height=65, command=auto)
+    NSSetupAutoSwitchWallpaper.place(relx=0.8, rely=0.49, anchor=CENTER)
 
     NSPopupAlertClose = tkmacosx.Button(NSPopupAlert, text='关闭', bg='white', fg='black', font=("Futura", 15), borderless=1, activebackground='white', activeforeground='black', command=close_popup)
     NSPopupAlertClose.place(relx=0.5, rely=0.65, anchor=CENTER)
@@ -1345,7 +1377,7 @@ def control_clock():
 
         NSCanvas.after(ms=1000, func=change_language)
 
-    NSPopupAlert = Frame(NSControlMenu, width=380, height=400)
+    NSPopupAlert = Frame(NSControlMenu, width=400, height=400)
     NSPopupAlert.place(relx=0.5, rely=0.7, anchor=CENTER)
 
     NSClockVancouver = Label(NSPopupAlert, text='Vancouver', bg=NSControlMenu['bg'], font=("Futura", 15), height=4, width=20)
@@ -1478,6 +1510,32 @@ def screenshot():
     
     NSCanvas.after(1000, wait)
 
+def autoswitch_wallpaper():
+    with open(os.getcwd() + '/wallpaper.txt', 'r') as file:
+        if file.read() == 'true':
+            NSAutoSwitchWallpaperStat.set(1)
+            if NSDarkModeStat.get() == 1:
+                wallimg = Image.open(os.getcwd() + '/wallpaper/9.jpg')
+                shutil.copy(src=os.getcwd() + '/wallpaper/9.jpg', dst=os.getcwd() + '/dark_wallpaper.jpg')
+                pic = ImageTk.PhotoImage(wallimg)
+                NSWallpaper.config(image = pic)
+                NSWallpaper.image = pic
+            else:
+                wallimg = Image.open(os.getcwd() + '/wallpaper/6.jpg')
+                shutil.copy(src=os.getcwd() + '/wallpaper/6.jpg', dst=os.getcwd() + '/light_wallpaper.jpg')
+                pic = ImageTk.PhotoImage(wallimg)
+                NSWallpaper.config(image = pic)
+                NSWallpaper.image = pic
+        else:
+            NSAutoSwitchWallpaperStat.set(0)
+            wallimg = Image.open(os.getcwd() + '/wallpaper.jpg')
+            pic = ImageTk.PhotoImage(wallimg)
+            NSWallpaper.config(image = pic)
+            NSWallpaper.image = pic
+            pass
+
+    NSCanvas.after(ms=1000, func=autoswitch_wallpaper)
+
 NSCanvas = Canvas(root)
 NSCanvas.pack(fill=BOTH, expand=True)
 
@@ -1602,4 +1660,5 @@ update_bluetooth()
 detect_darkmode()
 change_language()
 update_languages()
+autoswitch_wallpaper()
 root.mainloop()
