@@ -13,27 +13,30 @@ PC Users currently not supported
 
 <a name="version"></a>
 ## Versions
-1. Version 1.0
+- Version 1.0
    - Network
    - Bluetooth
    - Settings
-2. Version 1.5 (Need to reinstall modules: `pip3 instsll -r r.txt` or `pip install -r r.txt`)
+- Version 1.5 (Need to reinstall modules: `pip3 instsll -r r.txt` or `pip install -r r.txt`)
    - Added new bluetooth image
    - Can select wallpaper and change homescreen layout
    - Added Browser
    - Privacy settings are now available in the settings menu
-3. Version 2.5 (Need to reinstall modules: `pip3 instsll -r r.txt` or `pip install -r r.txt`)
+- Version 2.5 (Need to reinstall modules: `pip3 instsll -r r.txt` or `pip install -r r.txt`)
    - Added Clock app
    - Can view up to 2 world-wide clocks in the control menu
-4. Version 3.0 (Need to reinstall modules: `pip3 instsll -r r.txt` or `pip install -r r.txt`)
+- Version 3.0 (Need to reinstall modules: `pip3 instsll -r r.txt` or `pip install -r r.txt`)
    - Added Dark Mode
    - Support real-time switching between dark and light (Need MacOS Big sur - 11.1 or up to switch manually)
    - Added support for user in settings profile.
    - Fixed some bugs
-5. Version 3.5 (Need to reinstall modules: `pip3 instsll -r r.txt` or `pip install -r r.txt`)
+- Version 3.5 (Need to reinstall modules: `pip3 instsll -r r.txt` or `pip install -r r.txt`)
    - Added option for language: English and Chinese
    - Added screenshot function
    - Fixed some bugs
+- Version 3.5.1
+   - Fixed some bugs regarding to Dark Mode
+   - Fixed some bugs in Settings.
 
 <a name="install"></a>
 ## Installing an executing
