@@ -67,4 +67,4 @@ PC Users currently not supported
 ![6](https://i.ibb.co/2N2g648/Screen-Shot-2021-01-23-at-1-11-32-PM.png)
 ![7](https://i.ibb.co/FqknCvn/Screen-Shot-2021-01-23-at-1-11-36-PM.png)
 
-[Back to top↑](#top)
+[Back to top ↑](#top)
