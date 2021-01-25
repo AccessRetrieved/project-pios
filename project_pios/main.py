@@ -262,31 +262,28 @@ def return_home(event):
         NSClockView.destroy()
     except:
         pass
+    try:
+        APPSettings.place(relx=0.2, rely=0.85, anchor=CENTER)
+    except:
+        pass
+    try:
+        APPBrowser.place(relx=0.5, rely=0.85, anchor=CENTER)
+    except:
+        pass
+    try:
+        APPClock.place(relx=0.8, rely=0.85, anchor=CENTER)
+    except:
+        pass
 
 def settings(event):
     global NSSettingsView
-    NSSettingsView = Toplevel()
-    NSSettingsView.geometry('400x800')
-    NSSettingsView.title('')
-    NSSettingsView.resizable(0, 0)
+    NSSettingsView = Frame(NSWallpaper)
+    NSSettingsView.pack(fill=BOTH, expand=True)
 
-    def update_time():
-        orig = str(datetime.now())
-        fil = orig[11:16]
-        ampm = fil[0:2]
-        if int(ampm) > 12:
-            time = '{}{} PM'.format(int(ampm) - 12, fil[2:])
-            NSSettingsDisplayTime['text'] = time
-        else:
-            NSSettingsDisplayTime['text'] = '{} AM'.format(fil)
+    APPSettings.place_forget()
+    APPBrowser.place_forget()
+    APPClock.place_forget()
 
-        NSSettingsView.after(ms=1000, func=update_time)
-
-    def update_date():
-        date = datetime.today()
-        fil = date.strftime('%b') + ' ' + date.strftime('%d') + ' ' + date.strftime('%a')
-        NSSettingsDisplayDate['text'] = fil
-       
     def about_this_mac():
         machine_platform = '机器: ' + platform.machine()
         machine_system = '系统: ' + platform.system()
@@ -641,10 +638,6 @@ def settings(event):
 
         change_language()
 
-    def return_home(event):
-        NSSettingsFrame.set(0)
-        NSSettingsView.destroy()
-
     def change_mode():
         if NSDarkModeStat.get() == 1:
             NSSettingsMenuBar.config(bg=dark_theme['bg'])
@@ -712,16 +705,6 @@ def settings(event):
 
         NSSettingsView.after(ms=1000, func=change_language)
 
-    NSSettingsView.after(ms=1000, func=update_date)
-
-    NSSettingsMenuBar = Frame(NSSettingsView, height=20, width=400)
-    NSSettingsMenuBar.place(relx=0.5, rely=0.012, anchor=CENTER)
-
-    NSSettingsDisplayTime = Label(NSSettingsMenuBar, text='', bg=NSMenuBar['bg'], font=("Futura", 12))
-    NSSettingsDisplayTime.place(relx=0.5, rely=0.5, anchor=CENTER)
-    NSSettingsDisplayDate = Label(NSSettingsMenuBar, text='', bg=NSMenuBar['bg'], font=("Futura", 12))
-    NSSettingsDisplayDate.place(relx=0.9, rely=0.5, anchor=CENTER)
-
     NSSettingsProfileimg = Image.open(os.getcwd() + '/profile.png')
     NSSettingsProfileimg = NSSettingsProfileimg.resize((50, 50), Image.ANTIALIAS)
     NSSettingsProfilepic = ImageTk.PhotoImage(NSSettingsProfileimg)
@@ -742,40 +725,17 @@ def settings(event):
     NSSettingsAbout = tkmacosx.Button(NSSettingsView, text='关于本机', borderless=1, font=("Futura", 15), height=50, width=400, activebackground='white', activeforeground='black', command=about_this_mac)
     NSSettingsAbout.place(relx=0.5, rely=0.41, anchor=CENTER)
 
-    NSSettingsReturnHome = Label(NSSettingsView, text=' ', font=("Futura", 1), height=0, width=200, bg='#dddddd')
-    NSSettingsReturnHome.place(relx=0.5, rely=0.97, anchor=CENTER)
-    NSSettingsReturnHome.bind('<Button-1>', return_home)
-
-    update_date()
-    update_time()
     change_mode()
     change_language()
-    NSSettingsView.mainloop()
 
 def browser(event):
     global NSBrowserView
-    NSBrowserView = Toplevel()
-    NSBrowserView.geometry('400x800')
-    NSBrowserView.title('')
-    NSBrowserView.resizable(0, 0)
+    NSBrowserView = Frame(NSWallpaper)
+    NSBrowserView.pack(fill=BOTH, expand=True)
 
-    def update_time():
-        orig = str(datetime.now())
-        fil = orig[11:16]
-        ampm = fil[0:2]
-        if int(ampm) > 12:
-            time = '{}{} PM'.format(int(ampm) - 12, fil[2:])
-            NSBrowserDisplayTime['text'] = time
-        else:
-            NSBrowserDisplayTime['text'] = '{} AM'.format(fil)
-
-        NSBrowserView.after(ms=1000, func=update_time)
-
-    def update_date():
-        date = datetime.today()
-        fil = date.strftime('%b') + ' ' + date.strftime('%d') + ' ' + date.strftime('%a')
-        NSBrowserDisplayDate['text'] = fil   
-        NSBrowserView.after(ms=1000, func=update_date)
+    APPSettings.place_forget()
+    APPBrowser.place_forget()
+    APPClock.place_forget()
 
     def on(event):
         NSBrowserURLQuery.delete(0, END)
@@ -793,7 +753,7 @@ def browser(event):
         if 'https://' in url or '.com' in url:
             webview.create_window(title='', url=url, confirm_close=False, text_select=True, width=400, height=820)
             webview.start()
-        elif url == '网址: ':
+        elif url == '网址: ' or url == 'URL: ':
             pass
         else:
             if NSBrowserSearchEngine.get() == 0:
@@ -810,7 +770,7 @@ def browser(event):
         if 'https://' in url or '.com' in url:
             webview.create_window(title='', url=url, confirm_close=False, text_select=True)
             webview.start()
-        elif url == '网址: ':
+        elif url == '网址: ' or url == 'URL: ':
             pass
         else:
             if NSBrowserSearchEngine.get() == 0:
@@ -841,9 +801,6 @@ def browser(event):
                 NSBrowserIconLabel.place(relx=0.5, rely=0.5, anchor=CENTER)
 
         NSBrowserView.after(200, wait)
-
-    def return_home(event):
-        NSBrowserView.destroy()
 
     def change_mode():
         if NSDarkModeStat.get() == 1:
@@ -893,7 +850,6 @@ def browser(event):
 
         NSBrowserView.after(ms=1000, func=change_language)
 
-
     NSBrowserIconimg = Image.open(os.getcwd() + '/browser.png')
     NSBrowserIconimg = NSBrowserIconimg.resize((100, 100), Image.ANTIALIAS)
     NSBrowserIconpic = ImageTk.PhotoImage(NSBrowserIconimg)
@@ -904,37 +860,21 @@ def browser(event):
     NSBrowserIconLabel = Label(NSBrowserView, text='浏览器', font=("Futura", 25))
     NSBrowserIconLabel.place(relx=0.5, rely=0., anchor=CENTER)
 
-    NSBrowserMenuBar = Frame(NSBrowserView, height=20, width=400)
-    NSBrowserMenuBar.place(relx=0.5, rely=0.012, anchor=CENTER)
-
-    NSBrowserDisplayTime = Label(NSBrowserMenuBar, text='', bg=NSMenuBar['bg'], font=("Futura", 12))
-    NSBrowserDisplayTime.place(relx=0.5, rely=0.5, anchor=CENTER)
-    NSBrowserDisplayDate = Label(NSBrowserMenuBar, text='', bg=NSMenuBar['bg'], font=("Futura", 12))
-    NSBrowserDisplayDate.place(relx=0.9, rely=0.5, anchor=CENTER)
-
     NSBrowserURLQuery = Entry(NSBrowserView, width=33)
     NSBrowserURLQuery.place(relx=0.41, rely=0.045, anchor=CENTER)
     NSBrowserURLQuery.bind('<FocusIn>', on)
     if NSLanguageValue.get() == 'en':
-        NSBrowserURLQuery.insert(0, 'URL:')
+        NSBrowserURLQuery.insert(0, 'URL: ')
     else:
-        NSBrowserURLQuery.insert(0, '网址:')
+        NSBrowserURLQuery.insert(0, '网址: ')
 
     NSBrowserURLLaunch = tkmacosx.Button(NSBrowserView, text='→', width=70, font=("Futura", 14), borderless=1, activeforeground='white', activebackground='black', command=launch_url)
     NSBrowserURLLaunch.place(relx=0.9, rely=0.045, anchor=CENTER)
 
-    NSSettingsReturnHome = Label(NSBrowserView, text=' ', font=("Futura", 1), height=0, width=200, bg='#dddddd')
-    NSSettingsReturnHome.place(relx=0.5, rely=0.97, anchor=CENTER)
-    NSSettingsReturnHome.bind('<Button-1>', return_home)
-
-    # Initialize time on date on menu bar
-    update_date()
-    update_time()
     launch_effect()
     change_mode()
     change_language()
     NSBrowserView.bind('<Return>', launch_url_key)
-    NSBrowserView.mainloop()
 
 def close_experimental_alert():
     NSExperimentalAlert.destroy()
@@ -1177,31 +1117,13 @@ def screenshot_takedown_pulldown_menu():
 
 def clock(event):
     global NSClockView
-    NSClockView = Toplevel()
-    NSClockView.geometry('400x800')
-    NSClockView.title('')
-    NSClockView.resizable(0, 0)
+    NSClockView = Frame(NSWallpaper)
+    NSClockView.pack(fill=BOTH, expand=True)
+    NSClockView.bind('<Button-1>', takedown_pulldown_menu)
 
-    def update_time():
-        orig = str(datetime.now())
-        fil = orig[11:16]
-        ampm = fil[0:2]
-        if int(ampm) > 12:
-            time = '{}{} PM'.format(int(ampm) - 12, fil[2:])
-            NSClockDisplayTime['text'] = time
-        else:
-            NSClockDisplayTime['text'] = '{} AM'.format(fil)
-
-        NSClockView.after(ms=1000, func=update_time)
-
-    def update_date():
-        date = datetime.today()
-        fil = date.strftime('%b') + ' ' + date.strftime('%d') + ' ' + date.strftime('%a')
-        NSClockDisplayDate['text'] = fil   
-        NSClockView.after(ms=1000, func=update_date)
-
-    def return_home(event):
-        NSClockView.destroy()
+    APPSettings.place_forget()
+    APPBrowser.place_forget()
+    APPClock.place_forget()
 
     def update_vancouver():
         orig = str(datetime.now())
@@ -1229,12 +1151,6 @@ def clock(event):
             NSClockBeijing['fg'] = dark_theme['fg']
             NSClockBeijingTime['bg'] = dark_theme['bg']
             NSClockBeijingTime['fg'] = dark_theme['fg']
-
-            NSClockMenuBar.config(bg=dark_theme['bg'])
-            NSClockDisplayDate['bg'] = dark_theme['bg']
-            NSClockDisplayDate['fg'] = dark_theme['fg']
-            NSClockDisplayTime['bg'] = dark_theme['bg']
-            NSClockDisplayTime['fg'] = dark_theme['fg']
             pass
         else:
             NSClockView.config(bg='white')
@@ -1246,12 +1162,6 @@ def clock(event):
             NSClockBeijing['fg'] = theme['fg']
             NSClockBeijingTime['bg'] = theme['bg']
             NSClockBeijingTime['fg'] = theme['fg']
-
-            NSClockMenuBar.config(bg=theme['bg'])
-            NSClockDisplayDate['bg'] = theme['bg']
-            NSClockDisplayDate['fg'] = theme['fg']
-            NSClockDisplayTime['bg'] = theme['bg']
-            NSClockDisplayTime['fg'] = theme['fg']
             pass
 
         NSClockView.after(ms=500, func=change_mode)
@@ -1268,14 +1178,6 @@ def clock(event):
 
         NSClockView.after(ms=1000, func=change_language)
 
-    NSClockMenuBar = Frame(NSClockView, height=20, width=400)
-    NSClockMenuBar.place(relx=0.5, rely=0.012, anchor=CENTER)
-
-    NSClockDisplayTime = Label(NSClockMenuBar, text='', bg=NSMenuBar['bg'], font=("Futura", 12))
-    NSClockDisplayTime.place(relx=0.5, rely=0.5, anchor=CENTER)
-    NSClockDisplayDate = Label(NSClockMenuBar, text='', bg=NSMenuBar['bg'], font=("Futura", 12))
-    NSClockDisplayDate.place(relx=0.9, rely=0.5, anchor=CENTER)
-
     NSClockVancouver = Label(NSClockView, text='Vancouver', bg=NSClockView['bg'], font=("Futura", 20), height=4, width=20)
     NSClockVancouver.place(relx=0.19, rely=0.1, anchor=CENTER)
 
@@ -1288,17 +1190,10 @@ def clock(event):
     NSClockBeijingTime = Label(NSClockView, text='', bg=NSClockView['bg'], font=("Futura", 18))
     NSClockBeijingTime.place(relx=0.85, rely=0.2, anchor=CENTER)
 
-    NSClockReturnHome = Label(NSClockView, text=' ', font=("Futura", 1), height=0, width=200, bg='#dddddd')
-    NSClockReturnHome.place(relx=0.5, rely=0.97, anchor=CENTER)
-    NSClockReturnHome.bind('<Button-1>', return_home)
-
-    update_time()
-    update_date()
     update_vancouver()
     update_beijing()
     change_mode()
     change_language()
-    NSClockView.mainloop()
 
 def control_clock():
     def close_popup():
@@ -1591,7 +1486,7 @@ shotpic = ImageTk.PhotoImage(shotimg)
 NSScreenshotControl = tkmacosx.CircleButton(NSControlMenu, image=shotpic, borderless=1, radius=20, command=screenshot)
 NSScreenshotLabel = Label(NSControlMenu, text='截屏', bg=NSControlMenu['bg'])
 
-NSHomeView = Label(NSCanvas, text=' ', font=("Futura", 1), height=0, width=200)
+NSHomeView = Label(NSCanvas, text=' ', font=("Futura", 1), height=0, width=200, bg='#dddddd')
 NSHomeView.place(relx=0.5, rely=0.97, anchor=CENTER)
 NSHomeView.bind('<Button-1>', return_home)
 
