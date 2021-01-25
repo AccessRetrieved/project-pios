@@ -14,35 +14,35 @@ PC Users currently not supported
 
 <a name="version"></a>
 ## Versions
-- **Version 1.0**
-   - Network
-   - Bluetooth
-   - Settings
-- **Version 1.5** (Need to reinstall modules: `pip3 instsll -r r.txt` or `pip install -r r.txt`)
-   - Added new bluetooth image
-   - Can select wallpaper and change homescreen layout
-   - Added Browser
-   - Privacy settings are now available in the settings menu
-- **Version 2.5** (Need to reinstall modules: `pip3 instsll -r r.txt` or `pip install -r r.txt`)
-   - Added Clock app
-   - Can view up to 2 world-wide clocks in the control menu
+- **Version 3.5.2**
+   - Quick controls are now accessable in other apps
+   - Can now take screenshots in other apps such as settings, browser, and clock
+   - Fixed some bugs regarding to auto-switch between wallpapers
+- **Version 3.5.1**
+   - Added auto-switch wallpaper between light and dark mode
+   - Fixed some bugs regarding to Dark Mode
+   - Fixed some bugs in Settings.
+- **Version 3.5** (Need to reinstall modules: `pip3 instsll -r r.txt` or `pip install -r r.txt`)
+   - Added option for language: English and Chinese
+   - Added screenshot function
+   - Fixed some bugs
 - **Version 3.0** (Need to reinstall modules: `pip3 instsll -r r.txt` or `pip install -r r.txt`)
    - Added Dark Mode
    - Support real-time switching between dark and light (Need MacOS Big sur - 11.1 or up to switch manually)
    - Added support for user in settings profile.
    - Fixed some bugs
-- **Version 3.5** (Need to reinstall modules: `pip3 instsll -r r.txt` or `pip install -r r.txt`)
-   - Added option for language: English and Chinese
-   - Added screenshot function
-   - Fixed some bugs
-- **Version 3.5.1**
-   - Added auto-switch wallpaper between light and dark mode
-   - Fixed some bugs regarding to Dark Mode
-   - Fixed some bugs in Settings.
-- **Version 3.5.2**
-   - Quick controls are now accessable in other apps
-   - Can now take screenshots in other apps such as settings, browser, and clock
-   - Fixed some bugs regarding to auto-switch between wallpapers
+- **Version 2.5** (Need to reinstall modules: `pip3 instsll -r r.txt` or `pip install -r r.txt`)
+   - Added Clock app
+   - Can view up to 2 world-wide clocks in the control menu
+- **Version 1.5** (Need to reinstall modules: `pip3 instsll -r r.txt` or `pip install -r r.txt`)
+   - Added new bluetooth image
+   - Can select wallpaper and change homescreen layout
+   - Added Browser
+   - Privacy settings are now available in the settings menu
+- **Version 1.0**
+   - Network
+   - Bluetooth
+   - Settings
 
 <a name="install"></a>
 ## Installing an executing
