@@ -39,6 +39,10 @@ PC Users currently not supported
    - Added auto-switch wallpaper between light and dark mode
    - Fixed some bugs regarding to Dark Mode
    - Fixed some bugs in Settings.
+- **Version 3.5.2**
+   - Quick controls are now accessable in other apps
+   - Can now take screenshots in other apps such as settings, browser, and clock
+   - Fixed some bugs regarding to auto-switch between wallpapers
 
 <a name="install"></a>
 ## Installing an executing
