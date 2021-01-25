@@ -76,7 +76,7 @@ NSMenuCounter = 1
 NSAutoSwitchCounter = 1
 
 NSBrowserSearchEngine = IntVar()
-NSBrowserSearchEngine.set(2)
+NSBrowserSearchEngine.set(0)
 
 def update_time():
     orig = str(datetime.now())
@@ -279,6 +279,8 @@ def settings(event):
     global NSSettingsView
     NSSettingsView = Frame(NSWallpaper)
     NSSettingsView.pack(fill=BOTH, expand=True)
+
+    NSSettingsView.bind('<Button-1>', takedown_pulldown_menu)
 
     APPSettings.place_forget()
     APPBrowser.place_forget()
@@ -640,16 +642,11 @@ def settings(event):
 
     def change_mode():
         if NSDarkModeStat.get() == 1:
-            NSSettingsMenuBar.config(bg=dark_theme['bg'])
             if NSSettingsFrame.get() == 1:
                 pass
             else:
                 NSSettingsView.config(bg=dark_theme['bg'])
                 pass
-            NSSettingsDisplayDate['bg'] = dark_theme['bg']
-            NSSettingsDisplayDate['fg'] = dark_theme['fg']
-            NSSettingsDisplayTime['bg'] = dark_theme['bg']
-            NSSettingsDisplayTime['fg'] = dark_theme['fg']
 
             NSSettingsSearchEngine['bg'] = dark_theme['bg']
             NSSettingsSearchEngine['fg'] = dark_theme['fg']
@@ -661,16 +658,11 @@ def settings(event):
             NSSettingsAbout['fg'] = dark_theme['fg']
             pass
         else:
-            NSSettingsMenuBar.config(bg=theme['bg'])
             if NSSettingsFrame.get() == 1:
                 pass
             else:
                 NSSettingsView.config(bg=theme['bg'])
                 pass
-            NSSettingsDisplayDate['bg'] = theme['bg']
-            NSSettingsDisplayDate['fg'] = theme['fg']
-            NSSettingsDisplayTime['bg'] = theme['bg']
-            NSSettingsDisplayTime['fg'] = theme['fg']
 
             NSSettingsSearchEngine['bg'] = theme['bg']
             NSSettingsSearchEngine['fg'] = theme['fg']
@@ -733,6 +725,8 @@ def browser(event):
     NSBrowserView = Frame(NSWallpaper)
     NSBrowserView.pack(fill=BOTH, expand=True)
 
+    NSBrowserView.bind('<Button-1>', takedown_pulldown_menu)
+
     APPSettings.place_forget()
     APPBrowser.place_forget()
     APPClock.place_forget()
@@ -751,35 +745,35 @@ def browser(event):
     def launch_url():
         url = str(NSBrowserURLQuery.get())
         if 'https://' in url or '.com' in url:
-            webview.create_window(title='', url=url, confirm_close=False, text_select=True, width=400, height=820)
+            webview.create_window(title='', url=url, confirm_close=False, text_select=True, width=400, height=820, frameless=True)
             webview.start()
         elif url == '网址: ' or url == 'URL: ':
             pass
         else:
-            if NSBrowserSearchEngine.get() == 0:
+            if NSBrowserSearchEngine.get() == 1:
                 fil = 'https://www.google.com/search?q={}'.format(url)
-                webview.create_window(title='', url=fil, confirm_close=False, text_select=True, width=400, height=820)
+                webview.create_window(title='', url=fil, confirm_close=False, text_select=True, width=400, height=820, frameless=True)
                 webview.start()
-            elif NSBrowserSearchEngine.get() == 1:
+            elif NSBrowserSearchEngine.get() == 2:
                 fil = 'https://www.baidu.com/s?wd={}'.format(url)
-                webview.create_window(title='', url=fil, confirm_close=False, text_select=True, width=400, height=820)
+                webview.create_window(title='', url=fil, confirm_close=False, text_select=True, width=400, height=820, frameless=True)
                 webview.start()
 
     def launch_url_key(event):
         url = str(NSBrowserURLQuery.get())
         if 'https://' in url or '.com' in url:
-            webview.create_window(title='', url=url, confirm_close=False, text_select=True)
+            webview.create_window(title='', url=url, confirm_close=False, text_select=True, x=60, y=30, width=400, height=820, frameless=True)
             webview.start()
         elif url == '网址: ' or url == 'URL: ':
             pass
         else:
-            if NSBrowserSearchEngine.get() == 0:
+            if NSBrowserSearchEngine.get() == 1:
                 fil = 'https://www.google.com/search?q={}'.format(url)
-                webview.create_window(title='', url=fil, confirm_close=False, text_select=True, width=400, height=820)
+                webview.create_window(title='', url=fil, confirm_close=False, text_select=True, width=400, height=820, frameless=True)
                 webview.start()
             else:
                 fil = 'https://www.baidu.com/s?wd={}'.format(url)
-                webview.create_window(title='', url=fil, confirm_close=False, text_select=True, width=400, height=820)
+                webview.create_window(title='', url=fil, confirm_close=False, text_select=True, width=400, height=820, frameless=True)
                 webview.start()
 
     def launch_effect():
@@ -813,12 +807,6 @@ def browser(event):
             NSBrowserURLQuery['highlightcolor'] = dark_theme['fg']
             NSBrowserURLLaunch['bg'] = dark_theme['bg']
             NSBrowserURLLaunch['fg'] = dark_theme['fg']
-
-            NSBrowserMenuBar.config(bg=dark_theme['bg'])
-            NSBrowserDisplayDate['bg'] = dark_theme['bg']
-            NSBrowserDisplayDate['fg'] = dark_theme['fg']
-            NSBrowserDisplayTime['bg'] = dark_theme['bg']
-            NSBrowserDisplayTime['fg'] = dark_theme['fg']
             pass
         else:
             NSBrowserView.config(bg=theme['bg'])
@@ -830,12 +818,6 @@ def browser(event):
             NSBrowserURLQuery['highlightcolor'] = theme['fg']
             NSBrowserURLLaunch['bg'] = theme['bg']
             NSBrowserURLLaunch['fg'] = theme['fg']
-
-            NSBrowserMenuBar.config(bg=theme['bg'])
-            NSBrowserDisplayDate['bg'] = theme['bg']
-            NSBrowserDisplayDate['fg'] = theme['fg']
-            NSBrowserDisplayTime['bg'] = theme['bg']
-            NSBrowserDisplayTime['fg'] = theme['fg']
             pass
 
         NSBrowserView.after(ms=500, func=change_mode)
@@ -874,7 +856,7 @@ def browser(event):
     launch_effect()
     change_mode()
     change_language()
-    NSBrowserView.bind('<Return>', launch_url_key)
+    NSBrowserURLQuery.bind('<Return>', launch_url_key)
 
 def close_experimental_alert():
     NSExperimentalAlert.destroy()
@@ -885,16 +867,15 @@ def close_experimental_alert():
     APPBrowser.place(relx=0.5, rely=0.85, anchor=CENTER)
     APPClock.place(relx=0.8, rely=0.85, anchor=CENTER)
 
-def shutdown():
+def shutdown(event):
     NSCanvas.destroy()
     root.destroy()
-    sys.exit(0)
 
 def wallpaper():
     def close_popup():
         NSPopupAlert.destroy()
 
-    NSPopupAlert = Frame(NSControlMenu, width=400, height=400)
+    NSPopupAlert = Frame(NSControlMenu, width=400, height=420)
     NSPopupAlert.place(relx=0.5, rely=0.7, anchor=CENTER)
 
     NSPopupTitle = Label(NSPopupAlert, text='选择壁纸: ', fg='#949494', font=("Futura", 20))
@@ -1264,7 +1245,7 @@ def control_clock():
     NSClockVancouverTime.place(relx=0.8, rely=0.2, anchor=CENTER)
 
     NSClockBeijing = Label(NSPopupAlert, text='北京', bg=NSControlMenu['bg'], font=("Futura", 15), height=4, width=20)
-    NSClockBeijing.place(relx=0.12, rely=0.35, anchor=CENTER)
+    NSClockBeijing.place(relx=0.135, rely=0.35, anchor=CENTER)
 
     NSClockBeijingTime = Label(NSPopupAlert, text='', bg=NSControlMenu['bg'], font=("Futura", 13))
     NSClockBeijingTime.place(relx=0.8, rely=0.35, anchor=CENTER)
@@ -1281,15 +1262,8 @@ def detect_darkmode():
     response = os.popen('defaults read -g AppleInterfaceStyle').read()
     if 'Dark\n' == response:
         NSDarkModeStat.set(1)
-        NSMenuBar.config(bg=dark_theme['bg'])
-        NSDisplayDate['bg'] = dark_theme['bg']
-        NSDisplayDate['fg'] = dark_theme['fg']
-        NSDisplayTime['bg'] = dark_theme['bg']
-        NSDisplayTime['fg'] = dark_theme['fg']
-        NSSignalWidget['bg'] = dark_theme['bg']
-        NSSignalWidget['fg'] = dark_theme['fg']
-        NSBlueSignalWidget['bg'] = dark_theme['bg']
-        NSBlueSignalWidget['fg'] = dark_theme['fg']
+        NSSignalWidget['bg'] = 'white'
+        NSBlueSignalWidget['bg'] = 'white'
 
         NSControlMenu.config(bg=dark_theme['bg'])
         NSBluetoothLabel['bg'] = dark_theme['bg']
@@ -1307,15 +1281,8 @@ def detect_darkmode():
         pass
     else:
         NSDarkModeStat.set(0)
-        NSMenuBar.config(bg=theme['bg'])
-        NSDisplayDate['bg'] = theme['bg']
-        NSDisplayDate['fg'] = theme['fg']
-        NSDisplayTime['bg'] = theme['bg']
-        NSDisplayTime['fg'] = theme['fg']
-        NSSignalWidget['bg'] = theme['bg']
-        NSSignalWidget['fg'] = theme['fg']
-        NSBlueSignalWidget['bg'] = theme['bg']
-        NSBlueSignalWidget['fg'] = theme['fg']
+        NSSignalWidget['bg'] = 'white'
+        NSBlueSignalWidget['bg'] = 'white'
 
         NSControlMenu.config(bg=theme['bg'])
         NSBluetoothLabel['bg'] = theme['bg']
@@ -1462,8 +1429,9 @@ shutimg = Image.open(os.getcwd() + '/shutdown.png')
 shutimg = shutimg.resize((25, 25), Image.ANTIALIAS)
 shutpic = ImageTk.PhotoImage(shutimg)
 
-NSShutdownControl = tkmacosx.CircleButton(NSControlMenu, image=shutpic, borderless=1, radius=20, command=shutdown)
+NSShutdownControl = tkmacosx.CircleButton(NSControlMenu, image=shutpic, borderless=1, radius=20)
 NSShutdownLabel = Label(NSControlMenu, text='关机', bg=NSControlMenu['bg'])
+NSShutdownControl.bind('<Double-1>', shutdown)
 
 wallimg = Image.open(os.getcwd() + '/wallpaper_icon.png')
 wallimg = wallimg.resize((25, 25), Image.ANTIALIAS)

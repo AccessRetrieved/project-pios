@@ -14,6 +14,9 @@ PC Users currently not supported
 
 <a name="version"></a>
 ## Versions
+- **Version 3.5.3**
+   - Double click to shutdown
+   - Can capture screenshots on webpage
 - **Version 3.5.2**
    - Quick controls are now accessable in other apps
    - Can now take screenshots in other apps such as settings, browser, and clock
