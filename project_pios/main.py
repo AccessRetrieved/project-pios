@@ -18,7 +18,6 @@ import arrow
 import webbrowser
 import pyscreenshot
 import yagmail
-import base64
 import objc
 
 #change all path from "/project_pios/FILE" to "/FILE" for github
@@ -29,6 +28,16 @@ root.title('')
 #root.config(cursor='none')
 #root.tk.call("::tk::unsupported::MacWindowStyle", "style", root._w, "plain", "none")
 root.resizable(0, 0)
+
+##################################
+#                                #
+#                                #
+# P R O J E C T    V E R S I O N #
+#                                #
+#                                #
+##################################
+NSLocalVersion = StringVar()
+NSLocalVersion.set('4.0.1')
 
 dark_theme = {
     "bg": "black",
@@ -51,6 +60,8 @@ NSDarkModeStat = IntVar()
 NSAutoSwitchWallpaperStat = IntVar()
 
 NSSettingsFrame = IntVar()
+
+NSUpdateAlert = 0
 
 NSLanguageValue = StringVar()
 try:
@@ -111,7 +122,7 @@ def update_date():
 
 def update_wifi():
     timeout = 5
-    url = 'http://google.com'
+    url = 'http:/google.com'
     try:
         response = requests.get(url, timeout=timeout)
         pic = Image.open(os.getcwd() + '/wifi.png')
@@ -361,6 +372,7 @@ def settings(event):
         NSHostname = Label(NSPopupAlert, text=machine_hostname, font=("Futura", 12))
         NSMac = Label(NSPopupAlert, text=machine_mac, font=("Futura", 12))
         NSRam = Label(NSPopupAlert, text=machine_ram, font=("Futura", 12))
+        NSDisplayVersion = Label(NSPopupAlert, text='版本: ' + NSLocalVersion.get(), font=("Futura", 12))
 
         NSPlatform.place(relx=0.5, rely=0.1, anchor=CENTER)
         NSSystem.place(relx=0.5, rely=0.2, anchor=CENTER)
@@ -369,9 +381,10 @@ def settings(event):
         NSHostname.place(relx=0.5, rely=0.5, anchor=CENTER)
         NSMac.place(relx=0.5, rely=0.6, anchor=CENTER)
         NSRam.place(relx=0.5, rely=0.7, anchor=CENTER)
+        NSDisplayVersion.place(relx=0.5, rely=0.8, anchor=CENTER)
 
         NSPopupAlertClose = tkmacosx.Button(NSPopupAlert, text='关闭', bg='white', fg='black', font=("Futura", 15), borderless=1, activebackground='white', activeforeground='black', command=close_about)
-        NSPopupAlertClose.place(relx=0.5, rely=0.85, anchor=CENTER)
+        NSPopupAlertClose.place(relx=0.5, rely=0.9, anchor=CENTER)
 
     def choose_search_engine():
         NSSettingsFrame.set(1)
@@ -712,7 +725,7 @@ def settings(event):
         NSSettingsView.after(ms=10, func=change_mode)
 
     def open_page():
-        webbrowser.open('https://github.com/AccessRetrieved')
+        webbrowser.open('https:/github.com/AccessRetrieved/project-pios')
 
     def change_language():
         if NSLanguageValue.get() == 'en':
@@ -780,35 +793,35 @@ def browser(event):
 
     def launch_url():
         url = str(NSBrowserURLQuery.get())
-        if 'https://' in url or '.com' in url:
+        if 'https:/' in url or '.com' in url:
             webview.create_window(title='', url=url, confirm_close=False, text_select=True, width=400, height=820, frameless=True)
             webview.start()
         elif url == '网址: ' or url == 'URL: ':
             pass
         else:
             if NSBrowserSearchEngine.get() == 1:
-                fil = 'https://www.google.com/search?q={}'.format(url)
+                fil = 'https:/www.google.com/search?q={}'.format(url)
                 webview.create_window(title='', url=fil, confirm_close=False, text_select=True, width=400, height=820, frameless=True)
                 webview.start()
             elif NSBrowserSearchEngine.get() == 2:
-                fil = 'https://www.baidu.com/s?wd={}'.format(url)
+                fil = 'https:/www.baidu.com/s?wd={}'.format(url)
                 webview.create_window(title='', url=fil, confirm_close=False, text_select=True, width=400, height=820, frameless=True)
                 webview.start()
 
     def launch_url_key(event):
         url = str(NSBrowserURLQuery.get())
-        if 'https://' in url or '.com' in url:
+        if 'https:/' in url or '.com' in url:
             webview.create_window(title='', url=url, confirm_close=False, text_select=True, x=60, y=30, width=400, height=820, frameless=True)
             webview.start()
         elif url == '网址: ' or url == 'URL: ':
             pass
         else:
             if NSBrowserSearchEngine.get() == 1:
-                fil = 'https://www.google.com/search?q={}'.format(url)
+                fil = 'https:/www.google.com/search?q={}'.format(url)
                 webview.create_window(title='', url=fil, confirm_close=False, text_select=True, width=400, height=820, frameless=True)
                 webview.start()
             else:
-                fil = 'https://www.baidu.com/s?wd={}'.format(url)
+                fil = 'https:/www.baidu.com/s?wd={}'.format(url)
                 webview.create_window(title='', url=fil, confirm_close=False, text_select=True, width=400, height=820, frameless=True)
                 webview.start()
 
@@ -875,6 +888,7 @@ def close_experimental_alert():
     APPBrowser.place(relx=0.5, rely=0.85, anchor=CENTER)
     APPClock.place(relx=0.8, rely=0.85, anchor=CENTER)
     APPEmail.place(relx=0.2, rely=0.75, anchor=CENTER)
+    check_update()
 
 def shutdown(event):
     NSCanvas.destroy()
@@ -1463,7 +1477,7 @@ def email(event):
         NSEmailSubjectBox.delete(0, END)
         NSEmailContent.delete(1.0, END)
 
-        with open(os.getcwd() = '/system/email/email.txt', 'w') as email, open(os.getcwd() + '/system/email/password.txt', 'w') as password:
+        with open(os.getcwd() + '/system/email/email.txt', 'w') as email, open(os.getcwd() + '/system/email/password.txt', 'w') as password:
             email.truncate(0)
             password.truncate(0)
 
@@ -1569,6 +1583,28 @@ def email(event):
     NSEmailClear.place(relx=0.1, rely=0.97, anchor=CENTER)
 
     change_language()
+
+def check_update():
+    global NSUpdateAlert
+    url = 'https:/raw.githubusercontent.com/AccessRetrieved/project-pios/main/version.txt'
+    response_version = requests.get(url).content
+    version = response_version.decode('utf-8').replace('\n', '')
+    NSVersion = StringVar()
+    NSVersion.set(version)
+    NSUpdateAlert += 1
+
+    if NSUpdateAlert == 1:
+        if NSLocalVersion.get() != NSVersion.get():
+            if NSLanguageValue.get() == 'en':
+                messagebox.showinfo(message='You have a update available. Please go to settings and click on profile and follow instructions on github to update.')
+            else:
+                messagebox.showinfo(message='Project-Pios可以更新。请前往设置并单击用户，根据指示更新Project-Pios。')
+        else:
+            pass
+    else:
+        pass
+
+    NSCanvas.after(ms=5000, func=check_update)
 
 NSCanvas = Canvas(root)
 NSCanvas.pack(fill=BOTH, expand=True)

@@ -14,6 +14,8 @@ PC Users currently not supported
 
 <a name="version"></a>
 ## Versions
+- **Version 4.0.1**
+   - Added auto-check for update
 - **Version 4.0**
    - Added email system to Project-Pios
    - Fixed browser's screenshot function
