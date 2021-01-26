@@ -18,6 +18,7 @@ import arrow
 import webbrowser
 import pyscreenshot
 import yagmail
+from app import import_app, quit_app # Add custom app here
 import objc
 
 #change all path from "/project_pios/FILE" to "/FILE" for github
@@ -36,8 +37,20 @@ root.resizable(0, 0)
 #                                #
 #                                #
 ##################################
-NSLocalVersion = StringVar()
-NSLocalVersion.set('4.0.1')
+###############################################
+NSLocalVersion = StringVar()                  #
+#                                             #
+# U P D A T E   T H I S   E V E R Y T I M E ! #
+#                                             #
+NSLocalVersion.set('4.0.1')                     #
+###############################################
+##################################
+#                                #
+#                                #
+# P R O J E C T    V E R S I O N #
+#                                #
+#                                #
+##################################
 
 dark_theme = {
     "bg": "black",
@@ -122,7 +135,7 @@ def update_date():
 
 def update_wifi():
     timeout = 5
-    url = 'http:/google.com'
+    url = 'http://google.com'
     try:
         response = requests.get(url, timeout=timeout)
         pic = Image.open(os.getcwd() + '/wifi.png')
@@ -283,42 +296,14 @@ def return_home(event):
     NSScreenshotLabel.place_forget()
     NSControlMenu.place_forget()
 
+    destroy_apps()
+    
     try:
-        global NSSettingsView
-        NSSettingsView.destroy()
+        quit_app()
     except:
         pass
-    try:
-        global NSBrowserView
-        NSBrowserView.destroy()
-    except:
-        pass
-    try:
-        global NSClockView
-        NSClockView.destroy()
-    except:
-        pass
-    try:
-        global NSEmailView
-        NSEmailView.destroy()
-    except:
-        pass
-    try:
-        APPSettings.place(relx=0.2, rely=0.85, anchor=CENTER)
-    except:
-        pass
-    try:
-        APPBrowser.place(relx=0.5, rely=0.85, anchor=CENTER)
-    except:
-        pass
-    try:
-        APPClock.place(relx=0.8, rely=0.85, anchor=CENTER)
-    except:
-        pass
-    try:
-        APPEmail.place(relx=0.2, rely=0.75, anchor=CENTER)
-    except:
-        pass
+
+    add_apps()
 
 def settings(event):
     global NSSettingsView
@@ -327,10 +312,7 @@ def settings(event):
 
     NSSettingsView.bind('<Button-1>', takedown_pulldown_menu)
 
-    APPSettings.place_forget()
-    APPBrowser.place_forget()
-    APPClock.place_forget()
-    APPEmail.place_forget()
+    remove_apps()
 
     def about_this_mac():
         machine_platform = '机器: ' + platform.machine()
@@ -725,7 +707,7 @@ def settings(event):
         NSSettingsView.after(ms=10, func=change_mode)
 
     def open_page():
-        webbrowser.open('https:/github.com/AccessRetrieved/project-pios')
+        webbrowser.open('https://github.com/AccessRetrieved/project-pios')
 
     def change_language():
         if NSLanguageValue.get() == 'en':
@@ -775,10 +757,7 @@ def browser(event):
 
     NSBrowserView.bind('<Button-1>', takedown_pulldown_menu)
 
-    APPSettings.place_forget()
-    APPBrowser.place_forget()
-    APPClock.place_forget()
-    APPEmail.place_forget()
+    remove_apps()
 
     def on(event):
         NSBrowserURLQuery.delete(0, END)
@@ -793,35 +772,35 @@ def browser(event):
 
     def launch_url():
         url = str(NSBrowserURLQuery.get())
-        if 'https:/' in url or '.com' in url:
+        if 'https://' in url or '.com' in url:
             webview.create_window(title='', url=url, confirm_close=False, text_select=True, width=400, height=820, frameless=True)
             webview.start()
         elif url == '网址: ' or url == 'URL: ':
             pass
         else:
             if NSBrowserSearchEngine.get() == 1:
-                fil = 'https:/www.google.com/search?q={}'.format(url)
+                fil = 'https://www.google.com/search?q={}'.format(url)
                 webview.create_window(title='', url=fil, confirm_close=False, text_select=True, width=400, height=820, frameless=True)
                 webview.start()
             elif NSBrowserSearchEngine.get() == 2:
-                fil = 'https:/www.baidu.com/s?wd={}'.format(url)
+                fil = 'https://www.baidu.com/s?wd={}'.format(url)
                 webview.create_window(title='', url=fil, confirm_close=False, text_select=True, width=400, height=820, frameless=True)
                 webview.start()
 
     def launch_url_key(event):
         url = str(NSBrowserURLQuery.get())
-        if 'https:/' in url or '.com' in url:
+        if 'https://' in url or '.com' in url:
             webview.create_window(title='', url=url, confirm_close=False, text_select=True, x=60, y=30, width=400, height=820, frameless=True)
             webview.start()
         elif url == '网址: ' or url == 'URL: ':
             pass
         else:
             if NSBrowserSearchEngine.get() == 1:
-                fil = 'https:/www.google.com/search?q={}'.format(url)
+                fil = 'https://www.google.com/search?q={}'.format(url)
                 webview.create_window(title='', url=fil, confirm_close=False, text_select=True, width=400, height=820, frameless=True)
                 webview.start()
             else:
-                fil = 'https:/www.baidu.com/s?wd={}'.format(url)
+                fil = 'https://www.baidu.com/s?wd={}'.format(url)
                 webview.create_window(title='', url=fil, confirm_close=False, text_select=True, width=400, height=820, frameless=True)
                 webview.start()
 
@@ -884,10 +863,7 @@ def close_experimental_alert():
     NSCanvas['bg'] = 'white'
     NSMenuBar.place(relx=0.5, rely=0.012, anchor=CENTER)
     NSWallpaper.place(x=0, y=0, relheight=1, relwidth=1)
-    APPSettings.place(relx=0.2, rely=0.85, anchor=CENTER)
-    APPBrowser.place(relx=0.5, rely=0.85, anchor=CENTER)
-    APPClock.place(relx=0.8, rely=0.85, anchor=CENTER)
-    APPEmail.place(relx=0.2, rely=0.75, anchor=CENTER)
+    add_apps()
     check_update()
 
 def shutdown(event):
@@ -1125,11 +1101,7 @@ def clock(event):
     NSClockView.pack(fill=BOTH, expand=True)
     NSClockView.bind('<Button-1>', takedown_pulldown_menu)
 
-    APPSettings.place_forget()
-    APPBrowser.place_forget()
-    APPClock.place_forget()
-    APPEmail.place_forget()
-
+    remove_apps()
     def update_vancouver():
         orig = str(datetime.now())
         fil = orig[11:19]
@@ -1452,10 +1424,7 @@ def email(event):
     NSEmailView.pack(fill=BOTH, expand=True)
     NSEmailView.bind('<Button-1>', takedown_pulldown_menu)
 
-    APPSettings.place_forget()
-    APPBrowser.place_forget()
-    APPClock.place_forget()
-    APPEmail.place_forget()
+    remove_apps()
 
     def change_language():
         if NSLanguageValue.get() == 'en':
@@ -1586,7 +1555,7 @@ def email(event):
 
 def check_update():
     global NSUpdateAlert
-    url = 'https:/raw.githubusercontent.com/AccessRetrieved/project-pios/main/version.txt'
+    url = 'https://raw.githubusercontent.com/AccessRetrieved/project-pios/main/version.txt'
     response_version = requests.get(url).content
     version = response_version.decode('utf-8').replace('\n', '')
     NSVersion = StringVar()
@@ -1605,6 +1574,49 @@ def check_update():
         pass
 
     NSCanvas.after(ms=5000, func=check_update)
+
+def remove_apps():
+    APPSettings.place_forget()
+    APPBrowser.place_forget()
+    APPClock.place_forget()
+    APPEmail.place_forget()
+    APPAdd.place_forget()
+
+def add_apps():
+    APPSettings.place(relx=0.2, rely=0.85, anchor=CENTER)
+    APPBrowser.place(relx=0.5, rely=0.85, anchor=CENTER)
+    APPClock.place(relx=0.8, rely=0.85, anchor=CENTER)
+    APPEmail.place(relx=0.2, rely=0.75, anchor=CENTER)
+    APPAdd.place(relx=0.5, rely=0.75, anchor=CENTER)
+
+def destroy_apps():
+    try:
+        global NSSettingsView
+        NSSettingsView.destroy()
+    except:
+        pass
+    try:
+        global NSBrowserView
+        NSBrowserView.destroy()
+    except:
+        pass
+    try:
+        NSClockView.destroy()
+    except:
+        pass
+    try:
+        NSEmailView.destroy()
+    except:
+        pass
+    try:
+        global NSAppView
+        NSAppView.destroy()
+    except:
+        pass
+
+def add_app(event): # Manage custom app here
+    remove_apps()
+    import_app(NSWallpaper)
 
 NSCanvas = Canvas(root)
 NSCanvas.pack(fill=BOTH, expand=True)
@@ -1712,12 +1724,16 @@ APPEmail = Label(NSCanvas, text='', image=appemailpic, border=0)
 APPEmail.place(relx=0.2, rely=0.75, anchor=CENTER)
 APPEmail.bind('<Button-1>', email)
 
+appaddimg = Image.open(os.getcwd() + '/plus.png')
+appaddimg = appaddimg.resize((40, 40), Image.ANTIALIAS)
+appaddpic = ImageTk.PhotoImage(appaddimg)
+APPAdd = Label(NSCanvas, text='', image=appaddpic, border=0) # Open custom app here
+APPAdd.place(relx=0.5, rely=0.75, anchor=CENTER)
+APPAdd.bind('<Button-1>', add_app)
+
 NSWallpaper.place_forget()
-APPSettings.place_forget()
-APPBrowser.place_forget()
-APPClock.place_forget()
+remove_apps()
 NSMenuBar.place_forget()
-APPEmail.place_forget()
 NSCanvas['bg'] = '#b3b3b3'
 
 NSExperimentalAlert = Frame(NSCanvas, width=380, height=300)
