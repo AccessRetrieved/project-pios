@@ -42,7 +42,7 @@ NSLocalVersion = StringVar()                  #
 #                                             #
 # U P D A T E   T H I S   E V E R Y T I M E ! #
 #                                             #
-NSLocalVersion.set('4.0.1')                     #
+NSLocalVersion.set('4.0.2')                   #
 ###############################################
 ##################################
 #                                #
@@ -773,35 +773,35 @@ def browser(event):
     def launch_url():
         url = str(NSBrowserURLQuery.get())
         if 'https://' in url or '.com' in url:
-            webview.create_window(title='', url=url, confirm_close=False, text_select=True, width=400, height=820, frameless=True)
+            webview.create_window(title='', url=url, confirm_close=False, text_select=True, width=800, height=620, frameless=True)
             webview.start()
         elif url == '网址: ' or url == 'URL: ':
             pass
         else:
-            if NSBrowserSearchEngine.get() == 1:
+            if NSBrowserSearchEngine.get() == 0:
                 fil = 'https://www.google.com/search?q={}'.format(url)
-                webview.create_window(title='', url=fil, confirm_close=False, text_select=True, width=400, height=820, frameless=True)
+                webview.create_window(title='', url=fil, confirm_close=False, text_select=True, width=800, height=620, frameless=True)
                 webview.start()
-            elif NSBrowserSearchEngine.get() == 2:
+            else:
                 fil = 'https://www.baidu.com/s?wd={}'.format(url)
-                webview.create_window(title='', url=fil, confirm_close=False, text_select=True, width=400, height=820, frameless=True)
+                webview.create_window(title='', url=fil, confirm_close=False, text_select=True, width=800, height=620, frameless=True)
                 webview.start()
 
     def launch_url_key(event):
         url = str(NSBrowserURLQuery.get())
         if 'https://' in url or '.com' in url:
-            webview.create_window(title='', url=url, confirm_close=False, text_select=True, x=60, y=30, width=400, height=820, frameless=True)
+            webview.create_window(title='', url=url, confirm_close=False, text_select=True, x=60, y=30, width=800, height=620, frameless=True)
             webview.start()
         elif url == '网址: ' or url == 'URL: ':
             pass
         else:
-            if NSBrowserSearchEngine.get() == 1:
+            if NSBrowserSearchEngine.get() == 0:
                 fil = 'https://www.google.com/search?q={}'.format(url)
-                webview.create_window(title='', url=fil, confirm_close=False, text_select=True, width=400, height=820, frameless=True)
+                webview.create_window(title='', url=fil, confirm_close=False, text_select=True, width=800, height=620, frameless=True)
                 webview.start()
             else:
                 fil = 'https://www.baidu.com/s?wd={}'.format(url)
-                webview.create_window(title='', url=fil, confirm_close=False, text_select=True, width=400, height=820, frameless=True)
+                webview.create_window(title='', url=fil, confirm_close=False, text_select=True, width=800, height=620, frameless=True)
                 webview.start()
 
     def change_mode():
@@ -815,6 +815,14 @@ def browser(event):
             NSBrowserURLQuery['highlightcolor'] = dark_theme['fg']
             NSBrowserURLLaunch['bg'] = dark_theme['bg']
             NSBrowserURLLaunch['fg'] = dark_theme['fg']
+            NSBrowserURLLaunch.config(activebackground='white', activeforeground='black')
+
+            NSBrowserFavoriteGoogle['bg'] = dark_theme['bg']
+            NSBrowserFavoriteGoogle['fg'] = dark_theme['fg']
+            NSBrowserFavoriteGoogle.config(activebackground='white', activeforeground='black')
+            NSBrowserFavoriteBaidu['bg'] = dark_theme['bg']
+            NSBrowserFavoriteBaidu['fg'] = dark_theme['fg']
+            NSBrowserFavoriteBaidu.config(activebackground='white', activeforeground='black')
             pass
         else:
             NSBrowserView.config(bg=theme['bg'])
@@ -826,6 +834,14 @@ def browser(event):
             NSBrowserURLQuery['highlightcolor'] = theme['fg']
             NSBrowserURLLaunch['bg'] = theme['bg']
             NSBrowserURLLaunch['fg'] = theme['fg']
+            NSBrowserURLLaunch.config(activebackground='black', activeforeground='white')
+
+            NSBrowserFavoriteGoogle['bg'] = theme['bg']
+            NSBrowserFavoriteGoogle['fg'] = theme['fg']
+            NSBrowserFavoriteGoogle.config(activebackground='black', activeforeground='white')
+            NSBrowserFavoriteBaidu['bg'] = theme['bg']
+            NSBrowserFavoriteBaidu['fg'] = theme['fg']
+            NSBrowserFavoriteBaidu.config(activebackground='black', activeforeground='white')
             pass
 
         NSBrowserView.after(ms=500, func=change_mode)
@@ -833,12 +849,24 @@ def browser(event):
     def change_language():
         if NSLanguageValue.get() == 'en':
             NSBrowserIconLabel['text'] = 'Browser'
+            NSBrowserFavoriteGoogle['text'] = 'Google'
+            NSBrowserFavoriteBaidu['text'] = 'Baidu'
             pass
         else:
             NSBrowserIconLabel['text'] = '浏览器'
+            NSBrowserFavoriteBaidu['text'] = '百度'
+            NSBrowserFavoriteGoogle['text'] = '谷歌'
             pass
 
         NSBrowserView.after(ms=1000, func=change_language)
+
+    def open_baidu():
+        webview.create_window(title='', url='https://www.baidu.com', confirm_close=False, text_select=True, width=800, height=620, frameless=True)
+        webview.start()
+    
+    def open_google():
+        webview.create_window(title='', url='https://www.google.com', confirm_close=False, text_select=True, width=800, height=620, frameless=True)
+        webview.start()
 
     NSBrowserIconLabel = Label(NSBrowserView, text='浏览器', font=("Futura", 25))
     NSBrowserIconLabel.place(relx=0.5, rely=0.5, anchor=CENTER)
@@ -853,6 +881,12 @@ def browser(event):
 
     NSBrowserURLLaunch = tkmacosx.Button(NSBrowserView, text='→', width=70, font=("Futura", 14), borderless=1, activeforeground='white', activebackground='black', command=launch_url)
     NSBrowserURLLaunch.place(relx=0.9, rely=0.045, anchor=CENTER)
+
+    NSBrowserFavoriteGoogle = tkmacosx.Button(NSBrowserView, text='谷歌', width=100, height=100, borderless=1, bg='black', fg='white', activebackground='white', activeforeground='black', command=open_google)
+    NSBrowserFavoriteGoogle.place(relx=0.3, rely=0.7, anchor=CENTER)
+
+    NSBrowserFavoriteBaidu = tkmacosx.Button(NSBrowserView, text='百度', width=100, height=100, borderless=1, bg='black', fg='white', activebackground='white', activeforeground='black', command=open_baidu)
+    NSBrowserFavoriteBaidu.place(relx=0.7, rely=0.7, anchor=CENTER)
 
     change_mode()
     change_language()
@@ -1565,9 +1599,9 @@ def check_update():
     if NSUpdateAlert == 1:
         if NSLocalVersion.get() != NSVersion.get():
             if NSLanguageValue.get() == 'en':
-                messagebox.showinfo(message='You have a update available. Please go to settings and click on profile and follow instructions on github to update.')
+                messagebox.showinfo(message='You have a update available. Please go to settings and click on profile. Follow instructions on github to update. \n\n Your version: {v1} \n Target version: {v2}'.format(v1 = NSLocalVersion.get(), v2 = NSVersion.get()))
             else:
-                messagebox.showinfo(message='Project-Pios可以更新。请前往设置并单击用户，根据指示更新Project-Pios。')
+                messagebox.showinfo(message='Project-Pios可以更新。请前往设置并单击用户，根据指示更新Project-Pios。\n\n 您的版本: {v1} \n 更新版本: {v2}'.format(v1 = NSLocalVersion.get(), v2 = NSVersion.get()))
         else:
             pass
     else:
