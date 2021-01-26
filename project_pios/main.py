@@ -22,7 +22,7 @@ from app import import_app, quit_app # Add custom app here
 from app2 import import_app2, quit_app2 # Add second custom app here
 import objc
 
-#change all path from "/FILE" to "/FILE" for github
+#change all path from "/project_pios/FILE" to "/FILE" for github
 
 # Custom App Icons
 NSCustomAppIcon1 = os.getcwd() + '/app1.png'
@@ -47,7 +47,7 @@ NSLocalVersion = StringVar()                  #
 #                                             #
 # U P D A T E   T H I S   E V E R Y T I M E ! #
 #                                             #
-NSLocalVersion.set('4.0.3')                     #
+NSLocalVersion.set('4.0.3')                   #
 ###############################################
 ##################################
 #                                #
@@ -350,11 +350,13 @@ def settings(event):
         NSSettingsAbout.place_forget()
         NSSettingsView['bg'] = '#b3b3b3'
 
-        NSPopupAlert = Frame(NSSettingsView, width=380, height=300)
-        NSPopupAlert.place(relx=0.5, rely=0.5, anchor=CENTER)
+        NSPopupAlert = Frame(NSSettingsView)
+        NSPopupAlert.pack(fill=BOTH, expand=True)
 
-        NSPopupTitle = Label(NSPopupAlert, text='关于本机: ', fg='#949494', font=("Futura", 20))
-        NSPopupTitle.place(relx=0.135, rely=0.05, anchor=CENTER)
+        NSPopupTitle = Label(NSPopupAlert, text='关于本机: ', fg='#949494', font=("Futura", 15))
+        NSPopupTitle.place(relx=0.5, rely=0.05, anchor=CENTER)
+
+        NSPopupAlert.bind('<Button-1>', takedown_pulldown_menu)
 
         NSPlatform = Label(NSPopupAlert, text=machine_platform, font=("Futura", 12))
         NSSystem = Label(NSPopupAlert, text=machine_system, font=("Futura", 12))
@@ -365,17 +367,17 @@ def settings(event):
         NSRam = Label(NSPopupAlert, text=machine_ram, font=("Futura", 12))
         NSDisplayVersion = Label(NSPopupAlert, text='版本: ' + NSLocalVersion.get(), font=("Futura", 12))
 
-        NSPlatform.place(relx=0.5, rely=0.1, anchor=CENTER)
-        NSSystem.place(relx=0.5, rely=0.2, anchor=CENTER)
+        NSPlatform.place(relx=0.5, rely=0.2, anchor=CENTER)
+        NSSystem.place(relx=0.5, rely=0.25, anchor=CENTER)
         NSProcessor.place(relx=0.5, rely=0.3, anchor=CENTER)
-        NSip.place(relx=0.5, rely=0.4, anchor=CENTER)
-        NSHostname.place(relx=0.5, rely=0.5, anchor=CENTER)
-        NSMac.place(relx=0.5, rely=0.6, anchor=CENTER)
-        NSRam.place(relx=0.5, rely=0.7, anchor=CENTER)
-        NSDisplayVersion.place(relx=0.5, rely=0.8, anchor=CENTER)
+        NSip.place(relx=0.5, rely=0.35, anchor=CENTER)
+        NSHostname.place(relx=0.5, rely=0.4, anchor=CENTER)
+        NSMac.place(relx=0.5, rely=0.45, anchor=CENTER)
+        NSRam.place(relx=0.5, rely=0.5, anchor=CENTER)
+        NSDisplayVersion.place(relx=0.5, rely=0.55, anchor=CENTER)
 
-        NSPopupAlertClose = tkmacosx.Button(NSPopupAlert, text='关闭', bg='white', fg='black', font=("Futura", 15), borderless=1, activebackground='white', activeforeground='black', command=close_about)
-        NSPopupAlertClose.place(relx=0.5, rely=0.9, anchor=CENTER)
+        NSPopupAlertClose = tkmacosx.Button(NSPopupAlert, text='⬅', bg='white', fg='black', font=("Futura", 12), borderless=1, activebackground='white', activeforeground='black', command=close_about)
+        NSPopupAlertClose.place(relx=0.13, rely=0.05, anchor=CENTER)
 
     def choose_search_engine():
         NSSettingsFrame.set(1)
@@ -430,11 +432,13 @@ def settings(event):
 
             NSSettingsView.after(ms=1, func=change_language)
 
-        NSPopupAlert = Frame(NSSettingsView, width=380, height=300)
-        NSPopupAlert.place(relx=0.5, rely=0.5, anchor=CENTER)
+        NSPopupAlert = Frame(NSSettingsView)
+        NSPopupAlert.pack(fill=BOTH, expand=True)
 
-        NSPopupTitle = Label(NSPopupAlert, text='选择浏览器: ', fg='#949494', font=("Futura", 20))
-        NSPopupTitle.place(relx=0.17, rely=0.05, anchor=CENTER)
+        NSPopupTitle = Label(NSPopupAlert, text='选择浏览器: ', fg='#949494', font=("Futura", 15))
+        NSPopupTitle.place(relx=0.5, rely=0.05, anchor=CENTER)
+
+        NSPopupAlert.bind('<Button-1>', takedown_pulldown_menu)
 
         NSBrowserSearchEngineBox = ttk.Combobox(NSPopupAlert, value=['Google', '百度'])
         NSBrowserSearchEngineBox.place(relx=0.5, rely=0.4, anchor=CENTER)
@@ -443,8 +447,8 @@ def settings(event):
         else:
             NSBrowserSearchEngineBox.current(1)
 
-        NSPopupAlertClose = tkmacosx.Button(NSPopupAlert, text='关闭', bg='white', fg='black', font=("Futura", 15), borderless=1, activebackground='white', activeforeground='black', command=close_popup)
-        NSPopupAlertClose.place(relx=0.5, rely=0.85, anchor=CENTER)
+        NSPopupAlertClose = tkmacosx.Button(NSPopupAlert, text='⬅', bg='white', fg='black', font=("Futura", 12), borderless=1, activebackground='white', activeforeground='black', command=close_popup)
+        NSPopupAlertClose.place(relx=0.15, rely=0.05, anchor=CENTER)
 
         change_language()
 
@@ -485,11 +489,13 @@ def settings(event):
 
             NSSettingsView.after(ms=1, func=change_language)
 
-        NSPopupAlert = Frame(NSSettingsView, width=380, height=400)
-        NSPopupAlert.place(relx=0.5, rely=0.5, anchor=CENTER)
+        NSPopupAlert = Frame(NSSettingsView)
+        NSPopupAlert.pack(fill=BOTH, expand=True)
 
-        NSPopupTitle = Label(NSPopupAlert, text='选择壁纸: ', fg='#949494', font=("Futura", 20))
-        NSPopupTitle.place(relx=0.17, rely=0.05, anchor=CENTER)
+        NSPopupTitle = Label(NSPopupAlert, text='选择壁纸: ', fg='#949494', font=("Futura", 15))
+        NSPopupTitle.place(relx=0.5, rely=0.05, anchor=CENTER)
+
+        NSPopupAlert.bind('<Button-1>', takedown_pulldown_menu)
 
         def w1(event):
             img = Image.open(os.getcwd() + '/wallpaper/1.jpg')
@@ -551,6 +557,12 @@ def settings(event):
             pic = ImageTk.PhotoImage(img)
             NSWallpaper.config(image = pic)
             NSWallpaper.image = pic
+        def w11(event):
+            img = Image.open(os.getcwd() + '/wallpaper/original/11.jpg')
+            shutil.copy(src=os.getcwd() + '/wallpaper/original/11.jpg', dst=os.getcwd() + '/wallpaper.jpg')
+            pic = ImageTk.PhotoImage(img)
+            NSWallpaper.config(image = pic)
+            NSWallpaper.image = pic
 
         wall1img = Image.open(os.getcwd() + '/wallpaper/1.jpg')
         wall2img = Image.open(os.getcwd() + '/wallpaper/2.jpg')
@@ -562,6 +574,7 @@ def settings(event):
         wall8img = Image.open(os.getcwd() + '/wallpaper/8.jpg')
         wall9img = Image.open(os.getcwd() + '/wallpaper/9.jpg')
         wall10img = Image.open(os.getcwd() + '/wallpaper/10.jpg')
+        wall11img = Image.open(os.getcwd() + '/wallpaper/11.jpg')
         wall1img = wall1img.resize((40, 70), Image.ANTIALIAS)
         wall2img = wall2img.resize((40, 70), Image.ANTIALIAS)
         wall3img = wall3img.resize((40, 70), Image.ANTIALIAS)
@@ -572,6 +585,7 @@ def settings(event):
         wall8img = wall8img.resize((40, 70), Image.ANTIALIAS)
         wall9img = wall9img.resize((40, 70), Image.ANTIALIAS)
         wall10img = wall10img.resize((40, 70), Image.ANTIALIAS)
+        wall11img = wall11img.resize((40, 70), Image.ANTIALIAS)
         wall1pic = ImageTk.PhotoImage(wall1img)
         wall2pic = ImageTk.PhotoImage(wall2img)
         wall3pic = ImageTk.PhotoImage(wall3img)
@@ -582,6 +596,7 @@ def settings(event):
         wall8pic = ImageTk.PhotoImage(wall8img)
         wall9pic = ImageTk.PhotoImage(wall9img)
         wall10pic = ImageTk.PhotoImage(wall10img)
+        wall11pic = ImageTk.PhotoImage(wall11img)
         wall1 = Label(NSPopupAlert, text='', image=wall1pic)
         wall2 = Label(NSPopupAlert, text='', image=wall2pic)
         wall3 = Label(NSPopupAlert, text='', image=wall3pic)
@@ -592,6 +607,7 @@ def settings(event):
         wall8 = Label(NSPopupAlert, text='', image=wall8pic)
         wall9 = Label(NSPopupAlert, text='', image=wall9pic)
         wall10 = Label(NSPopupAlert, text='', image=wall10pic)
+        wall11 = Label(NSPopupAlert, text='', image=wall11pic)
         wall1.image = wall1pic
         wall2.image = wall2pic
         wall3.image = wall3pic
@@ -602,16 +618,18 @@ def settings(event):
         wall8.image = wall8pic
         wall9.image = wall9pic
         wall10.image = wall10pic
-        wall1.place(relx=0.15, rely=0.25, anchor=CENTER)
-        wall2.place(relx=0.3, rely=0.25, anchor=CENTER)
-        wall3.place(relx=0.45, rely=0.25, anchor=CENTER)
-        wall4.place(relx=0.6, rely=0.25, anchor=CENTER)
-        wall5.place(relx=0.75, rely=0.25, anchor=CENTER)
-        wall6.place(relx=0.9, rely=0.25, anchor=CENTER)
-        wall7.place(relx=0.15, rely=0.5, anchor=CENTER)
-        wall8.place(relx=0.3, rely=0.5, anchor=CENTER)
-        wall9.place(relx=0.45, rely=0.5, anchor=CENTER)
-        wall10.place(relx=0.6, rely=0.5, anchor=CENTER)
+        wall11.image = wall11pic
+        wall1.place(relx=0.15, rely=0.3, anchor=CENTER)
+        wall2.place(relx=0.3, rely=0.3, anchor=CENTER)
+        wall3.place(relx=0.45, rely=0.3, anchor=CENTER)
+        wall4.place(relx=0.6, rely=0.3, anchor=CENTER)
+        wall5.place(relx=0.75, rely=0.3, anchor=CENTER)
+        wall6.place(relx=0.9, rely=0.3, anchor=CENTER)
+        wall7.place(relx=0.15, rely=0.4, anchor=CENTER)
+        wall8.place(relx=0.3, rely=0.4, anchor=CENTER)
+        wall9.place(relx=0.45, rely=0.4, anchor=CENTER)
+        wall10.place(relx=0.6, rely=0.4, anchor=CENTER)
+        wall11.place(relx=0.75, rely=0.4, anchor=CENTER)
         wall1.bind('<Button-1>', w1)
         wall2.bind('<Button-1>', w2)
         wall3.bind('<Button-1>', w3)
@@ -622,9 +640,10 @@ def settings(event):
         wall8.bind('<Button-1>', w8)
         wall9.bind('<Button-1>', w9)
         wall10.bind('<Button-1>', w10)
+        wall11.bind('<Button-1>', w11)
 
-        NSPopupAlertClose = tkmacosx.Button(NSPopupAlert, text='关闭', bg='white', fg='black', font=("Futura", 15), borderless=1, activebackground='white', activeforeground='black', command=close_popup)
-        NSPopupAlertClose.place(relx=0.5, rely=0.85, anchor=CENTER)
+        NSPopupAlertClose = tkmacosx.Button(NSPopupAlert, text='⬅', bg='white', fg='black', font=("Futura", 12), borderless=1, activebackground='white', activeforeground='black', command=close_popup)
+        NSPopupAlertClose.place(relx=0.15, rely=0.05, anchor=CENTER)
 
         change_language()
 
@@ -665,17 +684,19 @@ def settings(event):
 
                 NSSettingsView.after(ms=1, func=change_language)
 
-        NSPopupAlert = Frame(NSSettingsView, width=380, height=400)
-        NSPopupAlert.place(relx=0.5, rely=0.5, anchor=CENTER)
+        NSPopupAlert = Frame(NSSettingsView)
+        NSPopupAlert.pack(fill=BOTH, expand=True)
 
-        NSPopupTitle = Label(NSPopupAlert, text='隐私: ', fg='#949494', font=("Futura", 20))
-        NSPopupTitle.place(relx=0.1, rely=0.05, anchor=CENTER)
+        NSPopupTitle = Label(NSPopupAlert, text='隐私: ', fg='#949494', font=("Futura", 15))
+        NSPopupTitle.place(relx=0.5, rely=0.05, anchor=CENTER)
+
+        NSPopupAlert.bind('<Button-1>', takedown_pulldown_menu)
 
         NSPopupBody = Label(NSPopupAlert, text='Project-Pios 将获得通知，麦克风，和照相机权限。\n 您可以在macos设置中选择关闭或开启。部分系统报告\n会自动发送给软件开发者。', font=("Futura", 15))
         NSPopupBody.place(relx=0.5, rely=0.45, anchor=CENTER)
 
-        NSPopupClose = tkmacosx.Button(NSPopupAlert, text='关闭', font=("Futura", 12), borderless=1, activeforeground='black', activebackground='white', command=close_popup)
-        NSPopupClose.place(relx=0.5, rely=0.85, anchor=CENTER)
+        NSPopupClose = tkmacosx.Button(NSPopupAlert, text='⬅', font=("Futura", 12), borderless=1, activeforeground='black', activebackground='white', command=close_popup)
+        NSPopupClose.place(relx=0.15, rely=0.05, anchor=CENTER)
 
         change_language()
 
