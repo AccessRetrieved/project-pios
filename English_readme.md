@@ -14,6 +14,9 @@ PC Users currently not supported
 
 <a name="version"></a>
 ## Versions
+- **Version 4.0.2**
+   - Fixed auto-check for update
+   - Adjusted browser size
 - **Version 4.0.1**
    - Added auto-check for update
    - Can now open apps created by anyone using the given template: app.py
