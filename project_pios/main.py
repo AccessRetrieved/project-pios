@@ -40,6 +40,9 @@ theme = {
 NSWifiValue = IntVar()
 NSWifiCount = 0
 os.system('networksetup -setairportpower en0 on')
+with open(os.getcwd() + '/system/wifi/bool.txt', 'w') as file:
+    file.truncate(0)
+    file.write('true')
 
 NSDarkModeStat = IntVar()
 NSAutoSwitchWallpaperStat = IntVar()
@@ -68,9 +71,16 @@ NSBluetoothCount = 0
 response = os.popen('blueutil -p').read()
 if response == '1\n':
     NSBluetoothValue.set(1)
+    with open(os.getcwd() + '/system/wifi/bool.txt', 'w') as file:
+        file.truncate(0)
+        file.write('true')
+        pass
 else:
     NSBluetoothValue.set(0)
-    pass
+    with open(os.getcwd() + '/system/wifi/bool.txt', 'w') as file:
+        file.truncate(0)
+        file.write('false')
+        pass
 
 NSMenuCounter = 1
 NSAutoSwitchCounter = 1
@@ -211,10 +221,16 @@ def manage_wifi():
         os.system('networksetup -setairportpower en0 on')
         NSWifiValue.set(1)
         NSWifiControl['bg'] = '#1b73e9'
+        with open(os.getcwd() + '/system/wifi/bool.txt', 'w') as file:
+            file.truncate(0)
+            file.write('true')
     else:
         os.system('networksetup -setairportpower en0 off')
         NSWifiValue.set(0)
         NSWifiControl['bg'] = '#dcdcdc'
+        with open(os.getcwd() + '/system/wifi/bool.txt', 'w') as file:
+            file.truncate(0)
+            file.write('false')
 
 def manage_bluetooth():
     global NSBluetoothCount
@@ -223,10 +239,16 @@ def manage_bluetooth():
         os.system('blueutil -p on')
         NSBluetoothControl['bg'] = '#1b73e9'
         NSBluetoothValue.set(1)
+        with open(os.getcwd() + '/system/bluetooth/bool.txt', 'w') as file:
+            file.truncate(0)
+            file.write('true')
     else:
         os.system('blueutil -p off')
         NSBluetoothControl['bg'] = '#dcdcdc'
         NSBluetoothValue.set(0)
+        with open(os.getcwd() + '/system/bluetooth/bool.txt', 'w') as file:
+            file.truncate(0)
+            file.write('false')
 
 def clicked(event):
     print('true')
@@ -1380,6 +1402,48 @@ def autoswitch_wallpaper():
 
     NSCanvas.after(ms=1000, func=autoswitch_wallpaper)
 
+def check_bluetooth():
+    with open(os.getcwd() + '/system/bluetooth/bool.txt', 'r') as file:
+        if file.read() == 'true':
+            os.system('blueutil -p on')
+            NSBluetoothControl['bg'] = '#1b73e9'
+            NSBluetoothValue.set(1)
+            with open(os.getcwd() + '/system/bluetooth/bool.txt', 'w') as file:
+                file.truncate(0)
+                file.write('true')
+                pass
+        else:
+            os.system('blueutil -p off')
+            NSBluetoothControl['bg'] = '#dcdcdc'
+            NSBluetoothValue.set(0)
+            with open(os.getcwd() + '/system/bluetooth/bool.txt', 'w') as file:
+                file.truncate(0)
+                file.write('false')
+                pass
+
+    NSCanvas.after(ms=1000, func=check_bluetooth)
+
+def check_wifi():
+    with open(os.getcwd() + '/system/wifi/bool.txt', 'r') as file:
+        if file.read() == 'true':
+            os.system('networksetup -setairportpower en0 on')
+            NSWifiValue.set(1)
+            NSWifiControl['bg'] = '#1b73e9'
+            with open(os.getcwd() + '/system/wifi/bool.txt', 'w') as file:
+                file.truncate(0)
+                file.write('true')
+                pass
+        else:
+            os.system('networksetup -setairportpower en0 off')
+            NSWifiValue.set(0)
+            NSWifiControl['bg'] = '#dcdcdc'
+            with open(os.getcwd() + '/system/wifi/bool.txt', 'w') as file:
+                file.truncate(0)
+                file.write('false')
+                pass
+    
+    NSCanvas.after(ms=1000, func=check_wifi)
+
 NSCanvas = Canvas(root)
 NSCanvas.pack(fill=BOTH, expand=True)
 
@@ -1506,4 +1570,6 @@ detect_darkmode()
 change_language()
 update_languages()
 autoswitch_wallpaper()
+check_bluetooth()
+check_wifi()
 root.mainloop()
