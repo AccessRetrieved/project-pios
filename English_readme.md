@@ -14,6 +14,8 @@ PC Users currently not supported
 
 <a name="version"></a>
 ## Versions
+- **Version 4.0.3**
+   - Supports two custom apps
 - **Version 4.0.2**
    - Fixed auto-check for update
    - Adjusted browser size
