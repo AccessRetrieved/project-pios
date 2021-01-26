@@ -19,9 +19,14 @@ import webbrowser
 import pyscreenshot
 import yagmail
 from app import import_app, quit_app # Add custom app here
-import objc
+from app2 import import_app2, quit_app2 # Add second custom app here
+import objc #Add this to github to make it look better
 
-#change all path from "/project_pios/FILE" to "/FILE" for github
+#change all path from "/FILE" to "/FILE" for github
+
+# Custom App Icons
+NSCustomAppIcon1 = os.getcwd() + '/app1.png'
+NSCustomAppIcon2 = os.getcwd() + '/app2.png'
 
 root = Tk()
 root.geometry('400x800')
@@ -42,7 +47,7 @@ NSLocalVersion = StringVar()                  #
 #                                             #
 # U P D A T E   T H I S   E V E R Y T I M E ! #
 #                                             #
-NSLocalVersion.set('4.0.2')                   #
+NSLocalVersion.set('4.0.2')                     #
 ###############################################
 ##################################
 #                                #
@@ -300,6 +305,10 @@ def return_home(event):
     
     try:
         quit_app()
+    except:
+        pass
+    try:
+        quit_app2()
     except:
         pass
 
@@ -1615,6 +1624,7 @@ def remove_apps():
     APPClock.place_forget()
     APPEmail.place_forget()
     APPAdd.place_forget()
+    APPAdd2.place_forget()
 
 def add_apps():
     APPSettings.place(relx=0.2, rely=0.85, anchor=CENTER)
@@ -1622,6 +1632,7 @@ def add_apps():
     APPClock.place(relx=0.8, rely=0.85, anchor=CENTER)
     APPEmail.place(relx=0.2, rely=0.75, anchor=CENTER)
     APPAdd.place(relx=0.5, rely=0.75, anchor=CENTER)
+    APPAdd2.place(relx=0.8, rely=0.75, anchor=CENTER)
 
 def destroy_apps():
     try:
@@ -1647,10 +1658,19 @@ def destroy_apps():
         NSAppView.destroy()
     except:
         pass
+    try:
+        global NSApp2View
+        NSApp2View.destroy()
+    except:
+        pass
 
 def add_app(event): # Manage custom app here
     remove_apps()
     import_app(NSWallpaper)
+
+def add_app2(event): # Manage second custom app here
+    remove_apps()
+    import_app2(NSWallpaper)
 
 NSCanvas = Canvas(root)
 NSCanvas.pack(fill=BOTH, expand=True)
@@ -1758,12 +1778,19 @@ APPEmail = Label(NSCanvas, text='', image=appemailpic, border=0)
 APPEmail.place(relx=0.2, rely=0.75, anchor=CENTER)
 APPEmail.bind('<Button-1>', email)
 
-appaddimg = Image.open(os.getcwd() + '/plus.png')
+appaddimg = Image.open(NSCustomAppIcon1)
 appaddimg = appaddimg.resize((40, 40), Image.ANTIALIAS)
 appaddpic = ImageTk.PhotoImage(appaddimg)
 APPAdd = Label(NSCanvas, text='', image=appaddpic, border=0) # Open custom app here
 APPAdd.place(relx=0.5, rely=0.75, anchor=CENTER)
 APPAdd.bind('<Button-1>', add_app)
+
+appadd2img = Image.open(NSCustomAppIcon2)
+appadd2img = appadd2img.resize((40, 40), Image.ANTIALIAS)
+appadd2pic = ImageTk.PhotoImage(appadd2img)
+APPAdd2 = Label(NSCanvas, text='', image=appadd2pic, border=0)
+APPAdd2.place(relx=0.8, rely=0.75, anchor=CENTER)
+APPAdd2.bind('<Button-1>', add_app2)
 
 NSWallpaper.place_forget()
 remove_apps()
