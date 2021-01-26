@@ -9,7 +9,7 @@
 4. [图片介绍](#images)
 ***
 
-### 暂时只支持Macbook Air 2018+ 或更好的电脑，比如macbook pro(原因？因为老的电脑屏幕太小这软件装不下)
+### 暂时只支持Macbook Air 2018+ 或更好的电脑，比如macbook pro
 用PC的暂时不支持
 
 <a name="version"></a>
