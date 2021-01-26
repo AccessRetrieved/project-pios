@@ -14,6 +14,9 @@ PC Users currently not supported
 
 <a name="version"></a>
 ## Versions
+- **Version 4.0**
+   - Added email system to Project-Pios
+   - Fixed browser's screenshot function
 - **Version 3.5.4**
    - Added system controls (BETA)
 - **Version 3.5.3**

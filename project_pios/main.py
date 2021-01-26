@@ -1,5 +1,6 @@
 from tkinter import *
 from tkinter import ttk
+from tkinter import simpledialog, messagebox
 from datetime import datetime
 from PIL import Image, ImageTk
 import requests
@@ -16,6 +17,8 @@ import shutil
 import arrow
 import webbrowser
 import pyscreenshot
+import yagmail
+import base64
 import objc
 
 #change all path from "/project_pios/FILE" to "/FILE" for github
@@ -285,6 +288,11 @@ def return_home(event):
     except:
         pass
     try:
+        global NSEmailView
+        NSEmailView.destroy()
+    except:
+        pass
+    try:
         APPSettings.place(relx=0.2, rely=0.85, anchor=CENTER)
     except:
         pass
@@ -294,6 +302,10 @@ def return_home(event):
         pass
     try:
         APPClock.place(relx=0.8, rely=0.85, anchor=CENTER)
+    except:
+        pass
+    try:
+        APPEmail.place(relx=0.2, rely=0.75, anchor=CENTER)
     except:
         pass
 
@@ -307,6 +319,7 @@ def settings(event):
     APPSettings.place_forget()
     APPBrowser.place_forget()
     APPClock.place_forget()
+    APPEmail.place_forget()
 
     def about_this_mac():
         machine_platform = '机器: ' + platform.machine()
@@ -752,6 +765,7 @@ def browser(event):
     APPSettings.place_forget()
     APPBrowser.place_forget()
     APPClock.place_forget()
+    APPEmail.place_forget()
 
     def on(event):
         NSBrowserURLQuery.delete(0, END)
@@ -798,26 +812,6 @@ def browser(event):
                 webview.create_window(title='', url=fil, confirm_close=False, text_select=True, width=400, height=820, frameless=True)
                 webview.start()
 
-    def launch_effect():
-        def wait():
-            icony = float(NSBrowserIcon.place_info()['rely'])
-            texty = float(NSBrowserIconLabel.place_info()['rely'])
-            if icony < 0.4:
-                icony += .25
-                NSBrowserIcon.place_configure(relx=0.5, rely=icony, anchor=CENTER)
-                NSBrowserView.after(10, launch_effect)
-            else:
-                NSBrowserIcon.place(relx=0.5, rely=0.4, anchor=CENTER)
-        
-            if texty < 0.5:
-                texty += .3
-                NSBrowserIconLabel.place_configure(relx=0.5, rely=texty, anchor=CENTER)
-                NSBrowserView.after(10, launch_effect)
-            else:
-                NSBrowserIconLabel.place(relx=0.5, rely=0.5, anchor=CENTER)
-
-        NSBrowserView.after(200, wait)
-
     def change_mode():
         if NSDarkModeStat.get() == 1:
             NSBrowserView.config(bg=dark_theme['bg'])
@@ -854,15 +848,8 @@ def browser(event):
 
         NSBrowserView.after(ms=1000, func=change_language)
 
-    NSBrowserIconimg = Image.open(os.getcwd() + '/browser.png')
-    NSBrowserIconimg = NSBrowserIconimg.resize((100, 100), Image.ANTIALIAS)
-    NSBrowserIconpic = ImageTk.PhotoImage(NSBrowserIconimg)
-
-    NSBrowserIcon = Label(NSBrowserView, text='', image=NSBrowserIconpic)
-    NSBrowserIcon.place(relx=0.5, rely=0.0, anchor=CENTER)
-
     NSBrowserIconLabel = Label(NSBrowserView, text='浏览器', font=("Futura", 25))
-    NSBrowserIconLabel.place(relx=0.5, rely=0., anchor=CENTER)
+    NSBrowserIconLabel.place(relx=0.5, rely=0.5, anchor=CENTER)
 
     NSBrowserURLQuery = Entry(NSBrowserView, width=33)
     NSBrowserURLQuery.place(relx=0.41, rely=0.045, anchor=CENTER)
@@ -875,7 +862,6 @@ def browser(event):
     NSBrowserURLLaunch = tkmacosx.Button(NSBrowserView, text='→', width=70, font=("Futura", 14), borderless=1, activeforeground='white', activebackground='black', command=launch_url)
     NSBrowserURLLaunch.place(relx=0.9, rely=0.045, anchor=CENTER)
 
-    launch_effect()
     change_mode()
     change_language()
     NSBrowserURLQuery.bind('<Return>', launch_url_key)
@@ -888,6 +874,7 @@ def close_experimental_alert():
     APPSettings.place(relx=0.2, rely=0.85, anchor=CENTER)
     APPBrowser.place(relx=0.5, rely=0.85, anchor=CENTER)
     APPClock.place(relx=0.8, rely=0.85, anchor=CENTER)
+    APPEmail.place(relx=0.2, rely=0.75, anchor=CENTER)
 
 def shutdown(event):
     NSCanvas.destroy()
@@ -1127,6 +1114,7 @@ def clock(event):
     APPSettings.place_forget()
     APPBrowser.place_forget()
     APPClock.place_forget()
+    APPEmail.place_forget()
 
     def update_vancouver():
         orig = str(datetime.now())
@@ -1444,6 +1432,144 @@ def check_wifi():
     
     NSCanvas.after(ms=1000, func=check_wifi)
 
+def email(event):
+    global NSEmailView
+    NSEmailView = Frame(NSWallpaper)
+    NSEmailView.pack(fill=BOTH, expand=True)
+    NSEmailView.bind('<Button-1>', takedown_pulldown_menu)
+
+    APPSettings.place_forget()
+    APPBrowser.place_forget()
+    APPClock.place_forget()
+    APPEmail.place_forget()
+
+    def change_language():
+        if NSLanguageValue.get() == 'en':
+            NSEmailSenderEmailLabel['text'] = 'Receiver:'
+            NSEmailSend['text'] = 'Send'
+            NSEmailClear['text'] = 'Clear'
+            pass
+        else:
+            NSEmailSenderEmailLabel['text'] = '收件人:'
+            NSEmailSend['text'] = '发送'
+            NSEmailClear['text'] = '清除'
+            pass
+
+        NSEmailView.after(ms=1000, func=change_language)
+
+    def clear():
+        NSEmailSenderEmailBox.delete(0, END)
+        NSEmailCCBox.delete(0, END)
+        NSEmailSubjectBox.delete(0, END)
+        NSEmailContent.delete(1.0, END)
+
+        with open(os.getcwd() = '/system/email/email.txt', 'w') as email, open(os.getcwd() + '/system/email/password.txt', 'w') as password:
+            email.truncate(0)
+            password.truncate(0)
+
+    def send():
+        if NSLanguageValue.get() == 'en':
+            with open(os.getcwd() + '/system/email/email.txt', 'r') as email, open(os.getcwd() + '/system/email/password.txt', 'r') as password:
+                if email.read() == '' or password.read() == '':
+                    username = simpledialog.askstring(title='Sign In', prompt='Email')
+                    word = simpledialog.askstring(title='Sign In', prompt='Password')
+                    pass
+                else:
+                    username = open(os.getcwd() + '/system/email/email.txt', 'r').read()
+                    word = open(os.getcwd() + '/system/email/password.txt', 'r').read()
+                    pass
+            with yagmail.SMTP(username, word) as yag:
+                if NSEmailCCBox.get() == '':
+                    yag.send(to=NSEmailSenderEmailBox.get(), subject=NSEmailSubjectBox.get(), contents=NSEmailContent.get(1.0, END))
+                    messagebox.showinfo(message=f'Email send to {NSEmailSenderEmailBox.get()}, from {username} was sent.')
+                    clear()
+
+                    #write credencials to file for next use
+                    with open(os.getcwd() + '/system/email/email.txt', 'w') as email, open(os.getcwd() + '/system/email/password.txt', 'w') as password:
+                        email.truncate(0)
+                        password.truncate(0)
+                        email.write(username)
+                        password.write(word)
+                        pass
+                else:
+                    pass
+                yag.send(to=NSEmailSenderEmailBox.get(), subject=NSEmailSubjectBox.get(), contents=NSEmailContent.get(1.0, END), cc=NSEmailCCBox.get())
+                messagebox.showinfo(message=f'Email send to {NSEmailSenderEmailBox.get()}, from {username} was sent.')
+                clear()
+
+                #write credencials to file for next use
+                with open(os.getcwd() + '/system/email/email.txt', 'w') as email, open(os.getcwd() + '/system/email/password.txt', 'w') as password:
+                    email.truncate(0)
+                    password.truncate(0)
+                    email.write(username)
+                    password.write(word)
+                    pass
+        else:
+            with open(os.getcwd() + '/system/email/email.txt', 'r') as email, open(os.getcwd() + '/system/email/password.txt', 'r') as password:
+                if email.read() == '' or password.read() == '':
+                    username = simpledialog.askstring(title='登录', prompt='邮箱')
+                    word = simpledialog.askstring(title='登录', prompt='密码')
+                    pass
+                else:
+                    username = open(os.getcwd() + '/system/email/email.txt', 'r').read()
+                    word = open(os.getcwd() + '/system/email/password.txt', 'r').read()
+                    pass
+            with yagmail.SMTP(username, word) as yag:
+                if NSEmailCCBox.get() == '':
+                    yag.send(to=NSEmailSenderEmailBox.get(), subject=NSEmailSubjectBox.get(), contents=NSEmailContent.get(1.0, END))
+                    messagebox.showinfo(message=f'从 {username} 的邮件已发送。')
+                    clear()
+
+                    #write credencials to file for next use
+                    with open(os.getcwd() + '/system/email/email.txt', 'w') as email, open(os.getcwd() + '/system/email/password.txt', 'w') as password:
+                        email.truncate(0)
+                        password.truncate(0)
+                        email.write(username)
+                        password.write(word)
+                        pass
+                else:
+                    pass
+                yag.send(to=NSEmailSenderEmailBox.get(), subject=NSEmailSubjectBox.get(), contents=NSEmailContent.get(1.0, END), cc=NSEmailCCBox.get())
+                messagebox.showinfo(message=f'从 {username} 的邮件已发送。')
+                clear()
+
+                #write credencials to file for next use
+                with open(os.getcwd() + '/system/email/email.txt', 'w') as email, open(os.getcwd() + '/system/email/password.txt', 'w') as password:
+                    email.truncate(0)
+                    password.truncate(0)
+                    email.write(username)
+                    password.write(word)
+                    pass
+
+    NSEmailSenderEmailLabel = Label(NSEmailView, text='收件人:', font=("Futura", 15))
+    NSEmailSenderEmailLabel.place(relx=0.1, rely=0.048, anchor=CENTER)
+    NSEmailSenderEmailBox = Entry(NSEmailView, width=33)
+    NSEmailSenderEmailBox.place(relx=0.6, rely=0.045, anchor=CENTER)
+
+    NSEmailCCLabel = Label(NSEmailView, text='CC:', font=("Futura", 15))
+    NSEmailCCLabel.place(relx=0.1, rely=0.093, anchor=CENTER)
+    NSEmailCCBox = Entry(NSEmailView, width=33)
+    NSEmailCCBox.place(relx=0.6, rely=0.093, anchor=CENTER)
+
+    NSEmailSubjectLabel = Label(NSEmailView, text='Subject:', font=("Futura", 15))
+    NSEmailSubjectLabel.place(relx=0.1, rely=0.138, anchor=CENTER)
+    NSEmailSubjectBox = Entry(NSEmailView, width=33)
+    NSEmailSubjectBox.place(relx=0.6, rely=0.138, anchor=CENTER)
+
+    NSEmailSendDivider = ttk.Separator(NSEmailView)
+    NSEmailSendDivider.place(relx=0.05, rely=0.17, relwidth=0.9)
+
+    NSEmailContent = Text(NSEmailView, width=56, height=43, font=("Arial", 12))
+    NSEmailContent.place(relx=0.5, rely=0.56, anchor=CENTER)
+
+    NSEmailSend = tkmacosx.Button(NSEmailView, text='发送', borderless=1, bg='white', fg='black', activebackground='black', activeforeground='white', width=60, command=send)
+    NSEmailSend.place(relx=0.9, rely=0.97, anchor=CENTER)
+
+    NSEmailClear = tkmacosx.Button(NSEmailView, text='清除', borderless=1, bg='white', fg='black', activebackground='black', activeforeground='white', width=60, command=clear)
+    NSEmailClear.place(relx=0.1, rely=0.97, anchor=CENTER)
+
+    change_language()
+
 NSCanvas = Canvas(root)
 NSCanvas.pack(fill=BOTH, expand=True)
 
@@ -1543,11 +1669,19 @@ APPClock = Label(NSCanvas, text='', image=appclockpic, border=0)
 APPClock.place(relx=0.8, rely=0.85, anchor=CENTER)
 APPClock.bind('<Button-1>', clock)
 
+appemailimg = Image.open(os.getcwd() + '/email.png')
+appemailimg = appemailimg.resize((40, 40), Image.ANTIALIAS)
+appemailpic = ImageTk.PhotoImage(appemailimg)
+APPEmail = Label(NSCanvas, text='', image=appemailpic, border=0)
+APPEmail.place(relx=0.2, rely=0.75, anchor=CENTER)
+APPEmail.bind('<Button-1>', email)
+
 NSWallpaper.place_forget()
 APPSettings.place_forget()
 APPBrowser.place_forget()
 APPClock.place_forget()
 NSMenuBar.place_forget()
+APPEmail.place_forget()
 NSCanvas['bg'] = '#b3b3b3'
 
 NSExperimentalAlert = Frame(NSCanvas, width=380, height=300)
