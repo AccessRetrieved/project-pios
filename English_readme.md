@@ -16,6 +16,7 @@ PC Users currently not supported
 ## Versions
 - **Version 4.0.1**
    - Added auto-check for update
+   - Can now open apps created by anyone using the given template: app.py
 - **Version 4.0**
    - Added email system to Project-Pios
    - Fixed browser's screenshot function
