@@ -20,7 +20,7 @@
 - **版本4.0.1**
    - 添加了自动查看更新功能
    - 可运行自主软件用：app.py
-- **版本4.0**（需要重新运行`pip3 instal -r r.txt` 或 `pip install -r r.txt`)
+- **版本4.0**（需要重新运行`pip3 install -r r.txt` 或 `pip install -r r.txt`)
    - 添加了邮件功能
    - 修复了浏览器截屏功能
 - **版本3.5.4**
@@ -35,16 +35,16 @@
    - 添加了自动切换壁纸功能
    - 修复了一些暗模式的bugs
    - 修复了设置
-- **版本3.5**（需要重新运行`pip3 instal -r r.txt` 或 `pip install -r r.txt`)
+- **版本3.5**（需要重新运行`pip3 install -r r.txt` 或 `pip install -r r.txt`)
    - 可选择语言：英语和中文
    - 添加了截屏功能
    - 修复了一些bugs
-- **版本3.0**（需要重新运行`pip3 instal -r r.txt` 或 `pip install -r r.txt`)
+- **版本3.0**（需要重新运行`pip3 install -r r.txt` 或 `pip install -r r.txt`)
    - 添加了暗模式
    - 支持实时切换暗模式（需要macos Big sur - 11.1以上开启手动切换/macos Catalina支持自动切换）
    - 设置里的用户添加了功能
    - 修复了一些bugs
-- **版本2.5**（需要重新运行`pip3 instal -r r.txt` 或 `pip install -r r.txt`)
+- **版本2.5**（需要重新运行`pip3 install -r r.txt` 或 `pip install -r r.txt`)
    - 添加了”时间“软件
    - 可在快捷菜单里选择时间选项
 - **版本1.5** （还在用版本1.0的需要重新运行`pip3 install -r r.txt` 或 `pip instal -r r.txt`)
