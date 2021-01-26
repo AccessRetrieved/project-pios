@@ -24,10 +24,9 @@ PC Users currently not supported
    - Added email system to Project-Pios
    - Fixed browser's screenshot function
 - **Version 3.5.4**
-   - Added system controls (BETA)
+   - Added system controls with files
 - **Version 3.5.3**
    - Double click to shutdown
-   - Can capture screenshots on webpage (BETA)
 - **Version 3.5.2**
    - Quick controls are now accessable in other apps
    - Can now take screenshots in other apps such as settings, browser, and clock
