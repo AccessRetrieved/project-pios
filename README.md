@@ -59,7 +59,7 @@
 4. 运行：`cd project-pios`
 5. 运行： `pip3 install -r r.txt` - 如果出错，运行`pip install -r r.txt`
 6. 运行： `cd project_pios`
-7. 所需的模块都下载完了，现在运行：`python3 main.py` - 如果出错，打`python main.py`
+7. 所需的模块都下载完了，现在运行：`python3 main.py` - 如果出错，运行`python main.py`
 
 <a name="bugs"></a>
 ## 已知问题
