@@ -20,7 +20,7 @@ import pyscreenshot
 import yagmail
 from app import import_app, quit_app # Add custom app here
 from app2 import import_app2, quit_app2 # Add second custom app here
-import objc #Add this to github to make it look better
+import objc
 
 #change all path from "/FILE" to "/FILE" for github
 
