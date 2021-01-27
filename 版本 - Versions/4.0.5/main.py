@@ -18,8 +18,8 @@ import arrow
 import webbrowser
 import pyscreenshot
 import yagmail
-from App1.app import import_app, quit_app # Add custom app here
-from App2.app2 import import_app2, quit_app2 # Add second custom app here
+from app import import_app, quit_app # Add custom app here
+from app2 import import_app2, quit_app2 # Add second custom app here
 import objc
 
 #change all path from "/FILE" to "/FILE" for github
@@ -1181,7 +1181,7 @@ def clock(event):
     global aa, bb, cc
     aa = 0
     bb = 0
-    cc = 0
+    cc = 0 
 
     remove_apps()
     def update_vancouver():
@@ -1319,9 +1319,10 @@ def clock(event):
     NSClockDivider = ttk.Separator(NSClockView)
     NSClockDivider.place(relx=0.05, rely=0.25, relwidth=0.9)
 
+
     #stop watch
     NSClockStopWatchDisplay = Label(NSClockView, text='0:0:0', font=("Futura", 30))
-    NSClockStopWatchDisplay.place(relx=0.5, rely=0.355, anchor=CENTER)
+    NSClockStopWatchDisplay.place(relx=0.5, rely=0.365, anchor=CENTER)
 
     NSClockStopWatchStart = tkmacosx.Button(NSClockView, text='开始', font=("Futura", 12), borderless=1, bg='black', fg='white', activebackground='white', activeforeground='black', command=start)
     NSClockStopWatchStart.place(relx=0.4, rely=0.45, anchor=CENTER)
@@ -1332,8 +1333,6 @@ def clock(event):
     NSClockStopWatchReset = tkmacosx.Button(NSClockView, text='重置', font=("Futura", 12), borderless=1, bg='black', fg='white', activebackground='white', activeforeground='black', command=reset)
     NSClockStopWatchReset.place(relx=0.5, rely=0.5, anchor=CENTER)
 
-    NSClockDivider = ttk.Separator(NSClockView)
-    NSClockDivider.place(relx=0.05, rely=0.55, relwidth=0.9)
 
     update_vancouver()
     update_beijing()
@@ -1637,7 +1636,6 @@ def email(event):
                     pass
             with yagmail.SMTP(username, word) as yag:
                 if NSEmailCCBox.get() == '':
-                    # no cc
                     yag.send(to=NSEmailSenderEmailBox.get(), subject=NSEmailSubjectBox.get(), contents=NSEmailContent.get(1.0, END))
                     messagebox.showinfo(message=f'Email send to {NSEmailSenderEmailBox.get()}, from {username} was sent.')
                     clear()
@@ -1651,7 +1649,6 @@ def email(event):
                         pass
                 else:
                     pass
-                # yes cc
                 yag.send(to=NSEmailSenderEmailBox.get(), subject=NSEmailSubjectBox.get(), contents=NSEmailContent.get(1.0, END), cc=NSEmailCCBox.get())
                 messagebox.showinfo(message=f'Email send to {NSEmailSenderEmailBox.get()}, from {username} was sent.')
                 clear()
@@ -1787,11 +1784,13 @@ def destroy_apps():
     except:
         pass
     try:
-        quit_app()
+        global NSAppView
+        NSAppView.destroy()
     except:
         pass
     try:
-        quit_app2()
+        global NSApp2View
+        NSApp2View.destroy()
     except:
         pass
 

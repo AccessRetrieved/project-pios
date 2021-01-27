@@ -14,6 +14,11 @@ PC Users currently not supported
 
 <a name="version"></a>
 ## Versions
+- **Version 4.0.5**
+   - Added sleep function
+   - Rearranged the file system
+- **Version 4.0.4**
+   - Fixed some bugs
 - **Version 4.0.3**
    - Supports two custom apps
 - **Version 4.0.2**
