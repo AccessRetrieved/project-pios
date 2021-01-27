@@ -22,7 +22,7 @@ from app import import_app, quit_app # Add custom app here
 from app2 import import_app2, quit_app2 # Add second custom app here
 import objc
 
-#change all path from "/project_pios/FILE" to "/FILE" for github
+#change all path from "/FILE" to "/FILE" for github
 
 # Custom App Icons
 NSCustomAppIcon1 = os.getcwd() + '/app1.png'
@@ -47,7 +47,7 @@ NSLocalVersion = StringVar()                  #
 #                                             #
 # U P D A T E   T H I S   E V E R Y T I M E ! #
 #                                             #
-NSLocalVersion.set('4.0.3')                   #
+NSLocalVersion.set('4.0.5')                   #
 ###############################################
 ##################################
 #                                #
@@ -185,6 +185,7 @@ def pulldown_menu(event):
             NSWallpaperLabel['text'] = 'Wallpaper'
             NSClockLabel['text'] = 'Clock'
             NSScreenshotLabel['text'] = 'Screenshot'
+            NSSleepLabel['text'] = 'Sleep'
             pass
         else:
             NSWifiLabel['text'] = '网络'
@@ -193,6 +194,7 @@ def pulldown_menu(event):
             NSWallpaperLabel['text'] = '壁纸'
             NSClockLabel['text'] = '时间'
             NSScreenshotLabel['text'] = '截屏'
+            NSSleepLabel['text'] = '睡眠'
             pass
 
         NSCanvas.after(ms=1000, func=change_language)
@@ -221,6 +223,9 @@ def pulldown_menu(event):
         NSScreenshotControl.place(relx=0.1, rely=0.4, anchor=CENTER)
         NSScreenshotLabel.place(relx=0.1, rely=0.5, anchor=CENTER)
 
+        NSSleepControl.place(relx=0.3, rely=0.4, anchor=CENTER)
+        NSSleepLabel.place(relx=0.3, rely=0.5, anchor=CENTER)
+
         if NSWifiValue.get() == 1:
             NSWifiControl['bg'] = '#1b73e9'
         else:
@@ -244,6 +249,8 @@ def pulldown_menu(event):
         NSControlMenu.place_forget()
         NSScreenshotControl.place_forget()
         NSScreenshotLabel.place_forget()
+        NSSleepControl.place_forget()
+        NSSleepLabel.place_forget()
         pass
 
 def manage_wifi():
@@ -299,6 +306,8 @@ def return_home(event):
     NSClockLabel.place_forget()
     NSScreenshotControl.place_forget()
     NSScreenshotLabel.place_forget()
+    NSSleepControl.place_forget()
+    NSSleepLabel.place_forget()
     NSControlMenu.place_forget()
 
     destroy_apps()
@@ -1140,6 +1149,8 @@ def takedown_pulldown_menu(event):
         NSControlMenu.place_forget()
         NSScreenshotControl.place_forget()
         NSScreenshotLabel.place_forget()
+        NSSleepControl.place_forget()
+        NSSleepLabel.place_forget()
     except:
         pass
 
@@ -1156,6 +1167,8 @@ def screenshot_takedown_pulldown_menu():
         NSControlMenu.place_forget()
         NSScreenshotControl.place_forget()
         NSScreenshotLabel.place_forget()
+        NSSleepControl.place_forget()
+        NSSleepLabel.place_forget()
     except:
         pass
 
@@ -1164,6 +1177,11 @@ def clock(event):
     NSClockView = Frame(NSWallpaper)
     NSClockView.pack(fill=BOTH, expand=True)
     NSClockView.bind('<Button-1>', takedown_pulldown_menu)
+
+    global aa, bb, cc
+    aa = 0
+    bb = 0
+    cc = 0 
 
     remove_apps()
     def update_vancouver():
@@ -1192,6 +1210,19 @@ def clock(event):
             NSClockBeijing['fg'] = dark_theme['fg']
             NSClockBeijingTime['bg'] = dark_theme['bg']
             NSClockBeijingTime['fg'] = dark_theme['fg']
+
+            NSClockStopWatchDisplay['bg'] = dark_theme['bg']
+            NSClockStopWatchDisplay['fg'] = dark_theme['fg']
+            NSClockStopWatchStart['bg'] = dark_theme['fg']
+            NSClockStopWatchStart['fg'] = dark_theme['bg']
+            NSClockStopWatchStop['bg'] = dark_theme['fg']
+            NSClockStopWatchStop['fg'] = dark_theme['bg']
+            NSClockStopWatchReset['bg'] = dark_theme['fg']
+            NSClockStopWatchReset['fg'] = dark_theme['bg']
+
+            NSClockStopWatchStart.config(activebackground='black', activeforeground='white')
+            NSClockStopWatchStop.config(activebackground='black', activeforeground='white')
+            NSClockStopWatchReset.config(activebackground='black', activeforeground='white')
             pass
         else:
             NSClockView.config(bg='white')
@@ -1203,6 +1234,19 @@ def clock(event):
             NSClockBeijing['fg'] = theme['fg']
             NSClockBeijingTime['bg'] = theme['bg']
             NSClockBeijingTime['fg'] = theme['fg']
+
+            NSClockStopWatchDisplay['bg'] = theme['bg']
+            NSClockStopWatchDisplay['fg'] = theme['fg']
+            NSClockStopWatchStart['bg'] = theme['fg']
+            NSClockStopWatchStart['fg'] = theme['bg']
+            NSClockStopWatchStop['bg'] = theme['fg']
+            NSClockStopWatchStop['fg'] = theme['bg']
+            NSClockStopWatchReset['bg'] = theme['fg']
+            NSClockStopWatchReset['fg'] = theme['bg']
+
+            NSClockStopWatchStart.config(activebackground='white', activeforeground='black')
+            NSClockStopWatchStop.config(activebackground='white', activeforeground='black')
+            NSClockStopWatchReset.config(activebackground='white', activeforeground='black')
             pass
 
         NSClockView.after(ms=500, func=change_mode)
@@ -1211,13 +1255,54 @@ def clock(event):
         if NSLanguageValue.get() == 'en':
             NSClockVancouver['text'] = 'Vancouver'
             NSClockBeijing['text'] = 'Beijing'
+            NSClockStopWatchStart['text'] = 'Start'
+            NSClockStopWatchStop['text'] = 'Stop'
+            NSClockStopWatchReset['text'] = 'Reset'
             pass
         else:
             NSClockVancouver['text'] = '温哥华'
             NSClockBeijing['text'] = '北京'
+            NSClockStopWatchStart['text'] = '开始'
+            NSClockStopWatchStop['text'] = '停止'
+            NSClockStopWatchReset['text'] = '重置'
             pass
 
         NSClockView.after(ms=1000, func=change_language)
+
+    def start():
+        global aa, bb, cc
+        NSClockStopWatchStart.config(state = DISABLED)
+        NSClockStopWatchReset.config(state = DISABLED)
+        NSClockStopWatchStop.config(state = NORMAL)
+
+        cc += 1
+        NSClockStopWatchDisplay['text'] = '{}:{}:{}'.format(aa, bb, cc)
+        if cc == 60:
+            cc = 0
+            bb += 1
+            NSClockStopWatchDisplay['text'] = '{}:{}:{}'.format(aa, bb, cc)
+        elif bb == 60:
+            bb = 0
+            aa += 1
+            NSClockStopWatchDisplay['text'] = '{}:{}:{}'.format(aa, bb, cc)
+        global count
+        count = NSClockView.after(ms=1000, func=start)
+
+    def stop():
+        global count
+        NSClockStopWatchStart.config(state = NORMAL)
+        NSClockStopWatchReset.config(state = NORMAL)
+        NSClockStopWatchStop.config(state = DISABLED)
+        NSClockView.after_cancel(count)
+
+    def reset():
+        global aa, bb, cc
+        NSClockStopWatchStart.config(state = NORMAL)
+        NSClockStopWatchStop.config(state = DISABLED)
+        aa = 0
+        bb = 0
+        cc = 0
+        NSClockStopWatchDisplay['text'] = '0:0:0'
 
     NSClockVancouver = Label(NSClockView, text='Vancouver', bg=NSClockView['bg'], font=("Futura", 20), height=4, width=20)
     NSClockVancouver.place(relx=0.19, rely=0.1, anchor=CENTER)
@@ -1230,6 +1315,24 @@ def clock(event):
 
     NSClockBeijingTime = Label(NSClockView, text='', bg=NSClockView['bg'], font=("Futura", 18))
     NSClockBeijingTime.place(relx=0.85, rely=0.2, anchor=CENTER)
+
+    NSClockDivider = ttk.Separator(NSClockView)
+    NSClockDivider.place(relx=0.05, rely=0.25, relwidth=0.9)
+
+
+    #stop watch
+    NSClockStopWatchDisplay = Label(NSClockView, text='0:0:0', font=("Futura", 30))
+    NSClockStopWatchDisplay.place(relx=0.5, rely=0.365, anchor=CENTER)
+
+    NSClockStopWatchStart = tkmacosx.Button(NSClockView, text='开始', font=("Futura", 12), borderless=1, bg='black', fg='white', activebackground='white', activeforeground='black', command=start)
+    NSClockStopWatchStart.place(relx=0.4, rely=0.45, anchor=CENTER)
+
+    NSClockStopWatchStop = tkmacosx.Button(NSClockView, text='停止', font=("Futura", 12), borderless=1, bg='black', fg='white', activebackground='white', activeforeground='black', command=stop)
+    NSClockStopWatchStop.place(relx=0.6, rely=0.45, anchor=CENTER)
+
+    NSClockStopWatchReset = tkmacosx.Button(NSClockView, text='重置', font=("Futura", 12), borderless=1, bg='black', fg='white', activebackground='white', activeforeground='black', command=reset)
+    NSClockStopWatchReset.place(relx=0.5, rely=0.5, anchor=CENTER)
+
 
     update_vancouver()
     update_beijing()
@@ -1338,6 +1441,8 @@ def detect_darkmode():
         NSClockLabel['fg'] = dark_theme['fg']
         NSScreenshotLabel['bg'] = dark_theme['bg']
         NSScreenshotLabel['fg'] = dark_theme['fg']
+        NSSleepLabel['bg'] = dark_theme['bg']
+        NSSleepLabel['fg'] = dark_theme['fg']
         pass
     else:
         NSDarkModeStat.set(0)
@@ -1357,6 +1462,8 @@ def detect_darkmode():
         NSClockLabel['fg'] = theme['fg']
         NSScreenshotLabel['bg'] = theme['bg']
         NSScreenshotLabel['fg'] = theme['fg']
+        NSSleepLabel['bg'] = theme['bg']
+        NSSleepLabel['fg'] = theme['fg']
         pass
     
     root.after(ms=500, func=detect_darkmode)
@@ -1411,6 +1518,8 @@ def screenshot():
         NSClockLabel.place(relx=0.9, rely=0.2, anchor=CENTER)
         NSScreenshotControl.place(relx=0.1, rely=0.4, anchor=CENTER)
         NSScreenshotLabel.place(relx=0.1, rely=0.5, anchor=CENTER)
+        NSSleepControl.place(relx=0.3, rely=0.4, anchor=CENTER)
+        NSSleepLabel.place(relx=0.3, rely=0.5, anchor=CENTER)
     
     NSCanvas.after(1000, wait)
 
@@ -1693,6 +1802,40 @@ def add_app2(event): # Manage second custom app here
     remove_apps()
     import_app2(NSWallpaper)
 
+def sleep():
+    NSPopupAlert = Frame(NSWallpaper, bg='black')
+    NSPopupAlert.pack(fill=BOTH, expand=True)
+
+    remove_apps()
+    destroy_apps()
+    screenshot_takedown_pulldown_menu()
+    NSHomeView.place_forget()
+    NSMenuBar.place_forget()
+
+    def check_language():
+        if NSLanguageValue.get() == 'en':
+            hint['text'] = 'Double-click to exit'
+        else:
+            hint['text'] = '双击以退出'
+            pass
+
+        NSCanvas.after(ms=1000, func=check_language)
+
+    def close(event):
+            NSMenuBar.place(relx=0.5, rely=0.012, anchor=CENTER)
+            NSHomeView.place(relx=0.5, rely=0.97, anchor=CENTER)
+            def wait():
+                NSPopupAlert.destroy()
+                add_apps()
+
+            NSCanvas.after(500, wait)
+
+    hint = Label(NSPopupAlert, text='双击以退出', font=("Futura", 18), bg='black', fg='white')
+    hint.place(relx=0.5, rely=0.4, anchor=CENTER)
+    
+    check_language()
+    NSPopupAlert.bind('<Double-1>', close)
+
 NSCanvas = Canvas(root)
 NSCanvas.pack(fill=BOTH, expand=True)
 
@@ -1767,9 +1910,12 @@ shotpic = ImageTk.PhotoImage(shotimg)
 NSScreenshotControl = tkmacosx.CircleButton(NSControlMenu, image=shotpic, borderless=1, radius=20, command=screenshot)
 NSScreenshotLabel = Label(NSControlMenu, text='截屏', bg=NSControlMenu['bg'])
 
-NSHomeView = Label(NSCanvas, text=' ', font=("Futura", 1), height=0, width=200, bg='#dddddd')
-NSHomeView.place(relx=0.5, rely=0.97, anchor=CENTER)
-NSHomeView.bind('<Button-1>', return_home)
+closeimg = Image.open(os.getcwd() + '/close.png')
+closeimg = closeimg.resize((25, 25), Image.ANTIALIAS)
+closepic = ImageTk.PhotoImage(closeimg)
+
+NSSleepControl = tkmacosx.CircleButton(NSControlMenu, image=closepic, borderless=1, radius=20, command=sleep)
+NSSleepLabel = Label(NSControlMenu, text='睡眠', bg=NSControlMenu['bg'])
 
 appsettingsimg = Image.open(os.getcwd() + '/settings.png')
 appsettingsimg = appsettingsimg.resize((40, 40), Image.ANTIALIAS)
@@ -1829,6 +1975,10 @@ NSPopupBody.place(relx=0.5, rely=0.45, anchor=CENTER)
 
 NSPopupClose = tkmacosx.Button(NSExperimentalAlert, text='好', font=("Futura", 12), borderless=1, activeforeground='black', activebackground='white', command=close_experimental_alert)
 NSPopupClose.place(relx=0.87, rely=0.93, anchor=CENTER)
+
+NSHomeView = Label(NSCanvas, text=' ', font=("Futura", 1), height=0, width=200, bg='#dddddd')
+NSHomeView.place(relx=0.5, rely=0.97, anchor=CENTER)
+NSHomeView.bind('<Button-1>', return_home)
 
 update_time()
 update_date()
