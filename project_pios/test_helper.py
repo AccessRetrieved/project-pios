@@ -1,6 +1,6 @@
 from tkinter import *
-from app import import_app, quit_app
-from app2 import import_app2, quit_app2
+from App1.app import import_app, quit_app
+from App2.app2 import import_app2, quit_app2
 
 root = Tk()
 root.geometry('400x800')

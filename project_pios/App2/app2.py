@@ -83,7 +83,7 @@ def import_app2(window, launch_screen_time=1000): # customize app here
 
 
     # Customize launch screen here
-    img = Image.open(os.getcwd() + '/App2/launch/launch.png')
+    img = Image.open(os.getcwd() + '/project_pios/App2/launch/launch.png')
     pic = ImageTk.PhotoImage(img)
 
     def launch_app():
