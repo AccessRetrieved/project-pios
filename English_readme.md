@@ -70,8 +70,8 @@ PC Users currently not supported
 2. Open Terminal
 3. Run to install homebrew(Copy paste is easier): `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
 4. Run:`brew install blueutil`
-3. Run:`git clone https://github.com/AccessRetrieved/project-pios`
-4. Run:`cd project-pios`
+3. Run:`git clone https://github.com/AccessRetrieved/Project-Pios`
+4. Run:`cd Project-Pios`
 5. Run: `pip3 install -r r.txt` - if errors are generated than run，`pip install -r r.txt`
 6. Run: `cd project_pios`
 7. Now start the app:`python3 main.py` - if errors are generated than run，`python main.py`
