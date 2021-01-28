@@ -76,7 +76,7 @@ def import_app(window, launch_screen_time=1000): # customize app here
     NSStop.place(relx=0.3, rely=0.5, anchor=CENTER)
 
     # Customize launch screen here
-    img = Image.open(os.getcwd() + '/project_pios/App1/launch/launch.png')
+    img = Image.open(os.getcwd() + '/App1/launch/launch.png')
     pic = ImageTk.PhotoImage(img)
 
     def launch_app():
