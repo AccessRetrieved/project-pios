@@ -7,7 +7,8 @@ Operating system with python. [Switch to Chinese Readme](https://github.com/Acce
 2. [Installing and executing](#install)
 3. [Update](#update)
 4. [Known Bugs](#bugs)
-5. [Images](#images)
+5. ['Language'](#language)
+6. [Images](#images)
 ***
 
 ### Newer than macbook air 2018+ or macbook pro 2018+
@@ -99,6 +100,10 @@ PC Users currently not supported
 ## Known Bugs
 1. Switching between dark and light mode needs new resources for bluetooth and wifi
 2. Dark mode needs to be added for privacy settings
+
+<a name="language"></a>
+## Change Language
+Change language by changing the language.txt from "zh-cn" to "en".
 
 <a name="images"></a>
 ## Images

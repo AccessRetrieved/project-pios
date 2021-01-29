@@ -7,6 +7,7 @@
 2. [下载和运行](#install)
 3. [更新](#update)
 4. [已知问题](#bugs)
+5. ['语音'](#language)
 5. [图片介绍](#images)
 ***
 
@@ -100,6 +101,10 @@
 <a name="bugs"></a>
 ## 已知问题
 1. 切换到暗模式的时候蓝牙模块和wifi模块需要新的图片资源
+
+<a name="language"></a>
+## 更改语言
+把language.txt的“en“改成”zh-cn“以转换语言。
 
 <a name="images"></a>
 ## 图片介绍
