@@ -85,11 +85,10 @@ PC Users currently not supported
 <a name="update"></a>
 ## Update
 1. Run: `cd ..`
-2. Run: `cd ..`
-3. Run: `cd Project-Pios`
-4. Run: `pip3 install -r r.txt` - if errors are generated than run, `pip install -r r.txt`
-5. Run: `cd project_pios`
-6. Run: `python3 main.py` - if errors are generated than run, `python main.py`
+2. Run: `cd Project-Pios`
+3. Run: `pip3 install -r r.txt` - if errors are generated than run, `pip install -r r.txt`
+4. Run: `cd project_pios`
+5. Run: `python3 main.py` - if errors are generated than run, `python main.py`
 
 <a name="bugs"></a>
 ## Known Bugs
