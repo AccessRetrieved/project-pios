@@ -94,8 +94,8 @@
 6. 运行：`mv project_pios ..`
 7. 运行：`cd ..`
 8. 运行：`rm -rf Project-Pios`
-7. 运行：`cd project_pios`
-8. 运行：`python3 main.py` - 如果出错， 运行`python main.py`
+9. 运行：`cd project_pios`
+10. 运行：`python3 main.py` - 如果出错， 运行`python main.py`
 
 <a name="bugs"></a>
 ## 已知问题
