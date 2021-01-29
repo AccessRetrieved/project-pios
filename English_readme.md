@@ -86,15 +86,14 @@ PC Users currently not supported
 <a name="update"></a>
 ## Update
 1. Run: `cd ..`
-2. Run: `cd ..`
-3. Run: `rm -rf project_pios`
-4. Run: `cd Project-Pios`
-5. Run: `pip3 install -r r.txt` - if errors are generated than run, `pip install -r r.txt`
-6. Run: `mv project_pios ..`
-7. Run: `cd ..`
-8. Run: `rm -rf Project-Pios`
-9. Run: `cd project_pios`
-10. Run: `python3 main.py` - if errors are generated than run, `python main.py`
+2. Run: `rm -rf project_pios`
+3. Run: `cd Project-Pios`
+4. Run: `pip3 install -r r.txt` - if errors are generated than run, `pip install -r r.txt`
+5. Run: `mv project_pios ..`
+6. Run: `cd ..`
+7. Run: `rm -rf Project-Pios`
+8. Run: `cd project_pios`
+9. Run: `python3 main.py` - if errors are generated than run, `python main.py`
 
 <a name="bugs"></a>
 ## Known Bugs
