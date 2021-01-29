@@ -87,7 +87,7 @@
 <a name="update"></a>
 ## 更新
 1. 运行：`cd ..`
-2. 运行：`rm -r project_pios`
+2. 运行：`rm -rf project_pios`
 3. 运行：`cd Project-Pios`
 4. 运行：`pip3 install -r r.txt` - 如果出错，运行`pip install -r r.txt`
 5. 运行：`cd ..`
