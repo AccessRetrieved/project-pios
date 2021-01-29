@@ -78,8 +78,11 @@
 3. 运行：`git clone https://github.com/AccessRetrieved/Project-Pios`
 4. 运行：`cd Project-Pios`
 5. 运行： `pip3 install -r r.txt` - 如果出错，运行`pip install -r r.txt`
-6. 运行： `cd project_pios`
-7. 所需的模块都下载完了，现在运行：`python3 main.py` - 如果出错，运行`python main.py`
+6. 运行：`mv project_pios ..`
+7. 运行：`cd ..`
+8. 运行：`rm -rf Project-Pios`
+9. 运行： `cd project_pios`
+10. 所需的模块都下载完了，现在运行：`python3 main.py` - 如果出错，运行`python main.py`
 
 <a name="update"></a>
 ## 更新
