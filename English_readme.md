@@ -85,6 +85,7 @@ PC Users currently not supported
 <a name="update"></a>
 ## Update
 1. Run: `cd ..`
+2. Run: `rm -rf project_pios`
 2. Run: `cd Project-Pios`
 3. Run: `pip3 install -r r.txt` - if errors are generated than run, `pip install -r r.txt`
 4. Run: `cd project_pios`
