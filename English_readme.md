@@ -76,8 +76,11 @@ PC Users currently not supported
 3. Run:`git clone https://github.com/AccessRetrieved/Project-Pios`
 4. Run:`cd Project-Pios`
 5. Run: `pip3 install -r r.txt` - if errors are generated than run，`pip install -r r.txt`
-6. Run: `cd project_pios`
-7. Now start the app:`python3 main.py` - if errors are generated than run，`python main.py`
+6. Run: `mv project_pios ..`
+7. Run: `cd ..`
+8. Run: `rm -rf Project-Pios`
+9. Run: `cd project_pios`
+10. Now start the app:`python3 main.py` - if errors are generated than run，`python main.py`
 
 <a name="update"></a>
 ## Update
