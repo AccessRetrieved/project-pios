@@ -87,12 +87,10 @@
 <a name="update"></a>
 ## 更新
 1. 运行：`cd ..`
-2. 运行：`cd ..`
-3. 运行：`cd Project-Pios`
-4. 运行：`pip3 install -r r.txt` - 如果出错，运行`pip install -r r.txt`
-5. 运行：`cd project_pios`
-6. 运行：`python3 main.py` - 如果出错， 运行`python main.py`
-
+2. 运行：`cd Project-Pios`
+3. 运行：`pip3 install -r r.txt` - 如果出错，运行`pip install -r r.txt`
+4. 运行：`cd project_pios`
+5. 运行：`python3 main.py` - 如果出错， 运行`python main.py`
 
 <a name="bugs"></a>
 ## 已知问题
