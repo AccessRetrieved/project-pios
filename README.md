@@ -5,8 +5,9 @@
 ## 目录
 1. [版本](#version)
 2. [下载和运行](#install)
-3. [已知问题](#bugs)
-4. [图片介绍](#images)
+3. [更新](#update)
+4. [已知问题](#bugs)
+5. [图片介绍](#images)
 ***
 
 ### 暂时只支持Macbook Air 2018+ 或更好的电脑，比如macbook pro
@@ -79,6 +80,16 @@
 5. 运行： `pip3 install -r r.txt` - 如果出错，运行`pip install -r r.txt`
 6. 运行： `cd project_pios`
 7. 所需的模块都下载完了，现在运行：`python3 main.py` - 如果出错，运行`python main.py`
+
+<a name="update"></a>
+## 更新
+1. 运行：`cd ..`
+2. 运行：`cd ..`
+3. 运行：`cd Project-Pios`
+4. 运行：`pip3 install -r r.txt` - 如果出错，运行`pip install -r r.txt`
+5. 运行：`cd project_pios`
+6. 运行：`python3 main.py` - 如果出错， 运行`python main.py`
+
 
 <a name="bugs"></a>
 ## 已知问题
