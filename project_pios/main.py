@@ -20,6 +20,8 @@ import pyscreenshot
 import yagmail
 from getpass import getuser
 from system.software.update import update
+import csv
+import base64
 from App1.app import import_app, quit_app # Add custom app here
 from App2.app2 import import_app2, quit_app2 # Add second custom app here
 import objc
@@ -336,10 +338,12 @@ def settings(event):
 
     def about_this_mac():
         machine_platform = '机器: ' + platform.machine()
-        machine_system = '系统: ' + platform.system()
+        #machine_system = '系统: ' + platform.system()
+        if platform.system() == 'Darwin':
+            machine_system = '系统: MacOS'
         machine_processor = '芯片: ' + platform.processor()
-        machine_ip = 'IP: ' + socket.gethostbyname(socket.gethostname())
         machine_hostname = '网络名称: ' + socket.gethostname()
+        machine_ip = 'IP: ' + socket.gethostbyname(machine_hostname.replace('网络名称: ', ''))
         machine_mac = 'MAC: ' + ':'.join(re.findall('..', '%012x' % uuid.getnode()))
         machine_ram = '缓存: ' + str(round(psutil.virtual_memory().total / (1024.0 **3))) + ' GB'
 
@@ -1181,11 +1185,6 @@ def clock(event):
     NSClockView.pack(fill=BOTH, expand=True)
     NSClockView.bind('<Button-1>', takedown_pulldown_menu)
 
-    global aa, bb, cc
-    aa = 0
-    bb = 0
-    cc = 0
-
     remove_apps()
     def update_vancouver():
         orig = str(datetime.now())
@@ -1213,19 +1212,6 @@ def clock(event):
             NSClockBeijing['fg'] = dark_theme['fg']
             NSClockBeijingTime['bg'] = dark_theme['bg']
             NSClockBeijingTime['fg'] = dark_theme['fg']
-
-            NSClockStopWatchDisplay['bg'] = dark_theme['bg']
-            NSClockStopWatchDisplay['fg'] = dark_theme['fg']
-            NSClockStopWatchStart['bg'] = dark_theme['fg']
-            NSClockStopWatchStart['fg'] = dark_theme['bg']
-            NSClockStopWatchStop['bg'] = dark_theme['fg']
-            NSClockStopWatchStop['fg'] = dark_theme['bg']
-            NSClockStopWatchReset['bg'] = dark_theme['fg']
-            NSClockStopWatchReset['fg'] = dark_theme['bg']
-
-            NSClockStopWatchStart.config(activebackground='black', activeforeground='white')
-            NSClockStopWatchStop.config(activebackground='black', activeforeground='white')
-            NSClockStopWatchReset.config(activebackground='black', activeforeground='white')
             pass
         else:
             NSClockView.config(bg='white')
@@ -1237,19 +1223,6 @@ def clock(event):
             NSClockBeijing['fg'] = theme['fg']
             NSClockBeijingTime['bg'] = theme['bg']
             NSClockBeijingTime['fg'] = theme['fg']
-
-            NSClockStopWatchDisplay['bg'] = theme['bg']
-            NSClockStopWatchDisplay['fg'] = theme['fg']
-            NSClockStopWatchStart['bg'] = theme['fg']
-            NSClockStopWatchStart['fg'] = theme['bg']
-            NSClockStopWatchStop['bg'] = theme['fg']
-            NSClockStopWatchStop['fg'] = theme['bg']
-            NSClockStopWatchReset['bg'] = theme['fg']
-            NSClockStopWatchReset['fg'] = theme['bg']
-
-            NSClockStopWatchStart.config(activebackground='white', activeforeground='black')
-            NSClockStopWatchStop.config(activebackground='white', activeforeground='black')
-            NSClockStopWatchReset.config(activebackground='white', activeforeground='black')
             pass
 
         NSClockView.after(ms=500, func=change_mode)
@@ -1258,54 +1231,13 @@ def clock(event):
         if NSLanguageValue.get() == 'en':
             NSClockVancouver['text'] = 'Vancouver'
             NSClockBeijing['text'] = 'Beijing'
-            NSClockStopWatchStart['text'] = 'Start'
-            NSClockStopWatchStop['text'] = 'Stop'
-            NSClockStopWatchReset['text'] = 'Reset'
             pass
         else:
             NSClockVancouver['text'] = '温哥华'
             NSClockBeijing['text'] = '北京'
-            NSClockStopWatchStart['text'] = '开始'
-            NSClockStopWatchStop['text'] = '停止'
-            NSClockStopWatchReset['text'] = '重置'
             pass
 
         NSClockView.after(ms=1000, func=change_language)
-
-    def start():
-        global aa, bb, cc
-        NSClockStopWatchStart.config(state = DISABLED)
-        NSClockStopWatchReset.config(state = DISABLED)
-        NSClockStopWatchStop.config(state = NORMAL)
-
-        cc += 1
-        NSClockStopWatchDisplay['text'] = '{}:{}:{}'.format(aa, bb, cc)
-        if cc == 60:
-            cc = 0
-            bb += 1
-            NSClockStopWatchDisplay['text'] = '{}:{}:{}'.format(aa, bb, cc)
-        elif bb == 60:
-            bb = 0
-            aa += 1
-            NSClockStopWatchDisplay['text'] = '{}:{}:{}'.format(aa, bb, cc)
-        global count
-        count = NSClockView.after(ms=1000, func=start)
-
-    def stop():
-        global count
-        NSClockStopWatchStart.config(state = NORMAL)
-        NSClockStopWatchReset.config(state = NORMAL)
-        NSClockStopWatchStop.config(state = DISABLED)
-        NSClockView.after_cancel(count)
-
-    def reset():
-        global aa, bb, cc
-        NSClockStopWatchStart.config(state = NORMAL)
-        NSClockStopWatchStop.config(state = DISABLED)
-        aa = 0
-        bb = 0
-        cc = 0
-        NSClockStopWatchDisplay['text'] = '0:0:0'
 
     NSClockVancouver = Label(NSClockView, text='Vancouver', bg=NSClockView['bg'], font=("Futura", 20), height=4, width=20)
     NSClockVancouver.place(relx=0.19, rely=0.1, anchor=CENTER)
@@ -1318,25 +1250,6 @@ def clock(event):
 
     NSClockBeijingTime = Label(NSClockView, text='', bg=NSClockView['bg'], font=("Futura", 18))
     NSClockBeijingTime.place(relx=0.85, rely=0.2, anchor=CENTER)
-
-    NSClockDivider = ttk.Separator(NSClockView)
-    NSClockDivider.place(relx=0.05, rely=0.25, relwidth=0.9)
-
-    #stop watch
-    NSClockStopWatchDisplay = Label(NSClockView, text='0:0:0', font=("Futura", 30))
-    NSClockStopWatchDisplay.place(relx=0.5, rely=0.355, anchor=CENTER)
-
-    NSClockStopWatchStart = tkmacosx.Button(NSClockView, text='开始', font=("Futura", 12), borderless=1, bg='black', fg='white', activebackground='white', activeforeground='black', command=start)
-    NSClockStopWatchStart.place(relx=0.4, rely=0.45, anchor=CENTER)
-
-    NSClockStopWatchStop = tkmacosx.Button(NSClockView, text='停止', font=("Futura", 12), borderless=1, bg='black', fg='white', activebackground='white', activeforeground='black', command=stop)
-    NSClockStopWatchStop.place(relx=0.6, rely=0.45, anchor=CENTER)
-
-    NSClockStopWatchReset = tkmacosx.Button(NSClockView, text='重置', font=("Futura", 12), borderless=1, bg='black', fg='white', activebackground='white', activeforeground='black', command=reset)
-    NSClockStopWatchReset.place(relx=0.5, rely=0.5, anchor=CENTER)
-
-    NSClockDivider = ttk.Separator(NSClockView)
-    NSClockDivider.place(relx=0.05, rely=0.55, relwidth=0.9)
 
     update_vancouver()
     update_beijing()
@@ -1637,6 +1550,8 @@ def email(event):
                 else:
                     username = open(os.getcwd() + '/system/email/email.txt', 'r').read()
                     word = open(os.getcwd() + '/system/email/password.txt', 'r').read()
+                    username = base64.b64decode(username).decode('utf-8')
+                    word = base64.b64decode(word).decode('utf-8')
                     pass
             with yagmail.SMTP(username, word) as yag:
                 if NSEmailCCBox.get() == '':
@@ -1646,11 +1561,21 @@ def email(event):
                     clear()
 
                     #write credencials to file for next use
-                    with open(os.getcwd() + '/system/email/email.txt', 'w') as email, open(os.getcwd() + '/system/email/password.txt', 'w') as password:
+                    with open(os.getcwd() + '/system/email/email.txt', 'wb') as email, open(os.getcwd() + '/system/email/password.txt', 'wb') as password:
                         email.truncate(0)
                         password.truncate(0)
-                        email.write(username)
-                        password.write(word)
+                        email.write(base64.b64encode(username.encode('ascii')))
+                        password.write(base64.b64encode(word.encode('ascii')))
+
+                        #save to csv file, read than write
+                        with open(os.getcwd() + '/system/email/info.csv', 'a+') as file:
+                            writer = csv.writer(file)
+                            rows = [
+                                ['Time', 'From', 'To', 'Status', 'Subject'],
+                                [datetime.now(), username, NSEmailSenderEmailBox.get(), 'Sent', NSEmailSubjectBox.get()]
+                            ]
+                            writer.writerows(rows)
+                            clear()
                         pass
                 else:
                     pass
@@ -1660,11 +1585,21 @@ def email(event):
                 clear()
 
                 #write credencials to file for next use
-                with open(os.getcwd() + '/system/email/email.txt', 'w') as email, open(os.getcwd() + '/system/email/password.txt', 'w') as password:
+                with open(os.getcwd() + '/system/email/email.txt', 'wb') as email, open(os.getcwd() + '/system/email/password.txt', 'wb') as password:
                     email.truncate(0)
                     password.truncate(0)
-                    email.write(username)
-                    password.write(word)
+                    email.write(base64.b64encode(username.encode('ascii')))
+                    password.write(base64.b64encode(word.encode('ascii')))
+
+                    #save to csv file, read than write
+                    with open(os.getcwd() + '/system/email/info.csv', 'a+') as file:
+                        writer = csv.writer(file)
+                        rows = [
+                            ['Time', 'From', 'To', 'Status', 'Subject'],
+                            [datetime.now(), username, NSEmailSenderEmailBox.get(), 'Sent', NSEmailSubjectBox.get()]
+                        ]
+                        writer.writerows(rows)
+                        clear()
                     pass
         else:
             with open(os.getcwd() + '/system/email/email.txt', 'r') as email, open(os.getcwd() + '/system/email/password.txt', 'r') as password:
@@ -1675,32 +1610,52 @@ def email(event):
                 else:
                     username = open(os.getcwd() + '/system/email/email.txt', 'r').read()
                     word = open(os.getcwd() + '/system/email/password.txt', 'r').read()
+                    username = base64.b64decode(username).decode('utf-8')
+                    word = base64.b64decode(word).decode('utf-8')
                     pass
             with yagmail.SMTP(username, word) as yag:
                 if NSEmailCCBox.get() == '':
                     yag.send(to=NSEmailSenderEmailBox.get(), subject=NSEmailSubjectBox.get(), contents=NSEmailContent.get(1.0, END))
                     messagebox.showinfo(message=f'从 {username} 的邮件已发送。')
-                    clear()
 
                     #write credencials to file for next use
-                    with open(os.getcwd() + '/system/email/email.txt', 'w') as email, open(os.getcwd() + '/system/email/password.txt', 'w') as password:
+                    with open(os.getcwd() + '/system/email/email.txt', 'wb') as email, open(os.getcwd() + '/system/email/password.txt', 'wb') as password:
                         email.truncate(0)
                         password.truncate(0)
-                        email.write(username)
-                        password.write(word)
+                        email.write(base64.b64encode(username.encode('ascii')))
+                        password.write(base64.b64encode(word.encode('ascii')))
+
+                        #save to csv file, read than write
+                        with open(os.getcwd() + '/system/email/info.csv', 'a+') as file:
+                            writer = csv.writer(file)
+                            rows = [
+                                ['Time', 'From', 'To', 'Status', 'Subject'],
+                                [datetime.now(), username, NSEmailSenderEmailBox.get(), 'Sent', NSEmailSubjectBox.get()]
+                            ]
+                            writer.writerows(rows)
+                            clear()
                         pass
                 else:
                     pass
                 yag.send(to=NSEmailSenderEmailBox.get(), subject=NSEmailSubjectBox.get(), contents=NSEmailContent.get(1.0, END), cc=NSEmailCCBox.get())
                 messagebox.showinfo(message=f'从 {username} 的邮件已发送。')
-                clear()
 
                 #write credencials to file for next use
-                with open(os.getcwd() + '/system/email/email.txt', 'w') as email, open(os.getcwd() + '/system/email/password.txt', 'w') as password:
+                with open(os.getcwd() + '/system/email/email.txt', 'wb') as email, open(os.getcwd() + '/system/email/password.txt', 'wb') as password:
                     email.truncate(0)
                     password.truncate(0)
-                    email.write(username)
-                    password.write(word)
+                    email.write(base64.b64encode(username.encode('ascii')))
+                    password.write(base64.b64encode(word.encode('ascii')))
+
+                    #save to csv file, read than write
+                    with open(os.getcwd() + '/system/email/info.csv', 'a+') as file:
+                        writer = csv.writer(file)
+                        rows = [
+                            ['Time', 'From', 'To', 'Status', 'Subject'],
+                            [datetime.now(), username, NSEmailSenderEmailBox.get(), 'Sent', NSEmailSubjectBox.get()]
+                        ]
+                        writer.writerows(rows)
+                        clear()
                     pass
 
     NSEmailSenderEmailLabel = Label(NSEmailView, text='收件人:', font=("Futura", 15))
@@ -1747,11 +1702,12 @@ def check_update():
                 messagebox.showinfo(message='You have a update available. Please go to settings and click on profile. Follow instructions on github to update. \n\n Your version: {v1} \n Target version: {v2}'.format(v1 = NSLocalVersion.get(), v2 = NSVersion.get()))
                 value = messagebox.askquestion(title='Update', message='Update?')
                 if value == 'yes':
+                    messagebox.showinfo(message='Please wait...')
                     update()
-                    messagebox.showinfo(message='Success. Follow instructions on the next page to run your updated Project-Pios.')
-                    webbrowser.open('https://github.com/AccessRetrieved/project-pios/blob/main/English_readme.md#install')
+                    messagebox.showinfo(message='Success. Please follow instruction and re-launch Project-Pios')
+                    webbrowser.open('https://github.com/AccessRetrieved/project-pios/blob/main/README.md#install')
                     os.system('open /System/Applications/Utilities/Terminal.app')
-                    root.destroy()
+                    root.quit()
                     quit()
                     exit()
                 else:
@@ -1760,11 +1716,12 @@ def check_update():
                 messagebox.showinfo(message='Project-Pios可以更新。请前往设置并单击用户，根据指示更新Project-Pios。\n\n 您的版本: {v1} \n 更新版本: {v2}'.format(v1 = NSLocalVersion.get(), v2 = NSVersion.get()))
                 value = messagebox.askquestion(title='更新', message='更新？')
                 if value == 'yes':
+                    messagebox.showinfo(message='请耐心等待...')
                     update()
                     messagebox.showinfo(message='更新成功。请按照以下窗口的指示以运行Project-Pios。')
                     webbrowser.open('https://github.com/AccessRetrieved/project-pios/blob/main/README.md#install')
                     os.system('open /System/Applications/Utilities/Terminal.app')
-                    root.destroy()
+                    root.quit()
                     quit()
                     exit()
                 else:
@@ -2018,4 +1975,3 @@ autoswitch_wallpaper()
 check_bluetooth()
 check_wifi()
 root.mainloop()
-root.update()
