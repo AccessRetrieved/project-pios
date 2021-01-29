@@ -91,7 +91,9 @@
 3. 运行：`rm -rf project_pios`
 4. 运行：`cd Project-Pios`
 5. 运行：`pip3 install -r r.txt` - 如果出错，运行`pip install -r r.txt`
-6. 运行：`cd ..`
+6. 运行：`mv project_pios ..`
+7. 运行：`cd ..`
+8. 运行：`rm -rf Project-Pios`
 7. 运行：`cd project_pios`
 8. 运行：`python3 main.py` - 如果出错， 运行`python main.py`
 
