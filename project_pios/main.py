@@ -1705,7 +1705,7 @@ def check_update():
                     messagebox.showinfo(message='Please wait...')
                     update()
                     messagebox.showinfo(message='Success. Please follow instruction and re-launch Project-Pios')
-                    webbrowser.open('https://github.com/AccessRetrieved/project-pios/blob/main/README.md#update')
+                    webbrowser.open('https://github.com/AccessRetrieved/Project-Pios/blob/main/English_readme.md#update')
                     os.system('open /System/Applications/Utilities/Terminal.app')
                     root.quit()
                     quit()
