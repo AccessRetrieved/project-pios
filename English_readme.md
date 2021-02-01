@@ -16,6 +16,9 @@ PC Users currently not supported
 
 <a name="version"></a>
 ## Versions
+- **Version 4.0.7**
+   - Added launch folder: any file put in launch folder will be opened at Project-Pios startup
+   - Fixed some bugs
 - **Version 4.0.6**
    - Fixed some bugs
 - **Version 4.0.5**
