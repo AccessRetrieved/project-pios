@@ -52,7 +52,7 @@ NSLocalVersion = StringVar()                  #
 #                                             #
 # U P D A T E   T H I S   E V E R Y T I M E ! #
 #                                             #
-NSLocalVersion.set('4.0.7')                   #
+NSLocalVersion.set('4.0.8')                   #
 ###############################################
 ##################################
 #                                #
