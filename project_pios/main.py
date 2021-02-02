@@ -1,12 +1,10 @@
-#! /Library/Frameworks/Python.framework/Versions/3.9/bin/python3
-
 from tkinter import *
 from tkinter import ttk
 from tkinter import simpledialog, messagebox
 from datetime import datetime
 from PIL import Image, ImageTk
 import requests
-import os
+import os, sys
 import tkmacosx
 import platform
 import socket
@@ -14,6 +12,7 @@ import re
 import uuid
 import psutil
 import webview
+from pyzbar import pyzbar
 import sys
 import shutil
 import arrow
@@ -71,7 +70,10 @@ else:
     try:
         files = os.listdir(path)
         for file in files:
-            os.system('open {}'.format(path + file))
+            if file.startswith('.') and os.path.isfile(os.path.join(path, file)):
+                pass
+            else:
+                os.system('open {}'.format(path + file))
     except:
         pass
 
@@ -1831,6 +1833,37 @@ def sleep():
     check_language()
     NSPopupAlert.bind('<Double-1>', close)
 
+def check_qr():
+    # Look for qr codes in photos library
+    path = os.getcwd() + '/system/Library/Photos/'
+
+    if len(os.listdir(path)) == 1 and os.listdir(path)[0].startswith('.') == True or len(os.listdir(path)) == 0:
+        pass
+    else:
+        files = os.listdir(path)
+        for file in files:
+            if file.startswith('.') and os.path.isfile(os.path.join(path, file)):
+                pass
+            else:
+                img = Image.open(path + file)
+                out = pyzbar.decode(img)
+                for i in out:
+                    data = out[0].data.decode('utf-8')
+                    try:
+                        requests.get(data)
+                        if NSLanguageValue.get() == 'en':
+                            ans = messagebox.askyesno(message='Open %s?' % data)
+                            if ans == True:
+                                webbrowser.open(data)
+                                pass
+                        else:
+                            ans = messagebox.askyesno(message='打开 %s?' % data)
+                            if ans == True:
+                                webbrowser.open(data)
+                                pass
+                    except:
+                        pass
+
 NSCanvas = Canvas(root)
 NSCanvas.pack(fill=BOTH, expand=True)
 
@@ -1986,4 +2019,5 @@ update_languages()
 autoswitch_wallpaper()
 check_bluetooth()
 check_wifi()
+check_qr()
 root.mainloop()

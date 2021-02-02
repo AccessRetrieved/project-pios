@@ -6,3 +6,4 @@ pywebview==3.4
 arrow==0.17.0
 pyscreenshot==2.3
 yagmail==0.14.245
+pyzbar==0.1.8
