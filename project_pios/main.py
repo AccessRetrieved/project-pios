@@ -23,6 +23,8 @@ from getpass import getuser
 from system.Software.update import update
 import csv
 import base64
+import json
+import matplotlib.pyplot as plt
 from App1.app import import_app, quit_app # Add custom app here
 from App2.app2 import import_app2, quit_app2 # Add second custom app here
 import objc
@@ -52,7 +54,7 @@ NSLocalVersion = StringVar()                  #
 #                                             #
 # U P D A T E   T H I S   E V E R Y T I M E ! #
 #                                             #
-NSLocalVersion.set('4.0.8')                   #
+NSLocalVersion.set('4.0.9')                   #
 ###############################################
 ##################################
 #                                #
@@ -101,6 +103,8 @@ NSSettingsFrame = IntVar()
 
 NSUpdateAlert = 0
 
+NSScreenTimeCounter = 0
+
 NSLanguageValue = StringVar()
 try:
     with open(os.getcwd() + '/language.txt', 'r') as file:
@@ -139,6 +143,9 @@ NSAutoSwitchCounter = 1
 
 NSBrowserSearchEngine = IntVar()
 NSBrowserSearchEngine.set(0)
+
+def rgbtohex(r, g, b):
+    return f'#{r:02x}{g:02x}{b:02x}'
 
 def update_time():
     orig = str(datetime.now())
@@ -1674,6 +1681,55 @@ def email(event):
                         clear()
                     pass
 
+    def check_darkmode():
+        if NSDarkModeStat.get() == 1:
+            NSEmailView['bg'] = dark_theme['bg']
+            NSEmailSenderEmailLabel['bg'] = dark_theme['bg']
+            NSEmailSenderEmailLabel['fg'] = dark_theme['fg']
+            NSEmailSenderEmailBox['bg'] = dark_theme['bg']
+            NSEmailSenderEmailBox['fg'] = dark_theme['fg']
+            NSEmailCCBox['bg'] = dark_theme['bg']
+            NSEmailCCBox['fg'] = dark_theme['fg']
+            NSEmailCCLabel['bg'] = dark_theme['bg']
+            NSEmailCCLabel['fg'] = dark_theme['fg']
+            NSEmailSubjectLabel['bg'] = dark_theme['bg']
+            NSEmailSubjectLabel['fg'] = dark_theme['fg']
+            NSEmailSubjectBox['bg'] = dark_theme['bg']
+            NSEmailSubjectBox['fg'] = dark_theme['fg']
+            NSEmailContent['bg'] = dark_theme['bg']
+            NSEmailContent['fg'] = dark_theme['fg']
+
+            NSEmailSend['bg'] = dark_theme['bg']
+            NSEmailSend['fg'] = dark_theme['fg']
+            NSEmailSend.config(activebackground='white', activeforeground='black')
+            NSEmailClear['bg'] = dark_theme['bg']
+            NSEmailClear['fg'] = dark_theme['fg']
+            NSEmailClear.config(activebackground='white', activeforeground='black')
+        else:
+            NSEmailView['bg'] = theme['bg']
+            NSEmailSenderEmailLabel['bg'] = theme['bg']
+            NSEmailSenderEmailLabel['fg'] = theme['fg']
+            NSEmailSenderEmailBox['bg'] = theme['bg']
+            NSEmailSenderEmailBox['fg'] = theme['fg']
+            NSEmailCCBox['bg'] = theme['bg']
+            NSEmailCCBox['fg'] = theme['fg']
+            NSEmailCCLabel['bg'] = theme['bg']
+            NSEmailCCLabel['fg'] = theme['fg']
+            NSEmailSubjectLabel['bg'] = theme['bg']
+            NSEmailSubjectLabel['fg'] = theme['fg']
+            NSEmailSubjectBox['bg'] = theme['bg']
+            NSEmailSubjectBox['fg'] = theme['fg']
+            NSEmailContent['bg'] = theme['bg']
+            NSEmailContent['fg'] = theme['fg']
+
+            NSEmailSend['bg'] = theme['bg']
+            NSEmailSend['fg'] = theme['fg']
+            NSEmailSend.config(activebackground='black', activeforeground='white')
+            NSEmailClear['bg'] = theme['bg']
+            NSEmailClear['fg'] = theme['fg']
+            NSEmailClear.config(activebackground='black', activeforeground='white')
+        NSEmailView.after(ms=1000, func=check_darkmode)
+
     NSEmailSenderEmailLabel = Label(NSEmailView, text='收件人:', font=("Futura", 15))
     NSEmailSenderEmailLabel.place(relx=0.1, rely=0.048, anchor=CENTER)
     NSEmailSenderEmailBox = Entry(NSEmailView, width=33)
@@ -1702,6 +1758,7 @@ def email(event):
     NSEmailClear.place(relx=0.1, rely=0.97, anchor=CENTER)
 
     change_language()
+    check_darkmode()
 
 def check_update():
     global NSUpdateAlert
@@ -1754,6 +1811,7 @@ def remove_apps():
     APPEmail.place_forget()
     APPAdd.place_forget()
     APPAdd2.place_forget()
+    APPFriends.place_forget()
 
 def add_apps():
     APPSettings.place(relx=0.2, rely=0.85, anchor=CENTER)
@@ -1762,6 +1820,7 @@ def add_apps():
     APPEmail.place(relx=0.2, rely=0.75, anchor=CENTER)
     APPAdd.place(relx=0.5, rely=0.75, anchor=CENTER)
     APPAdd2.place(relx=0.8, rely=0.75, anchor=CENTER)
+    APPFriends.place(relx=0.2, rely=0.65, anchor=CENTER)
 
 def destroy_apps():
     try:
@@ -1790,10 +1849,22 @@ def destroy_apps():
         quit_app2()
     except:
         pass
+    try:
+        NSFriendsView.destroy()
+    except:
+        pass
+    try:
+        NSFriendsMyView.destroy()
+    except:
+        pass
+    try:
+        NSFriendsCircleView.destroy()
+    except:
+        pass
 
 def add_app(event): # Manage custom app here
     remove_apps()
-    import_app(NSWallpaper)
+    import_app(NSWallpaper, launch_screen_time=1000)
 
 def add_app2(event): # Manage second custom app here
     remove_apps()
@@ -1851,18 +1922,262 @@ def check_qr():
                     data = out[0].data.decode('utf-8')
                     try:
                         requests.get(data)
-                        if NSLanguageValue.get() == 'en':
-                            ans = messagebox.askyesno(message='Open %s?' % data)
-                            if ans == True:
-                                webbrowser.open(data)
-                                pass
-                        else:
-                            ans = messagebox.askyesno(message='打开 %s?' % data)
-                            if ans == True:
-                                webbrowser.open(data)
-                                pass
+                        if 'u.wechat.com' in data:
+                            if NSLanguageValue.get() == 'en':
+                                ans = messagebox.askyesno(message='Open WeChat Contact? \n\nWebsite: %s' % data)
+                                if ans == True:
+                                    webbrowser.open(data)
+                                    pass
+                            else:
+                                ans = messagebox.askyesno(message='打开微信联系人? \n\n网址: %s' % data)
+                                if ans == True:
+                                    webbrowser.open(data)
+                                    pass
                     except:
                         pass
+
+def friends(event):
+    global NSFriendsView
+    NSFriendsView = Frame(NSWallpaper)
+    NSFriendsView.pack(fill=BOTH, expand=True)
+    NSFriendsView.bind("<Button-1>", takedown_pulldown_menu)
+
+    remove_apps()
+
+    def check_language():
+        if NSLanguageValue.get() == 'en':
+            NSFriendsMy['text'] = 'My'
+            NSFriendsCircle['text'] = 'Circle'
+            NSFriendsHint['text'] = 'Friend Circle is under development!'
+        else:
+            NSFriendsMy['text'] = '我'
+            NSFriendsCircle['text'] = '发现'
+            NSFriendsHint['text'] = '朋友圈正在开发中!'
+        
+        NSFriendsView.after(ms=1000, func=check_language)
+
+    def check_darkmode():
+        if NSDarkModeStat.get() == 1:
+            NSFriendsView['bg'] = dark_theme['bg']
+            NSFriendsHint['bg'] = dark_theme['bg']
+            NSFriendsHint['fg'] = dark_theme['fg']
+            
+            NSFriendsMy['bg'] = dark_theme['bg']
+            NSFriendsMy['fg'] = dark_theme['fg']
+            NSFriendsMy.config(activebackground='white', activeforeground='black')
+            NSFriendsCircle['bg'] = dark_theme['bg']
+            NSFriendsCircle['fg'] = dark_theme['fg']
+            NSFriendsCircle.config(activebackground='white', activeforeground='black')
+        else:
+            NSFriendsView['bg'] = theme['bg']
+            NSFriendsHint['bg'] = theme['bg']
+            NSFriendsHint['fg'] = theme['fg']
+            
+            NSFriendsMy['bg'] = theme['bg']
+            NSFriendsMy['fg'] = theme['fg']
+            NSFriendsMy.config(activebackground='black', activeforeground='white')
+            NSFriendsCircle['bg'] = theme['bg']
+            NSFriendsCircle['fg'] = theme['fg']
+            NSFriendsCircle.config(activebackground='black', activeforeground='white')
+        NSFriendsView.after(ms=1000, func=check_darkmode)
+
+    def switch_my():
+        global NSFriendsMyView
+        NSFriendsView.pack_forget()
+        NSFriendsMyView = Frame(NSWallpaper)
+        NSFriendsMyView.pack(fill=BOTH, expand=True)
+        NSFriendsMyView.bind('<Button-1>', takedown_pulldown_menu)
+
+        remove_apps()
+        check_qr()
+
+        def check_language():
+            if NSLanguageValue.get() == 'en':
+                NSFriendsMyBack['text'] = 'Back'
+            else:
+                NSFriendsMyBack['text'] = '返回'
+            NSFriendsMyView.after(ms=1000, func=check_language)
+
+        def check_mode():
+            if NSDarkModeStat.get() == 1:
+                NSFriendsMyView['bg'] = dark_theme['bg']
+                NSFriendsMyBack['bg'] = dark_theme['bg']
+                NSFriendsMyBack['fg'] = dark_theme['fg']
+                NSFriendsMyBack.config(activebackground='white', activeforeground='black')
+            else:
+                NSFriendsMyView['bg'] = theme['bg']
+                NSFriendsMyBack['bg'] = theme['bg']
+                NSFriendsMyBack['fg'] = theme['fg']
+                NSFriendsMyBack.config(activebackground='black', activeforeground='white')
+            NSFriendsMyView.after(ms=1000, func=check_mode)
+
+        def close():
+            NSFriendsView.pack(fill=BOTH, expand=True)
+            NSFriendsMyView.destroy()
+
+        NSFriendsMyBack = tkmacosx.Button(NSFriendsMyView, text='返回', font=("Arial", 12), borderless=1, activebackground='black', activeforeground='white', command=close)
+        NSFriendsMyBack.place(relx=0.5, rely=0.93, anchor=CENTER)
+
+        check_language()
+        check_mode()
+
+    def switch_circle():
+        global NSFriendsCircleView
+        NSFriendsView.pack_forget()
+        NSFriendsCircleView = Frame(NSWallpaper)
+        NSFriendsCircleView.pack(fill=BOTH, expand=True)
+        NSFriendsCircleView.bind("<Button-1>", takedown_pulldown_menu)
+
+        remove_apps()
+        
+        def check_language():
+            if NSLanguageValue.get() == 'en':
+                NSFriendsCircleBack['text'] = 'Back'
+            else:
+                NSFriendsCircleBack['text'] = '返回'
+            NSFriendsCircleView.after(ms=1000, func=check_language)
+
+        def check_mode():
+            if NSDarkModeStat.get() == 1:
+                NSFriendsCircleView['bg'] = dark_theme['bg']
+                NSFriendsCircleBack['bg'] = dark_theme['bg']
+                NSFriendsCircleBack['fg'] = dark_theme['fg']
+                NSFriendsCircleBack.config(activebackground='white', activeforeground='black')
+            else:
+                NSFriendsCircleView['bg'] = theme['bg']
+                NSFriendsCircleBack['bg'] = theme['bg']
+                NSFriendsCircleBack['fg'] = theme['fg']
+                NSFriendsCircleBack.config(activebackground='black', activeforeground='white')
+            NSFriendsCircleView.after(ms=1000, func=check_mode)
+
+        def close():
+            NSFriendsView.pack(fill=BOTH, expand=True)
+            NSFriendsCircleView.destroy()
+
+        NSFriendsCircleBack = tkmacosx.Button(NSFriendsCircleView, text='返回', font=("Arial", 12), borderless=1, activebackground='black', activeforeground='white', command=close)
+        NSFriendsCircleBack.place(relx=0.5, rely=0.93, anchor=CENTER)
+
+        check_language()
+        check_mode()
+
+    NSFriendsHint = Label(NSFriendsView, text='Friend Circle is under development!', font=("Arial", 20))
+    NSFriendsHint.place(relx=0.5, rely=0.4, anchor=CENTER)
+
+    NSFriendsMy = tkmacosx.CircleButton(NSFriendsView, text='我', font=("Arial", 12), borderless=1, radius=25, activebackground='black', activeforeground='white', command=switch_my)
+    NSFriendsMy.place(relx=0.1, rely=0.95, anchor=CENTER)
+
+    NSFriendsCircle = tkmacosx.CircleButton(NSFriendsView, text='发现', font=("Arial", 12), borderless=1, radius=25, activebackground='black', activeforeground='white', command=switch_circle)
+    NSFriendsCircle.place(relx=0.9, rely=0.95, anchor=CENTER)
+
+    check_language()
+    check_darkmode()
+
+def update_screentime():
+    global NSScreenTimeCounter
+    NSScreenTimeCounter += 1
+    if datetime.today().weekday() == 1:
+        os.remove(os.getcwd() + '/system/Library/ScreenTime/info.json')
+        with open(os.getcwd() + '/system/Library/ScreenTime/info.json', 'w') as file:
+            data = {
+                '_comment': 'Number on the left is the weekday, and number on the right is how many minutes the app is used',
+                '1': 0,
+                '2': 0,
+                '3': 0,
+                '4': 0,
+                '5': 0,
+                '6': 0,
+                '7': 0
+            }
+            json.dump(data, file, indent=4)
+    try:
+        with open(os.getcwd() + '/system/Library/ScreenTime/info.json', 'r') as file:
+            data = json.load(file)
+        today = str(datetime.today().weekday())
+        data[today] = NSScreenTimeCounter
+        with open(os.getcwd() + '/system/Library/ScreenTime/info.json', 'w') as file:
+            json.dump(data, file, indent=4)
+    except:
+        with open(os.getcwd() + '/system/Library/ScreenTime/info.json', 'w') as file:
+            data = {
+                '_comment': 'Number on the left is the weekday, and number on the right is how many minutes the app is used',
+                '1': 0,
+                '2': 0,
+                '3': 0,
+                '4': 0,
+                '5': 0,
+                '6': 0,
+                '7': 0
+            }
+            json.dump(data, file, indent=4)
+    NSCanvas.after(ms=60000, func=update_screentime)
+
+def simulator_settings(event):
+    preferences = Toplevel()
+    preferences.title('模拟器设置')
+    preferences.geometry('300x200')
+    preferences['bg'] = rgbtohex(235, 235, 235)
+    preferences.grab_set()
+
+    def check_mode():
+        if NSDarkModeStat.get() == 1:
+            preferences['bg'] = rgbtohex(40, 40, 40)
+
+            NSPreferencesScreenTimeLabel['bg'] = rgbtohex(40, 40, 40)
+            NSPreferencesScreenTimeLabel['fg'] = dark_theme['fg']
+            NSPreferencesScreenTimeButton['bg'] = rgbtohex(40, 40, 40)
+            NSPreferencesScreenTimeButton['fg'] = dark_theme['fg']
+        else:
+            preferences['bg'] = rgbtohex(235, 235, 235)
+
+            NSPreferencesScreenTimeLabel['bg'] = rgbtohex(235, 235, 235)
+            NSPreferencesScreenTimeLabel['fg'] = theme['fg']
+            NSPreferencesScreenTimeButton['bg'] = rgbtohex(235, 235, 235)
+            NSPreferencesScreenTimeButton['fg'] = theme['fg']
+        preferences.after(ms=1000, func=check_mode)
+
+    def check_language():
+        if NSLanguageValue.get() == 'en':
+            preferences.title('Simulator Preferences')
+        else:
+            preferences.title('模拟器设置')
+        preferences.after(ms=1000, func=check_language)
+
+    def get_screentime():
+        with open(os.getcwd() + '/system/Library/ScreenTime/info.json', 'r') as infile:
+            data = json.load(infile)
+        x = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+        y = [data['1'], data['2'], data['3'], data['4'], data['5'], data['6'], data['7']]
+
+        plt.plot(x, y)
+        plt.show()
+
+    def close():
+        preferences.grab_release()
+        preferences.destroy()
+
+    NSPreferencesScreenTimeLabel = Label(preferences, text='查看屏幕使用时间', font=("Arial", 13))
+    NSPreferencesScreenTimeLabel.place(relx=0.25, rely=0.1, anchor=CENTER)
+
+    NSPreferencesScreenTimeButton = tkmacosx.Button(preferences, text='查看', font=("Arial", 13), borderless=1, command=get_screentime)
+    NSPreferencesScreenTimeButton.place(relx=0.8, rely=0.1, anchor=CENTER)
+
+    NSPreferencesDivider = ttk.Separator(preferences, orient=HORIZONTAL)
+    NSPreferencesDivider.place(relx=0.5, rely=0.23, anchor=CENTER, relwidth=0.9)
+
+    check_mode()
+    check_language()
+    preferences.protocol("WM_DELETE_WINDOW", close)
+    preferences.mainloop()
+
+def save_screentime():
+    if datetime.now().weekday() == 7:
+        if os.path.exists(os.getcwd() + '/system/Library/ScreenTime/History') == True:
+            shutil.copy(src=os.getcwd() + '/system/Library/ScreenTime/info.json', dst=os.getcwd() + '/system/Library/ScreenTime/History/{}/info.json'.format(datetime.now().date()))
+        else:
+            os.mkdir(os.getcwd() + '/system/Library/ScreenTime/History')
+            os.mkdir(os.getcwd() + '/system/Library/ScreenTime/History/{}'.format(datetime.now().date()))
+            shutil.copy(src=os.getcwd() + '/system/Library/ScreenTime/info.json', dst=os.getcwd() + '/system/Library/ScreenTime/History/{}/info.json'.format(datetime.now().date()))
+    NSCanvas.after(ms=10000, func=save_screentime)
 
 NSCanvas = Canvas(root)
 NSCanvas.pack(fill=BOTH, expand=True)
@@ -1987,6 +2302,13 @@ APPAdd2 = Label(NSCanvas, text='', image=appadd2pic, border=0)
 APPAdd2.place(relx=0.8, rely=0.75, anchor=CENTER)
 APPAdd2.bind('<Button-1>', add_app2)
 
+appfriendsimg = Image.open(os.getcwd() + '/friends.jpg')
+appfriendsimg = appfriendsimg.resize((40, 40), Image.ANTIALIAS)
+appfriendspic = ImageTk.PhotoImage(appfriendsimg)
+APPFriends = Label(NSCanvas, text='', image=appfriendspic, border=0)
+APPFriends.place(relx=0.2, rely=0.65, anchor=CENTER)
+APPFriends.bind('<Button-1>', friends)
+
 NSHomeView = Label(NSCanvas, text=' ', font=("Futura", 1), height=0, width=200, bg='#dddddd')
 NSHomeView.place(relx=0.5, rely=0.97, anchor=CENTER)
 NSHomeView.bind('<Button-1>', return_home)
@@ -2019,5 +2341,7 @@ update_languages()
 autoswitch_wallpaper()
 check_bluetooth()
 check_wifi()
-check_qr()
+update_screentime()
+save_screentime()
+root.bind("<Command-,>", simulator_settings)
 root.mainloop()
