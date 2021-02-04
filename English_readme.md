@@ -16,6 +16,11 @@ PC Users currently not supported
 
 <a name="version"></a>
 ## Versions
+- **Version 5.0**
+   - Added screen time record
+   - Added system preferences for simulator (Activate by `Command-,`)
+- **Version 4.0.8**
+   - Added auto-scan qr codes stored in album to check for any contacts
 - **Version 4.0.7**
    - Added launch folder: any file put in launch folder will be opened at Project-Pios startup
    - Fixed some bugs
