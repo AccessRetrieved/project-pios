@@ -7,7 +7,7 @@
 2. [下载和运行](#install)
 3. [更新](#update)
 4. [已知问题](#bugs)
-5. ['语音'](#language)
+5. [语言](#language)
 5. [图片介绍](#images)
 ***
 
