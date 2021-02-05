@@ -8,6 +8,7 @@
 3. [已知问题](#bugs)
 4. [语言](#language)
 5. [图片介绍](#images)
+6. [帮手](#helpers)
 ***
 
 ### 暂时只支持Macbook Air 2018+ 或更好的电脑，比如macbook pro
@@ -106,5 +107,10 @@
 ![1](https://i.ibb.co/gPq0pNW/Screen-Shot-2021-01-23-at-1-10-59-PM.png)
 ![2](https://i.ibb.co/Lp6j161/Screen-Shot-2021-01-23-at-1-11-25-PM.png)
 ![3](https://i.ibb.co/FqknCvn/Screen-Shot-2021-01-23-at-1-11-36-PM.png)
+
+<a name="helpers"></a>
+## 帮手
+1. [图片转文字](https://github.com/AccessRetrieved/OCR/tree/master)
+2. [扫描二维码]
 
 [回到顶部 ↑](#top)
