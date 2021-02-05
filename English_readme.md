@@ -5,10 +5,9 @@ Operating system with python. [Switch to Chinese Readme](https://github.com/Acce
 ## Table of contents
 1. [Versions](#version)
 2. [Installing and executing](#install)
-3. [Update](#update)
-4. [Known Bugs](#bugs)
-5. ['Language'](#language)
-6. [Images](#images)
+3. [Known Bugs](#bugs)
+4. ['Language'](#language)
+5. [Images](#images)
 ***
 
 ### Newer than macbook air 2018+ or macbook pro 2018+
@@ -91,18 +90,6 @@ PC Users currently not supported
 11. Run: `rm -rf Project-Pios`
 12. Run: `cd project_pios`
 13. Now start the app:`python3 main.py` - if errors are generated than run，`python main.py`
-
-<a name="update"></a>
-## Update
-1. Run: `cd ..`
-2. Run: `rm -rf project_pios`
-3. Run: `cd Project-Pios`
-4. Run: `pip3 install -r r.txt` - if errors are generated than run, `pip install -r r.txt`
-5. Run: `mv project_pios ..`
-6. Run: `cd ..`
-7. Run: `rm -rf Project-Pios`
-8. Run: `cd project_pios`
-9. Run: `python3 main.py` - if errors are generated than run, `python main.py`
 
 <a name="bugs"></a>
 ## Known Bugs

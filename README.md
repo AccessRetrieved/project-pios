@@ -5,9 +5,8 @@
 ## 目录
 1. [版本](#version)
 2. [下载和运行](#install)
-3. [更新](#update)
-4. [已知问题](#bugs)
-5. [语言](#language)
+3. [已知问题](#bugs)
+4. [语言](#language)
 5. [图片介绍](#images)
 ***
 
@@ -93,18 +92,6 @@
 11. 运行：`rm -rf Project-Pios`
 12. 运行： `cd project_pios`
 13. 所需的模块都下载完了，现在运行：`python3 main.py` - 如果出错，运行`python main.py`
-
-<a name="update"></a>
-## 更新
-1. 运行：`cd ..`
-2. 运行：`rm -rf project_pios`
-3. 运行：`cd Project-Pios`
-4. 运行：`pip3 install -r r.txt` - 如果出错，运行`pip install -r r.txt`
-5. 运行：`mv project_pios ..`
-6. 运行：`cd ..`
-7. 运行：`rm -rf Project-Pios`
-8. 运行：`cd project_pios`
-9. 运行：`python3 main.py` - 如果出错， 运行`python main.py`
 
 <a name="bugs"></a>
 ## 已知问题
