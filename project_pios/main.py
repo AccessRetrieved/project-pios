@@ -2212,22 +2212,11 @@ def simulator_settings(event):
             helper.grab_release()
             helper.destroy()
 
-        def change_language():
-            if NSLanguageValue.get() == 'en':
-                helper.title('Helper')
-            
-                NSHelperText['text'] = 'Install Helper'
-            else:
-                helper.title('帮手')
-
-                NSHelperText['text'] = '下载帮手'
-            helper.after(ms=1000, func=change_language)
-
         def install():
             module = NSHelperSelection.get(NSHelperSelection.curselection())
             if module == 'OCR - Optical Characters Recognition':
                 download_ocr()
-                ask = messagebox.askyesno(message='Complete!')
+                ask = messagebox.askyesno(message='下载成功，运行?')
                 if ask == True:
                     subprocess.Popen('%s' % os.getcwd() + '/system/Library/Helpers/OCR/ocr.py', shell=True)
                 else:
@@ -2243,7 +2232,6 @@ def simulator_settings(event):
         NSHelperInstall = tkmacosx.Button(helper, text='下载', borderless=1, command=install)
         NSHelperInstall.place(relx=0.5, rely=0.9, anchor=CENTER)
 
-        change_language()
         helper.protocol("WM_DELETE_WINDOW", close)
         helper.mainloop()
 
