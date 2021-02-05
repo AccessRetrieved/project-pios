@@ -111,6 +111,6 @@
 <a name="helpers"></a>
 ## 帮手
 1. [图片转文字](https://github.com/AccessRetrieved/OCR/tree/master)
-2. [扫描二维码]
+2. [扫描二维码](https://github.com/AccessRetrieved/Qr-Code-Scanner)
 
 [回到顶部 ↑](#top)
