@@ -8,6 +8,7 @@ Operating system with python. [Switch to Chinese Readme](https://github.com/Acce
 3. [Known Bugs](#bugs)
 4. ['Language'](#language)
 5. [Images](#images)
+6. [Add-Ons](#helpers)
 ***
 
 ### Newer than macbook air 2018+ or macbook pro 2018+
@@ -109,5 +110,10 @@ Change language by changing the language.txt from "zh-cn" to "en".
 ![5](https://i.ibb.co/Lp6j161/Screen-Shot-2021-01-23-at-1-11-25-PM.png)
 ![6](https://i.ibb.co/2N2g648/Screen-Shot-2021-01-23-at-1-11-32-PM.png)
 ![7](https://i.ibb.co/FqknCvn/Screen-Shot-2021-01-23-at-1-11-36-PM.png)
+
+<a name="helpers"></a>
+## Add-Ons
+1. [OCR - Optical Characters Recognition](https://github.com/AccessRetrieved/OCR/tree/master)
+2. [Qr Code Scanner](https://github.com/AccessRetrieved/Qr-Code-Scanner)
 
 [Back to top ↑](#top)
