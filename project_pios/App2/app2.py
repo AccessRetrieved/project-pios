@@ -8,9 +8,6 @@ import tkmacosx # Helper for designing
 # quit_app2 is needed to return to home screen
 
 def import_app2(window, launch_screen_time=1000): # customize app here
-    '''
-    Param launch_screen_time is time for launch screen in milliseconds.
-    '''
     global NSApp2View
     NSApp2View = Frame(window) # Make sure to use NSApp2View as main window, ex. root, or master
     NSApp2View.pack(fill=BOTH, expand=True)
@@ -83,7 +80,7 @@ def import_app2(window, launch_screen_time=1000): # customize app here
 
 
     # Customize launch screen here
-    img = Image.open(os.getcwd() + '/App2/launch/launch.png')
+    img = Image.open(os.getcwd() + '/project_pios/App2/launch/launch.png')
     pic = ImageTk.PhotoImage(img)
 
     def launch_app():

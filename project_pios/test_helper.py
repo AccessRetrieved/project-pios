@@ -5,9 +5,6 @@ from App2.app2 import import_app2, quit_app2
 root = Tk()
 root.geometry('400x800')
 
-import_app2(root, 500)
-
-def see():
-    print('success!')
+import_app(root, 500)
 
 root.mainloop()

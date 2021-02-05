@@ -21,15 +21,19 @@ import pyscreenshot
 import yagmail
 from getpass import getuser
 from system.Software.update import update
+from system.Software.ocr import download_ocr
 import csv
 import base64
 import json
 import matplotlib.pyplot as plt
+import subprocess
+from modules.RoundedButton import RoundedButton
 from App1.app import import_app, quit_app # Add custom app here
 from App2.app2 import import_app2, quit_app2 # Add second custom app here
 import objc
 
-#change all path from "/FILE" to "/FILE" for github
+# change all path from "/FILE" to "/FILE" for github
+# In settings and friends app change name to getuser()
 
 # Custom App Icons
 NSCustomAppIcon1 = os.getcwd() + '/app1.png'
@@ -54,7 +58,7 @@ NSLocalVersion = StringVar()                  #
 #                                             #
 # U P D A T E   T H I S   E V E R Y T I M E ! #
 #                                             #
-NSLocalVersion.set('5.0')                     #
+NSLocalVersion.set('4.9.0')                   #
 ###############################################
 ##################################
 #                                #
@@ -127,13 +131,13 @@ NSBluetoothCount = 0
 response = os.popen('blueutil -p').read()
 if response == '1\n':
     NSBluetoothValue.set(1)
-    with open(os.getcwd() + '/system/wifi/bool.txt', 'w') as file:
+    with open(os.getcwd() + '/system/bluetooth/bool.txt', 'w') as file:
         file.truncate(0)
         file.write('true')
         pass
 else:
     NSBluetoothValue.set(0)
-    with open(os.getcwd() + '/system/wifi/bool.txt', 'w') as file:
+    with open(os.getcwd() + '/system/bluetooth/bool.txt', 'w') as file:
         file.truncate(0)
         file.write('false')
         pass
@@ -461,7 +465,7 @@ def settings(event):
                 NSSettingsAbout['text'] = 'About'
                 pass
             else:
-                NSSettingsProfile['text'] = '    胡家睿'
+                NSSettingsProfile['text'] = '    {}'.format(getuser())
                 NSSettingsWallpaper['text'] = '壁纸'
                 NSSettingsPrivacy['text'] = '隐私'
                 NSSettingsAbout['text'] = '关于本机'
@@ -519,7 +523,7 @@ def settings(event):
                 NSSettingsAbout['text'] = 'About'
                 pass
             else:
-                NSSettingsProfile['text'] = '    胡家睿'
+                NSSettingsProfile['text'] = '    {}'.format(getuser())
                 NSSettingsWallpaper['text'] = '壁纸'
                 NSSettingsPrivacy['text'] = '隐私'
                 NSSettingsAbout['text'] = '关于本机'
@@ -714,7 +718,7 @@ def settings(event):
                 NSSettingsAbout['text'] = 'About'
                 pass
             else:
-                NSSettingsProfile['text'] = '    胡家睿'
+                NSSettingsProfile['text'] = '    {}'.format(getuser())
                 NSSettingsWallpaper['text'] = '壁纸'
                 NSSettingsPrivacy['text'] = '隐私'
                 NSSettingsAbout['text'] = '关于本机'
@@ -786,7 +790,7 @@ def settings(event):
             NSSettingsAbout['text'] = 'About'
             pass
         else:
-            NSSettingsProfile['text'] = '    胡家睿'
+            NSSettingsProfile['text'] = '    {}'.format(getuser())
             NSSettingsSearchEngine['text'] = '浏览器'
             NSSettingsWallpaper['text'] = '壁纸'
             NSSettingsPrivacy['text'] = '隐私'
@@ -1777,8 +1781,6 @@ def check_update():
                 if value == 'yes':
                     messagebox.showinfo(message='Please wait...')
                     update()
-                    messagebox.showinfo(message='Success. Please follow instruction and re-launch Project-Pios')
-                    webbrowser.open('https://github.com/AccessRetrieved/Project-Pios/blob/main/English_readme.md#update')
                     root.quit()
                     quit()
                     exit()
@@ -1790,8 +1792,6 @@ def check_update():
                 if value == 'yes':
                     messagebox.showinfo(message='请耐心等待...')
                     update()
-                    messagebox.showinfo(message='更新成功。请按照以下窗口的指示以运行Project-Pios。')
-                    webbrowser.open('https://github.com/AccessRetrieved/project-pios/blob/main/README.md#update')
                     root.quit()
                     quit()
                     exit()
@@ -2004,16 +2004,41 @@ def friends(event):
                 NSFriendsMyBack['bg'] = dark_theme['bg']
                 NSFriendsMyBack['fg'] = dark_theme['fg']
                 NSFriendsMyBack.config(activebackground='white', activeforeground='black')
+
+                NSFriendsMyProfileBox['bg'] = dark_theme['bg']
+                NSFriendsMyProfileNameContainer['bg'] = rgbtohex(234, 234, 234)
+                NSFriendsMyProfileBirthdayContainer['bg'] = rgbtohex(234, 234, 234)
             else:
                 NSFriendsMyView['bg'] = theme['bg']
                 NSFriendsMyBack['bg'] = theme['bg']
                 NSFriendsMyBack['fg'] = theme['fg']
                 NSFriendsMyBack.config(activebackground='black', activeforeground='white')
+
+                NSFriendsMyProfileBox['bg'] = theme['bg']
+                NSFriendsMyProfileNameContainer['bg'] = rgbtohex(234, 234, 234)
+                NSFriendsMyProfileBirthdayContainer['bg'] = rgbtohex(234, 234, 234)
             NSFriendsMyView.after(ms=1000, func=check_mode)
 
         def close():
             NSFriendsView.pack(fill=BOTH, expand=True)
             NSFriendsMyView.destroy()
+
+        NSFriendsMyProfileBox = RoundedButton(NSFriendsMyView, 380, 100, 20, 0, rgbtohex(234, 234, 234), 'white')
+        NSFriendsMyProfileBox.place(relx=0.5, rely=0.13, anchor=CENTER)
+
+        NSFriendsMyProfileimg = Image.open(os.getcwd() + '/profile.png')
+        NSFriendsMyProfileimg = NSFriendsMyProfileimg.resize((50, 50), Image.ANTIALIAS)
+        NSFriendsMyProfilepic = ImageTk.PhotoImage(NSFriendsMyProfileimg)
+
+        NSFriendsMyProfileImageContainer = Label(NSFriendsMyView, image=NSFriendsMyProfilepic, font=("Futura", 20), bg=rgbtohex(234, 234, 234))
+        NSFriendsMyProfileImageContainer.image = NSFriendsMyProfilepic
+        NSFriendsMyProfileImageContainer.place(relx=0.2, rely=0.13, anchor=CENTER)
+        
+        NSFriendsMyProfileNameContainer = Label(NSFriendsMyView, text='{}'.format(getuser()), font=("Futura", 20), bg=rgbtohex(234, 234, 234))
+        NSFriendsMyProfileNameContainer.place(relx=0.4, rely=0.12, anchor=CENTER)
+
+        NSFriendsMyProfileBirthdayContainer = Label(NSFriendsMyView, text='0000/00/00', font=("Futura", 12), bg=rgbtohex(234, 234, 234), fg=rgbtohex(38, 39, 40))
+        NSFriendsMyProfileBirthdayContainer.place(relx=0.42, rely=0.15, anchor=CENTER)
 
         NSFriendsMyBack = tkmacosx.Button(NSFriendsMyView, text='返回', font=("Arial", 12), borderless=1, activebackground='black', activeforeground='white', command=close)
         NSFriendsMyBack.place(relx=0.5, rely=0.93, anchor=CENTER)
@@ -2075,20 +2100,6 @@ def friends(event):
 def update_screentime():
     global NSScreenTimeCounter
     NSScreenTimeCounter += 1
-    if datetime.today().weekday() == 1:
-        os.remove(os.getcwd() + '/system/Library/ScreenTime/info.json')
-        with open(os.getcwd() + '/system/Library/ScreenTime/info.json', 'w') as file:
-            data = {
-                '_comment': 'Number on the left is the weekday, and number on the right is how many minutes the app is used',
-                '1': 0,
-                '2': 0,
-                '3': 0,
-                '4': 0,
-                '5': 0,
-                '6': 0,
-                '7': 0
-            }
-            json.dump(data, file, indent=4)
     try:
         with open(os.getcwd() + '/system/Library/ScreenTime/info.json', 'r') as file:
             data = json.load(file)
@@ -2126,6 +2137,14 @@ def simulator_settings(event):
             NSPreferencesScreenTimeLabel['fg'] = dark_theme['fg']
             NSPreferencesScreenTimeButton['bg'] = rgbtohex(40, 40, 40)
             NSPreferencesScreenTimeButton['fg'] = dark_theme['fg']
+            
+            NSPreferencesCleanCacheLabel['bg'] = rgbtohex(40, 40, 40)
+            NSPreferencesCleanCacheLabel['fg'] = dark_theme['fg']
+            NSPreferencesCleanCacheButton['bg'] = rgbtohex(40, 40, 40)
+            NSPreferencesCleanCacheButton['fg'] = dark_theme['fg']
+
+            NSPreferencesDownloadHelperButton['bg'] = rgbtohex(40, 40, 40)
+            NSPreferencesDownloadHelperButton['fg'] = dark_theme['fg']
         else:
             preferences['bg'] = rgbtohex(235, 235, 235)
 
@@ -2133,13 +2152,37 @@ def simulator_settings(event):
             NSPreferencesScreenTimeLabel['fg'] = theme['fg']
             NSPreferencesScreenTimeButton['bg'] = rgbtohex(235, 235, 235)
             NSPreferencesScreenTimeButton['fg'] = theme['fg']
+
+            NSPreferencesCleanCacheLabel['bg'] = rgbtohex(235, 235, 235)
+            NSPreferencesCleanCacheLabel['fg'] = theme['fg']
+            NSPreferencesCleanCacheButton['bg'] = rgbtohex(235, 235, 235)
+            NSPreferencesCleanCacheButton['fg'] = theme['fg']
+
+            NSPreferencesDownloadHelperButton['bg'] = rgbtohex(235, 235, 235)
+            NSPreferencesDownloadHelperButton['fg'] = theme['fg']
         preferences.after(ms=1000, func=check_mode)
 
     def check_language():
         if NSLanguageValue.get() == 'en':
             preferences.title('Simulator Preferences')
+
+            NSPreferencesScreenTimeLabel['text'] = 'Screen Time Usage'
+            NSPreferencesScreenTimeButton['text'] = 'Open'
+
+            NSPreferencesCleanCacheLabel['text'] = 'Clean Cache'
+            NSPreferencesCleanCacheButton['text'] = 'Clean'
+
+            NSPreferencesDownloadHelperButton['text'] = 'Download Helper'
         else:
             preferences.title('模拟器设置')
+
+            NSPreferencesScreenTimeLabel['text'] = '查看屏幕使用时间'
+            NSPreferencesScreenTimeButton['text'] = '查看'
+
+            NSPreferencesCleanCacheLabel['text'] = '清理缓存'
+            NSPreferencesCleanCacheButton['text'] = '清理'
+
+            NSPreferencesDownloadHelperButton['text'] = '下载帮手'
         preferences.after(ms=1000, func=check_language)
 
     def get_screentime():
@@ -2155,6 +2198,55 @@ def simulator_settings(event):
         preferences.grab_release()
         preferences.destroy()
 
+    def clean_cache():
+        os.system('find . -type d -name  "__pycache__" -exec rm -r {} +')
+
+    def download_helper():
+        helper = Toplevel()
+        helper.title('帮手')
+        helper.geometry('500x400')
+        helper['bg'] = rgbtohex(235, 235, 235)
+        helper.grab_set()
+
+        def close():
+            helper.grab_release()
+            helper.destroy()
+
+        def change_language():
+            if NSLanguageValue.get() == 'en':
+                helper.title('Helper')
+            
+                NSHelperText['text'] = 'Install Helper'
+            else:
+                helper.title('帮手')
+
+                NSHelperText['text'] = '下载帮手'
+            helper.after(ms=1000, func=change_language)
+
+        def install():
+            module = NSHelperSelection.get(NSHelperSelection.curselection())
+            if module == 'OCR - Optical Characters Recognition':
+                download_ocr()
+                ask = messagebox.askyesno(message='Complete!')
+                if ask == True:
+                    subprocess.Popen('%s' % os.getcwd() + '/system/Library/Helpers/OCR/ocr.py', shell=True)
+                else:
+                    pass
+
+        NSHelperText = Label(helper, text='下载帮手', font=("Arial", 12), bg=rgbtohex(235, 235, 235))
+        NSHelperText.place(relx=0.5, rely=0.05, anchor=CENTER)
+
+        NSHelperSelection = Listbox(helper, font=("Arial", 12), selectmode=SINGLE, width=70, height=15)
+        NSHelperSelection.place(relx=0.5, rely=0.45, anchor=CENTER)
+        NSHelperSelection.insert(END, 'OCR - Optical Characters Recognition')
+
+        NSHelperInstall = tkmacosx.Button(helper, text='下载', borderless=1, command=install)
+        NSHelperInstall.place(relx=0.5, rely=0.9, anchor=CENTER)
+
+        change_language()
+        helper.protocol("WM_DELETE_WINDOW", close)
+        helper.mainloop()
+
     NSPreferencesScreenTimeLabel = Label(preferences, text='查看屏幕使用时间', font=("Arial", 13))
     NSPreferencesScreenTimeLabel.place(relx=0.25, rely=0.1, anchor=CENTER)
 
@@ -2164,6 +2256,15 @@ def simulator_settings(event):
     NSPreferencesDivider = ttk.Separator(preferences, orient=HORIZONTAL)
     NSPreferencesDivider.place(relx=0.5, rely=0.23, anchor=CENTER, relwidth=0.9)
 
+    NSPreferencesCleanCacheLabel = Label(preferences, text='清理缓存', font=("Arial", 13))
+    NSPreferencesCleanCacheLabel.place(relx=0.25, rely=0.33, anchor=CENTER)
+
+    NSPreferencesCleanCacheButton = tkmacosx.Button(preferences, text='清理', font=("Arial", 13), borderless=1, command=clean_cache)
+    NSPreferencesCleanCacheButton.place(relx=0.8, rely=0.33, anchor=CENTER)
+
+    NSPreferencesDownloadHelperButton = tkmacosx.Button(preferences, text='下载帮手', font=("Arial", 13), borderless=1, command=download_helper)
+    NSPreferencesDownloadHelperButton.place(relx=0.5, rely=0.5, anchor=CENTER)
+
     check_mode()
     check_language()
     preferences.protocol("WM_DELETE_WINDOW", close)
@@ -2172,11 +2273,52 @@ def simulator_settings(event):
 def save_screentime():
     if datetime.now().weekday() == 7:
         if os.path.exists(os.getcwd() + '/system/Library/ScreenTime/History') == True:
-            shutil.copy(src=os.getcwd() + '/system/Library/ScreenTime/info.json', dst=os.getcwd() + '/system/Library/ScreenTime/History/{}/info.json'.format(datetime.now().date()))
+            with open(os.getcwd() + '/system/Library/ScreenTime/History/{}.csv'.format(datetime.now().date()), 'w') as file:
+                with open(os.getcwd() + '/system/Library/ScreenTime/info.json', 'r') as infile:
+                    data = json.load(infile)
+                writer = csv.writer(file)
+                rows = [
+                    ['Comment', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturaday', 'Sunday'],
+                    ['Screen Time history in minutes', data['1'], data['2'], data['3'], data['4'], data['5'], data['6'], data['7']]
+                ]
+                writer.writerows(rows)
+                os.remove(os.getcwd() + '/system/Library/ScreenTime/info.json')
+                with open(os.getcwd() + '/system/Library/ScreenTime/info.json', 'w') as file:
+                    data = {
+                        '_comment': 'Number on the left is the weekday, and number on the right is how many minutes the app is used',
+                        '1': 0,
+                        '2': 0,
+                        '3': 0,
+                        '4': 0,
+                        '5': 0,
+                        '6': 0,
+                        '7': 0
+                    }
+                    json.dump(data, file, indent=4)
         else:
             os.mkdir(os.getcwd() + '/system/Library/ScreenTime/History')
-            os.mkdir(os.getcwd() + '/system/Library/ScreenTime/History/{}'.format(datetime.now().date()))
-            shutil.copy(src=os.getcwd() + '/system/Library/ScreenTime/info.json', dst=os.getcwd() + '/system/Library/ScreenTime/History/{}/info.json'.format(datetime.now().date()))
+            with open(os.getcwd() + '/system/Library/ScreenTime/History/{}.csv'.format(datetime.now().date()), 'w') as file:
+                with open(os.getcwd() + '/system/Library/ScreenTime/info.json', 'r') as infile:
+                    data = json.load(infile)
+                writer = csv.writer(file)
+                rows = [
+                    ['Comment', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturaday', 'Sunday'],
+                    ['Screen Time history in minutes', data['1'], data['2'], data['3'], data['4'], data['5'], data['6'], data['7']]
+                ]
+                writer.writerows(rows)
+                os.remove(os.getcwd() + '/system/Library/ScreenTime/info.json')
+                with open(os.getcwd() + '/system/Library/ScreenTime/info.json', 'w') as file:
+                    data = {
+                        '_comment': 'Number on the left is the weekday, and number on the right is how many minutes the app is used',
+                        '1': 0,
+                        '2': 0,
+                        '3': 0,
+                        '4': 0,
+                        '5': 0,
+                        '6': 0,
+                        '7': 0
+                    }
+                    json.dump(data, file, indent=4)
     NSCanvas.after(ms=10000, func=save_screentime)
 
 NSCanvas = Canvas(root)
