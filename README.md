@@ -3,16 +3,51 @@
 安卓和苹果结合的简单操作系统。 [切换到英文介绍](https://github.com/AccessRetrieved/project-pios/blob/main/English_readme.md)
 
 ## 目录
-1. [版本](#version)
-2. [下载和运行](#install)
-3. [已知问题](#bugs)
-4. [语言](#language)
-5. [图片介绍](#images)
-6. [帮手](#helpers)
+1. [下载和运行](#install)
+2. [已知问题](#bugs)
+3. [语言](#language)
+4. [图片介绍](#images)
+5. [帮手](#helpers)
+6. [版本](#version)
 ***
 
 ### 暂时只支持Macbook Air 2018+ 或更好的电脑，比如macbook pro
 用PC的暂时不支持
+
+<a name="install"></a>
+## 下载和运行
+1. [下载](https://www.python.org/ftp/python/3.9.1/python-3.9.1-macosx10.9.pkg) python3.9
+2. 打开终端
+3. 运行以下载(复制粘贴简单些)：`/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
+4. 运行：`brew install blueutil`
+5. 运行：`cd Desktop`
+6. 运行：`git clone https://github.com/AccessRetrieved/Project-Pios`
+7. 运行：`cd Project-Pios`
+8. 运行： `pip3 install -r r.txt` - 如果出错，运行`pip install -r r.txt`
+9. 运行：`mv project_pios ..`
+10. 运行：`cd ..`
+11. 运行：`rm -rf Project-Pios`
+12. 运行： `cd project_pios`
+13. 所需的模块都下载完了，现在运行：`python3 main.py` - 如果出错，运行`python main.py`
+
+<a name="bugs"></a>
+## 已知问题
+1. 切换到暗模式的时候蓝牙模块和wifi模块需要新的图片资源
+
+<a name="language"></a>
+## 更改语言
+把language.txt的“en“改成”zh-cn“以转换语言。
+
+<a name="images"></a>
+## 图片介绍
+![1](https://i.ibb.co/gPq0pNW/Screen-Shot-2021-01-23-at-1-10-59-PM.png)
+![2](https://i.ibb.co/Lp6j161/Screen-Shot-2021-01-23-at-1-11-25-PM.png)
+![3](https://i.ibb.co/FqknCvn/Screen-Shot-2021-01-23-at-1-11-36-PM.png)
+
+<a name="helpers"></a>
+## 帮手
+1. [图片转文字](https://github.com/AccessRetrieved/OCR/tree/master)
+2. [扫描二维码](https://github.com/AccessRetrieved/Qr-Code-Scanner)
 
 <a name="version"></a>
 ## 版本
@@ -80,40 +115,5 @@
    - 网络
    - 蓝牙
    - 设置
-
-<a name="install"></a>
-## 下载和运行
-1. [下载](https://www.python.org/ftp/python/3.9.1/python-3.9.1-macosx10.9.pkg) python3.9
-2. 打开终端
-3. 运行以下载(复制粘贴简单些)：`/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
-4. 运行：`brew install blueutil`
-5. 运行：`cd Desktop`
-6. 运行：`git clone https://github.com/AccessRetrieved/Project-Pios`
-7. 运行：`cd Project-Pios`
-8. 运行： `pip3 install -r r.txt` - 如果出错，运行`pip install -r r.txt`
-9. 运行：`mv project_pios ..`
-10. 运行：`cd ..`
-11. 运行：`rm -rf Project-Pios`
-12. 运行： `cd project_pios`
-13. 所需的模块都下载完了，现在运行：`python3 main.py` - 如果出错，运行`python main.py`
-
-<a name="bugs"></a>
-## 已知问题
-1. 切换到暗模式的时候蓝牙模块和wifi模块需要新的图片资源
-
-<a name="language"></a>
-## 更改语言
-把language.txt的“en“改成”zh-cn“以转换语言。
-
-<a name="images"></a>
-## 图片介绍
-![1](https://i.ibb.co/gPq0pNW/Screen-Shot-2021-01-23-at-1-10-59-PM.png)
-![2](https://i.ibb.co/Lp6j161/Screen-Shot-2021-01-23-at-1-11-25-PM.png)
-![3](https://i.ibb.co/FqknCvn/Screen-Shot-2021-01-23-at-1-11-36-PM.png)
-
-<a name="helpers"></a>
-## 帮手
-1. [图片转文字](https://github.com/AccessRetrieved/OCR/tree/master)
-2. [扫描二维码](https://github.com/AccessRetrieved/Qr-Code-Scanner)
 
 [回到顶部 ↑](#top)

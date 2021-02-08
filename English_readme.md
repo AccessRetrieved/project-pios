@@ -3,16 +3,56 @@
 Operating system with python. [Switch to Chinese Readme](https://github.com/AccessRetrieved/project-pios/blob/main/README.md)
 
 ## Table of contents
-1. [Versions](#version)
-2. [Installing and executing](#install)
-3. [Known Bugs](#bugs)
-4. ['Language'](#language)
-5. [Images](#images)
-6. [Add-Ons](#helpers)
+1. [Installing and executing](#install)
+2. [Known Bugs](#bugs)
+3. ['Language'](#language)
+4. [Images](#images)
+5. [Add-Ons](#helpers)
+6. [Versions](#version)
 ***
 
 ### Newer than macbook air 2018+ or macbook pro 2018+
 PC Users currently not supported
+
+<a name="install"></a>
+## Installing an executing
+1. [Download](https://www.python.org/ftp/python/3.9.1/python-3.9.1-macosx10.9.pkg) python3.9
+2. Open Terminal
+3. Run to install homebrew(Copy paste is easier): `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
+4. Run:`brew install blueutil`
+5. Run: `cd Desktop`
+6. Run:`git clone https://github.com/AccessRetrieved/Project-Pios`
+7. Run:`cd Project-Pios`
+8. Run: `pip3 install -r r.txt` - if errors are generated than run，`pip install -r r.txt`
+9. Run: `mv project_pios ..`
+10. Run: `cd ..`
+11. Run: `rm -rf Project-Pios`
+12. Run: `cd project_pios`
+13. Now start the app:`python3 main.py` - if errors are generated than run，`python main.py`
+
+<a name="bugs"></a>
+## Known Bugs
+1. Switching between dark and light mode needs new resources for bluetooth and wifi
+2. Dark mode needs to be added for privacy settings
+
+<a name="language"></a>
+## Change Language
+Change language by changing the language.txt from "zh-cn" to "en".
+
+<a name="images"></a>
+## Images
+![1](https://i.ibb.co/NLD0sFx/Screen-Shot-2021-01-23-at-1-10-48-PM.png)
+![2](https://i.ibb.co/KsKzKpm/Screen-Shot-2021-01-23-at-1-10-52-PM.png)
+![3](https://i.ibb.co/gPq0pNW/Screen-Shot-2021-01-23-at-1-10-59-PM.png)
+![4](https://i.ibb.co/0XqMJW5/Screen-Shot-2021-01-23-at-1-11-18-PM.png)
+![5](https://i.ibb.co/Lp6j161/Screen-Shot-2021-01-23-at-1-11-25-PM.png)
+![6](https://i.ibb.co/2N2g648/Screen-Shot-2021-01-23-at-1-11-32-PM.png)
+![7](https://i.ibb.co/FqknCvn/Screen-Shot-2021-01-23-at-1-11-36-PM.png)
+
+<a name="helpers"></a>
+## Add-Ons
+1. [OCR - Optical Characters Recognition](https://github.com/AccessRetrieved/OCR/tree/master)
+2. [Qr Code Scanner](https://github.com/AccessRetrieved/Qr-Code-Scanner)
 
 <a name="version"></a>
 ## Versions
@@ -78,45 +118,5 @@ PC Users currently not supported
    - Network
    - Bluetooth
    - Settings
-
-<a name="install"></a>
-## Installing an executing
-1. [Download](https://www.python.org/ftp/python/3.9.1/python-3.9.1-macosx10.9.pkg) python3.9
-2. Open Terminal
-3. Run to install homebrew(Copy paste is easier): `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
-4. Run:`brew install blueutil`
-5. Run: `cd Desktop`
-6. Run:`git clone https://github.com/AccessRetrieved/Project-Pios`
-7. Run:`cd Project-Pios`
-8. Run: `pip3 install -r r.txt` - if errors are generated than run，`pip install -r r.txt`
-9. Run: `mv project_pios ..`
-10. Run: `cd ..`
-11. Run: `rm -rf Project-Pios`
-12. Run: `cd project_pios`
-13. Now start the app:`python3 main.py` - if errors are generated than run，`python main.py`
-
-<a name="bugs"></a>
-## Known Bugs
-1. Switching between dark and light mode needs new resources for bluetooth and wifi
-2. Dark mode needs to be added for privacy settings
-
-<a name="language"></a>
-## Change Language
-Change language by changing the language.txt from "zh-cn" to "en".
-
-<a name="images"></a>
-## Images
-![1](https://i.ibb.co/NLD0sFx/Screen-Shot-2021-01-23-at-1-10-48-PM.png)
-![2](https://i.ibb.co/KsKzKpm/Screen-Shot-2021-01-23-at-1-10-52-PM.png)
-![3](https://i.ibb.co/gPq0pNW/Screen-Shot-2021-01-23-at-1-10-59-PM.png)
-![4](https://i.ibb.co/0XqMJW5/Screen-Shot-2021-01-23-at-1-11-18-PM.png)
-![5](https://i.ibb.co/Lp6j161/Screen-Shot-2021-01-23-at-1-11-25-PM.png)
-![6](https://i.ibb.co/2N2g648/Screen-Shot-2021-01-23-at-1-11-32-PM.png)
-![7](https://i.ibb.co/FqknCvn/Screen-Shot-2021-01-23-at-1-11-36-PM.png)
-
-<a name="helpers"></a>
-## Add-Ons
-1. [OCR - Optical Characters Recognition](https://github.com/AccessRetrieved/OCR/tree/master)
-2. [Qr Code Scanner](https://github.com/AccessRetrieved/Qr-Code-Scanner)
 
 [Back to top ↑](#top)
