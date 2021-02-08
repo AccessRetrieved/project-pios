@@ -11,7 +11,7 @@
 6. [版本](#version)
 ***
 
-### 暂时只支持Macbook Air 2018+ 或更好的电脑，比如macbook pro
+### 屏幕过于小的电脑不支持
 用PC的暂时不支持
 
 <a name="install"></a>
