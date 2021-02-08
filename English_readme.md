@@ -16,6 +16,9 @@ PC Users currently not supported
 
 <a name="version"></a>
 ## Versions
+- **Version 5.1**
+   - Reviewed Friends App, screentime usage are available in there
+   - Change screentime chart from plt.show() into tkinter figure. (in simulator settings only)
 - **Version 5.0**
    - Added screen time record
    - Added system preferences for simulator (Activate by `Command-,`)

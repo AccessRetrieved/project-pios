@@ -21,19 +21,25 @@ import pyscreenshot
 import yagmail
 from getpass import getuser
 from system.Software.update import update
-from system.Software.ocr import download_ocr
+from system.Software.helpers import download_ocr, download_qrcode
 import csv
 import base64
 import json
-import matplotlib.pyplot as plt
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import subprocess
 from modules.RoundedButton import RoundedButton
 from App1.app import import_app, quit_app # Add custom app here
 from App2.app2 import import_app2, quit_app2 # Add second custom app here
 import objc
 
-# change all path from "/FILE" to "/FILE" for github
-# In settings and friends app change name to getuser()
+'''
+Before uploading to github:
+
+1. Change all path from "/" to "/"
+2. Replace name from settings and friends app with getuser()
+3. Remove note for objc
+'''
 
 # Custom App Icons
 NSCustomAppIcon1 = os.getcwd() + '/app1.png'
@@ -58,7 +64,7 @@ NSLocalVersion = StringVar()                  #
 #                                             #
 # U P D A T E   T H I S   E V E R Y T I M E ! #
 #                                             #
-NSLocalVersion.set('5.0')                     #
+NSLocalVersion.set('5.1')                     #
 ###############################################
 ##################################
 #                                #
@@ -107,7 +113,18 @@ NSSettingsFrame = IntVar()
 
 NSUpdateAlert = 0
 
-NSScreenTimeCounter = 0
+path = os.getcwd() + '/system/Library/ScreenTime/counter.txt'
+if os.path.exists(path) == True:
+    with open(path, 'r') as file:
+        try:
+            NSScreenTimeCounter = int(file.read())
+        except:
+            NSScreenTimeCounter = 0
+            pass
+else:
+    with open(path, 'w') as file:
+        NSScreenTimeCounter = 0
+        file.write('0')
 
 NSLanguageValue = StringVar()
 try:
@@ -465,7 +482,7 @@ def settings(event):
                 NSSettingsAbout['text'] = 'About'
                 pass
             else:
-                NSSettingsProfile['text'] = '    {}'.format(getuser())
+                NSSettingsProfile['text'] = '    胡家睿'
                 NSSettingsWallpaper['text'] = '壁纸'
                 NSSettingsPrivacy['text'] = '隐私'
                 NSSettingsAbout['text'] = '关于本机'
@@ -523,7 +540,7 @@ def settings(event):
                 NSSettingsAbout['text'] = 'About'
                 pass
             else:
-                NSSettingsProfile['text'] = '    {}'.format(getuser())
+                NSSettingsProfile['text'] = '    胡家睿'
                 NSSettingsWallpaper['text'] = '壁纸'
                 NSSettingsPrivacy['text'] = '隐私'
                 NSSettingsAbout['text'] = '关于本机'
@@ -718,7 +735,7 @@ def settings(event):
                 NSSettingsAbout['text'] = 'About'
                 pass
             else:
-                NSSettingsProfile['text'] = '    {}'.format(getuser())
+                NSSettingsProfile['text'] = '    胡家睿'
                 NSSettingsWallpaper['text'] = '壁纸'
                 NSSettingsPrivacy['text'] = '隐私'
                 NSSettingsAbout['text'] = '关于本机'
@@ -790,7 +807,7 @@ def settings(event):
             NSSettingsAbout['text'] = 'About'
             pass
         else:
-            NSSettingsProfile['text'] = '    {}'.format(getuser())
+            NSSettingsProfile['text'] = '    胡家睿'
             NSSettingsSearchEngine['text'] = '浏览器'
             NSSettingsWallpaper['text'] = '壁纸'
             NSSettingsPrivacy['text'] = '隐私'
@@ -803,7 +820,7 @@ def settings(event):
     NSSettingsProfileimg = NSSettingsProfileimg.resize((50, 50), Image.ANTIALIAS)
     NSSettingsProfilepic = ImageTk.PhotoImage(NSSettingsProfileimg)
 
-    NSSettingsProfile = tkmacosx.Button(NSSettingsView, text='    {}'.format(getuser()), borderless=1, font=("Futura", 20), height=80, width=400, activebackground='white', activeforeground='black', image=NSSettingsProfilepic, compound=LEFT, command=open_page)
+    NSSettingsProfile = tkmacosx.Button(NSSettingsView, text='    胡家睿', borderless=1, font=("Futura", 20), height=80, width=400, activebackground='white', activeforeground='black', image=NSSettingsProfilepic, compound=LEFT, command=open_page)
     NSSettingsProfile.image = NSSettingsProfilepic
     NSSettingsProfile.place(relx=0.5, rely=0.1, anchor=CENTER)
 
@@ -1854,10 +1871,6 @@ def destroy_apps():
     except:
         pass
     try:
-        NSFriendsMyView.destroy()
-    except:
-        pass
-    try:
         NSFriendsCircleView.destroy()
     except:
         pass
@@ -1943,164 +1956,85 @@ def friends(event):
     NSFriendsView.bind("<Button-1>", takedown_pulldown_menu)
 
     remove_apps()
+    check_qr()
 
     def check_language():
         if NSLanguageValue.get() == 'en':
-            NSFriendsMy['text'] = 'My'
-            NSFriendsCircle['text'] = 'Circle'
-            NSFriendsHint['text'] = 'Friend Circle is under development!'
+            NSFriendsMyScreentimeTitleContainer['text'] = 'Screen Time Usage'
+            NSFriendsMyBack['text'] = 'Back'
         else:
-            NSFriendsMy['text'] = '我'
-            NSFriendsCircle['text'] = '发现'
-            NSFriendsHint['text'] = '朋友圈正在开发中!'
-        
+            NSFriendsMyScreentimeTitleContainer['text'] = '屏幕使用时间'
+            NSFriendsMyBack['text'] = '返回'
         NSFriendsView.after(ms=1000, func=check_language)
 
-    def check_darkmode():
+    def check_mode():
         if NSDarkModeStat.get() == 1:
             NSFriendsView['bg'] = dark_theme['bg']
-            NSFriendsHint['bg'] = dark_theme['bg']
-            NSFriendsHint['fg'] = dark_theme['fg']
-            
-            NSFriendsMy['bg'] = dark_theme['bg']
-            NSFriendsMy['fg'] = dark_theme['fg']
-            NSFriendsMy.config(activebackground='white', activeforeground='black')
-            NSFriendsCircle['bg'] = dark_theme['bg']
-            NSFriendsCircle['fg'] = dark_theme['fg']
-            NSFriendsCircle.config(activebackground='white', activeforeground='black')
+            NSFriendsMyBack['bg'] = dark_theme['bg']
+            NSFriendsMyBack['fg'] = dark_theme['fg']
+            NSFriendsMyBack.config(activebackground='white', activeforeground='black')
+
+            NSFriendsMyProfileBox['bg'] = dark_theme['bg']
+            NSFriendsMyProfileNameContainer['bg'] = rgbtohex(234, 234, 234)
+            NSFriendsMyProfileBirthdayContainer['bg'] = rgbtohex(234, 234, 234)
+
+            NSFriendsMyScreentimeBox['bg'] = dark_theme['bg']
+            NSFriendsMyScreentimeTitleContainer['bg'] = rgbtohex(234, 234, 234)
+            NSFriendsMyScreentimeDataContainer['bg'] = rgbtohex(234, 234, 234)
         else:
             NSFriendsView['bg'] = theme['bg']
-            NSFriendsHint['bg'] = theme['bg']
-            NSFriendsHint['fg'] = theme['fg']
-            
-            NSFriendsMy['bg'] = theme['bg']
-            NSFriendsMy['fg'] = theme['fg']
-            NSFriendsMy.config(activebackground='black', activeforeground='white')
-            NSFriendsCircle['bg'] = theme['bg']
-            NSFriendsCircle['fg'] = theme['fg']
-            NSFriendsCircle.config(activebackground='black', activeforeground='white')
-        NSFriendsView.after(ms=1000, func=check_darkmode)
+            NSFriendsMyBack['bg'] = theme['bg']
+            NSFriendsMyBack['fg'] = theme['fg']
+            NSFriendsMyBack.config(activebackground='black', activeforeground='white')
 
-    def switch_my():
-        global NSFriendsMyView
-        NSFriendsView.pack_forget()
-        NSFriendsMyView = Frame(NSWallpaper)
-        NSFriendsMyView.pack(fill=BOTH, expand=True)
-        NSFriendsMyView.bind('<Button-1>', takedown_pulldown_menu)
+            NSFriendsMyProfileBox['bg'] = theme['bg']
+            NSFriendsMyProfileNameContainer['bg'] = rgbtohex(234, 234, 234)
+            NSFriendsMyProfileBirthdayContainer['bg'] = rgbtohex(234, 234, 234)
 
-        remove_apps()
-        check_qr()
+            NSFriendsMyScreentimeBox['bg'] = theme['bg']
+            NSFriendsMyScreentimeTitleContainer['bg'] = rgbtohex(234, 234, 234)
+            NSFriendsMyScreentimeDataContainer['bg'] = rgbtohex(234, 234, 234)
+        NSFriendsView.after(ms=1000, func=check_mode)
 
-        def check_language():
-            if NSLanguageValue.get() == 'en':
-                NSFriendsMyBack['text'] = 'Back'
-            else:
-                NSFriendsMyBack['text'] = '返回'
-            NSFriendsMyView.after(ms=1000, func=check_language)
+    NSFriendsMyProfileBox = RoundedButton(NSFriendsView, 380, 100, 20, 0, rgbtohex(234, 234, 234), 'white')
+    NSFriendsMyProfileBox.place(relx=0.5, rely=0.13, anchor=CENTER)
 
-        def check_mode():
-            if NSDarkModeStat.get() == 1:
-                NSFriendsMyView['bg'] = dark_theme['bg']
-                NSFriendsMyBack['bg'] = dark_theme['bg']
-                NSFriendsMyBack['fg'] = dark_theme['fg']
-                NSFriendsMyBack.config(activebackground='white', activeforeground='black')
+    NSFriendsMyProfileimg = Image.open(os.getcwd() + '/profile.png')
+    NSFriendsMyProfileimg = NSFriendsMyProfileimg.resize((50, 50), Image.ANTIALIAS)
+    NSFriendsMyProfilepic = ImageTk.PhotoImage(NSFriendsMyProfileimg)
 
-                NSFriendsMyProfileBox['bg'] = dark_theme['bg']
-                NSFriendsMyProfileNameContainer['bg'] = rgbtohex(234, 234, 234)
-                NSFriendsMyProfileBirthdayContainer['bg'] = rgbtohex(234, 234, 234)
-            else:
-                NSFriendsMyView['bg'] = theme['bg']
-                NSFriendsMyBack['bg'] = theme['bg']
-                NSFriendsMyBack['fg'] = theme['fg']
-                NSFriendsMyBack.config(activebackground='black', activeforeground='white')
+    NSFriendsMyProfileImageContainer = Label(NSFriendsView, image=NSFriendsMyProfilepic, font=("Futura", 20), bg=rgbtohex(234, 234, 234))
+    NSFriendsMyProfileImageContainer.image = NSFriendsMyProfilepic
+    NSFriendsMyProfileImageContainer.place(relx=0.2, rely=0.13, anchor=CENTER)
+    
+    NSFriendsMyProfileNameContainer = Label(NSFriendsView, text='胡家睿', font=("Futura", 20), bg=rgbtohex(234, 234, 234))
+    NSFriendsMyProfileNameContainer.place(relx=0.4, rely=0.12, anchor=CENTER)
 
-                NSFriendsMyProfileBox['bg'] = theme['bg']
-                NSFriendsMyProfileNameContainer['bg'] = rgbtohex(234, 234, 234)
-                NSFriendsMyProfileBirthdayContainer['bg'] = rgbtohex(234, 234, 234)
-            NSFriendsMyView.after(ms=1000, func=check_mode)
+    NSFriendsMyProfileBirthdayContainer = Label(NSFriendsView, text='0000/00/00', font=("Futura", 12), bg=rgbtohex(234, 234, 234), fg=rgbtohex(38, 39, 40))
+    NSFriendsMyProfileBirthdayContainer.place(relx=0.42, rely=0.15, anchor=CENTER)
 
-        def close():
-            NSFriendsView.pack(fill=BOTH, expand=True)
-            NSFriendsMyView.destroy()
+    NSFriendsMyScreentimeBox = RoundedButton(NSFriendsView, 380, 100, 20, 0, rgbtohex(234, 234, 234), 'white')
+    NSFriendsMyScreentimeBox.place(relx=0.5, rely=0.28, anchor=CENTER)
 
-        NSFriendsMyProfileBox = RoundedButton(NSFriendsMyView, 380, 100, 20, 0, rgbtohex(234, 234, 234), 'white')
-        NSFriendsMyProfileBox.place(relx=0.5, rely=0.13, anchor=CENTER)
+    NSFriendsMyScreentimeTitleContainer = Label(NSFriendsView, text='屏幕使用时间', bg=rgbtohex(234, 234, 234), font=("Futura", 13))
+    NSFriendsMyScreentimeTitleContainer.place(relx=0.07, rely=0.225)
 
-        NSFriendsMyProfileimg = Image.open(os.getcwd() + '/profile.png')
-        NSFriendsMyProfileimg = NSFriendsMyProfileimg.resize((50, 50), Image.ANTIALIAS)
-        NSFriendsMyProfilepic = ImageTk.PhotoImage(NSFriendsMyProfileimg)
-
-        NSFriendsMyProfileImageContainer = Label(NSFriendsMyView, image=NSFriendsMyProfilepic, font=("Futura", 20), bg=rgbtohex(234, 234, 234))
-        NSFriendsMyProfileImageContainer.image = NSFriendsMyProfilepic
-        NSFriendsMyProfileImageContainer.place(relx=0.2, rely=0.13, anchor=CENTER)
-        
-        NSFriendsMyProfileNameContainer = Label(NSFriendsMyView, text='{}'.format(getuser()), font=("Futura", 20), bg=rgbtohex(234, 234, 234))
-        NSFriendsMyProfileNameContainer.place(relx=0.4, rely=0.12, anchor=CENTER)
-
-        NSFriendsMyProfileBirthdayContainer = Label(NSFriendsMyView, text='0000/00/00', font=("Futura", 12), bg=rgbtohex(234, 234, 234), fg=rgbtohex(38, 39, 40))
-        NSFriendsMyProfileBirthdayContainer.place(relx=0.42, rely=0.15, anchor=CENTER)
-
-        NSFriendsMyBack = tkmacosx.Button(NSFriendsMyView, text='返回', font=("Arial", 12), borderless=1, activebackground='black', activeforeground='white', command=close)
-        NSFriendsMyBack.place(relx=0.5, rely=0.93, anchor=CENTER)
-
-        check_language()
-        check_mode()
-
-    def switch_circle():
-        global NSFriendsCircleView
-        NSFriendsView.pack_forget()
-        NSFriendsCircleView = Frame(NSWallpaper)
-        NSFriendsCircleView.pack(fill=BOTH, expand=True)
-        NSFriendsCircleView.bind("<Button-1>", takedown_pulldown_menu)
-
-        remove_apps()
-        
-        def check_language():
-            if NSLanguageValue.get() == 'en':
-                NSFriendsCircleBack['text'] = 'Back'
-            else:
-                NSFriendsCircleBack['text'] = '返回'
-            NSFriendsCircleView.after(ms=1000, func=check_language)
-
-        def check_mode():
-            if NSDarkModeStat.get() == 1:
-                NSFriendsCircleView['bg'] = dark_theme['bg']
-                NSFriendsCircleBack['bg'] = dark_theme['bg']
-                NSFriendsCircleBack['fg'] = dark_theme['fg']
-                NSFriendsCircleBack.config(activebackground='white', activeforeground='black')
-            else:
-                NSFriendsCircleView['bg'] = theme['bg']
-                NSFriendsCircleBack['bg'] = theme['bg']
-                NSFriendsCircleBack['fg'] = theme['fg']
-                NSFriendsCircleBack.config(activebackground='black', activeforeground='white')
-            NSFriendsCircleView.after(ms=1000, func=check_mode)
-
-        def close():
-            NSFriendsView.pack(fill=BOTH, expand=True)
-            NSFriendsCircleView.destroy()
-
-        NSFriendsCircleBack = tkmacosx.Button(NSFriendsCircleView, text='返回', font=("Arial", 12), borderless=1, activebackground='black', activeforeground='white', command=close)
-        NSFriendsCircleBack.place(relx=0.5, rely=0.93, anchor=CENTER)
-
-        check_language()
-        check_mode()
-
-    NSFriendsHint = Label(NSFriendsView, text='Friend Circle is under development!', font=("Arial", 20))
-    NSFriendsHint.place(relx=0.5, rely=0.4, anchor=CENTER)
-
-    NSFriendsMy = tkmacosx.CircleButton(NSFriendsView, text='我', font=("Arial", 12), borderless=1, radius=25, activebackground='black', activeforeground='white', command=switch_my)
-    NSFriendsMy.place(relx=0.1, rely=0.95, anchor=CENTER)
-
-    NSFriendsCircle = tkmacosx.CircleButton(NSFriendsView, text='发现', font=("Arial", 12), borderless=1, radius=25, activebackground='black', activeforeground='white', command=switch_circle)
-    NSFriendsCircle.place(relx=0.9, rely=0.95, anchor=CENTER)
+    with open(os.getcwd() + '/system/Library/ScreenTime/counter.txt', 'r') as txt:
+        total = int(txt.read())
+    hours, mins = divmod(total, 60)
+    
+    NSFriendsMyScreentimeDataContainer = Label(NSFriendsView, text='{}h {}m'.format(hours, mins), bg=rgbtohex(234, 234, 234), font=("Futura", 17))
+    NSFriendsMyScreentimeDataContainer.place(relx=0.5, rely=0.28, anchor=CENTER)
 
     check_language()
-    check_darkmode()
+    check_mode()
 
 def update_screentime():
     global NSScreenTimeCounter
     NSScreenTimeCounter += 1
     try:
+        with open(os.getcwd() + '/system/Library/ScreenTime/counter.txt', 'w') as out:
+            out.write(str(NSScreenTimeCounter))
         with open(os.getcwd() + '/system/Library/ScreenTime/info.json', 'r') as file:
             data = json.load(file)
         today = str(datetime.today().weekday())
@@ -2186,13 +2120,31 @@ def simulator_settings(event):
         preferences.after(ms=1000, func=check_language)
 
     def get_screentime():
+        screentime = Toplevel()
+        screentime.title('')
+        screentime.geometry('500x500')
+
+        with open(os.getcwd() + '/system/Library/ScreenTime/counter.txt', 'r') as txt:
+            total = int(txt.read())
+
+        hours, mins = divmod(total, 60)
+
         with open(os.getcwd() + '/system/Library/ScreenTime/info.json', 'r') as infile:
             data = json.load(infile)
-        x = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+        x = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
         y = [data['1'], data['2'], data['3'], data['4'], data['5'], data['6'], data['7']]
 
-        plt.plot(x, y)
-        plt.show()
+        fig = Figure(figsize=(10, 10), dpi=80)
+
+        plot1 = fig.add_subplot(111)
+        plot1.set_title('{}h {}m'.format(hours, mins), fontsize=20)
+        plot1.plot(x, y)
+
+        canvas = FigureCanvasTkAgg(fig, master=screentime)
+        canvas.draw()
+        canvas.get_tk_widget().pack()
+
+        screentime.mainloop()
 
     def close():
         preferences.grab_release()
@@ -2216,11 +2168,8 @@ def simulator_settings(event):
             module = NSHelperSelection.get(NSHelperSelection.curselection())
             if module == 'OCR - Optical Characters Recognition':
                 download_ocr()
-                ask = messagebox.askyesno(message='下载成功，运行?')
-                if ask == True:
-                    subprocess.Popen('%s' % os.getcwd() + '/system/Library/Helpers/OCR/ocr.py', shell=True)
-                else:
-                    pass
+            elif module == 'Qr Code Scanner':
+                download_qrcode()
 
         NSHelperText = Label(helper, text='下载帮手', font=("Arial", 12), bg=rgbtohex(235, 235, 235))
         NSHelperText.place(relx=0.5, rely=0.05, anchor=CENTER)
@@ -2228,8 +2177,9 @@ def simulator_settings(event):
         NSHelperSelection = Listbox(helper, font=("Arial", 12), selectmode=SINGLE, width=70, height=15)
         NSHelperSelection.place(relx=0.5, rely=0.45, anchor=CENTER)
         NSHelperSelection.insert(END, 'OCR - Optical Characters Recognition')
+        NSHelperSelection.insert(END, 'Qr Code Scanner')
 
-        NSHelperInstall = tkmacosx.Button(helper, text='下载', borderless=1, command=install)
+        NSHelperInstall = tkmacosx.Button(helper, text='下载/运行', borderless=1, command=install)
         NSHelperInstall.place(relx=0.5, rely=0.9, anchor=CENTER)
 
         helper.protocol("WM_DELETE_WINDOW", close)
@@ -2283,6 +2233,8 @@ def save_screentime():
                         '7': 0
                     }
                     json.dump(data, file, indent=4)
+                with open(os.getcwd() + '/system/Library/ScreenTime/counter.txt', 'w') as f:
+                    f.truncate(0)
         else:
             os.mkdir(os.getcwd() + '/system/Library/ScreenTime/History')
             with open(os.getcwd() + '/system/Library/ScreenTime/History/{}.csv'.format(datetime.now().date()), 'w') as file:
