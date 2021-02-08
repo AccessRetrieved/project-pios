@@ -482,7 +482,7 @@ def settings(event):
                 NSSettingsAbout['text'] = 'About'
                 pass
             else:
-                NSSettingsProfile['text'] = '    胡家睿'
+                NSSettingsProfile['text'] = '    {}'.format(getuser())
                 NSSettingsWallpaper['text'] = '壁纸'
                 NSSettingsPrivacy['text'] = '隐私'
                 NSSettingsAbout['text'] = '关于本机'
@@ -540,7 +540,7 @@ def settings(event):
                 NSSettingsAbout['text'] = 'About'
                 pass
             else:
-                NSSettingsProfile['text'] = '    胡家睿'
+                NSSettingsProfile['text'] = '    {}'.format(getuser())
                 NSSettingsWallpaper['text'] = '壁纸'
                 NSSettingsPrivacy['text'] = '隐私'
                 NSSettingsAbout['text'] = '关于本机'
@@ -735,7 +735,7 @@ def settings(event):
                 NSSettingsAbout['text'] = 'About'
                 pass
             else:
-                NSSettingsProfile['text'] = '    胡家睿'
+                NSSettingsProfile['text'] = '    {}'.format(getuser())
                 NSSettingsWallpaper['text'] = '壁纸'
                 NSSettingsPrivacy['text'] = '隐私'
                 NSSettingsAbout['text'] = '关于本机'
@@ -807,7 +807,7 @@ def settings(event):
             NSSettingsAbout['text'] = 'About'
             pass
         else:
-            NSSettingsProfile['text'] = '    胡家睿'
+            NSSettingsProfile['text'] = '    {}'.format(getuser())
             NSSettingsSearchEngine['text'] = '浏览器'
             NSSettingsWallpaper['text'] = '壁纸'
             NSSettingsPrivacy['text'] = '隐私'
@@ -820,7 +820,7 @@ def settings(event):
     NSSettingsProfileimg = NSSettingsProfileimg.resize((50, 50), Image.ANTIALIAS)
     NSSettingsProfilepic = ImageTk.PhotoImage(NSSettingsProfileimg)
 
-    NSSettingsProfile = tkmacosx.Button(NSSettingsView, text='    胡家睿', borderless=1, font=("Futura", 20), height=80, width=400, activebackground='white', activeforeground='black', image=NSSettingsProfilepic, compound=LEFT, command=open_page)
+    NSSettingsProfile = tkmacosx.Button(NSSettingsView, text='    {}'.format(getuser()), borderless=1, font=("Futura", 20), height=80, width=400, activebackground='white', activeforeground='black', image=NSSettingsProfilepic, compound=LEFT, command=open_page)
     NSSettingsProfile.image = NSSettingsProfilepic
     NSSettingsProfile.place(relx=0.5, rely=0.1, anchor=CENTER)
 
@@ -2007,7 +2007,7 @@ def friends(event):
     NSFriendsMyProfileImageContainer.image = NSFriendsMyProfilepic
     NSFriendsMyProfileImageContainer.place(relx=0.2, rely=0.13, anchor=CENTER)
     
-    NSFriendsMyProfileNameContainer = Label(NSFriendsView, text='胡家睿', font=("Futura", 20), bg=rgbtohex(234, 234, 234))
+    NSFriendsMyProfileNameContainer = Label(NSFriendsView, text='{}'.format(getuser()), font=("Futura", 20), bg=rgbtohex(234, 234, 234))
     NSFriendsMyProfileNameContainer.place(relx=0.4, rely=0.12, anchor=CENTER)
 
     NSFriendsMyProfileBirthdayContainer = Label(NSFriendsView, text='0000/00/00', font=("Futura", 12), bg=rgbtohex(234, 234, 234), fg=rgbtohex(38, 39, 40))
