@@ -11,7 +11,7 @@ Operating system with python. [Switch to Chinese Readme](https://github.com/Acce
 6. [Add-Ons](#helpers)
 ***
 
-### Newer than macbook air 2018+ or macbook pro 2018+
+### Computers with a small screen not supported
 PC Users currently not supported
 
 <a name="version"></a>
