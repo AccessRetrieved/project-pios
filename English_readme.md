@@ -32,8 +32,7 @@ PC Users currently not supported
 
 <a name="bugs"></a>
 ## Known Bugs
-1. Switching between dark and light mode needs new resources for bluetooth and wifi
-2. Dark mode needs to be added for privacy settings
+1. [See](https://github.com/AccessRetrieved/Project-Pios/blob/main/dlib_error_solution.md) Dlib installation error solution
 
 <a name="language"></a>
 ## Change Language
