@@ -32,7 +32,7 @@
 
 <a name="bugs"></a>
 ## 已知问题
-1. 切换到暗模式的时候蓝牙模块和wifi模块需要新的图片资源
+1. [查看](https://github.com/AccessRetrieved/Project-Pios/blob/main/dlib_error_solution.md)dlib下载问题解决方案
 
 <a name="language"></a>
 ## 更改语言
