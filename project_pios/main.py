@@ -29,17 +29,13 @@ from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import subprocess
 from modules.RoundedButton import RoundedButton
+from system.Software.func import recognize, setup
 from App1.app import import_app, quit_app # Add custom app here
 from App2.app2 import import_app2, quit_app2 # Add second custom app here
 import objc
 
-'''
-Before uploading to github:
-
-1. Change all path from "/" to "/"
-2. Replace name from settings and friends app with getuser()
-3. Remove note for objc
-'''
+# change all path from "/FILE" to "/FILE" for github
+# In settings and friends app change name to getuser()
 
 # Custom App Icons
 NSCustomAppIcon1 = os.getcwd() + '/app1.png'
@@ -64,7 +60,7 @@ NSLocalVersion = StringVar()                  #
 #                                             #
 # U P D A T E   T H I S   E V E R Y T I M E ! #
 #                                             #
-NSLocalVersion.set('5.1')                     #
+NSLocalVersion.set('5.2')                     #
 ###############################################
 ##################################
 #                                #
@@ -158,6 +154,22 @@ else:
         file.truncate(0)
         file.write('false')
         pass
+
+try:
+    path = os.getcwd() + '/system/Library/Security/Face/counter.txt'
+    with open(path, 'r') as readfile:
+        NSFaceID = IntVar()
+        if readfile.read() == '1':
+            NSFaceID.set(1)
+        else:
+            NSFaceID.set(0)
+            pass
+except:
+    path = os.getcwd() + '/system/Library/Security/Face/counter.txt'
+    with open(path, 'w') as writefile:
+        writefile.write('0')
+        NSFaceID = IntVar()
+        NSFaceID.set(0)
 
 NSMenuCounter = 1
 NSAutoSwitchCounter = 1
@@ -982,13 +994,44 @@ def browser(event):
     NSBrowserURLQuery.bind('<Return>', launch_url_key)
 
 def close_experimental_alert():
-    NSExperimentalAlert.destroy()
-    NSCanvas['bg'] = 'white'
-    NSMenuBar.place(relx=0.5, rely=0.012, anchor=CENTER)
-    NSWallpaper.place(x=0, y=0, relheight=1, relwidth=1)
-    NSHomeView.place(relx=0.5, rely=0.97, anchor=CENTER)
-    add_apps()
-    check_update()
+    if NSFaceID.get() == 1:
+        unlock = Toplevel()
+        unlock.geometry('250x250')
+        unlock.attributes('-topmost', True)
+
+        def check_unlock():
+            check = recognize('default')
+            if check == True:
+                msg['text'] = 'Project-Pios已解锁'
+                unlock.destroy()
+                NSExperimentalAlert.destroy()
+                NSCanvas['bg'] = 'white'
+                NSMenuBar.place(relx=0.5, rely=0.012, anchor=CENTER)
+                NSWallpaper.place(x=0, y=0, relheight=1, relwidth=1)
+                NSHomeView.place(relx=0.5, rely=0.97, anchor=CENTER)
+                add_apps()
+                check_update()
+                pass
+            else:
+                msg['text'] = '请重试'
+                pass
+
+        msg = Label(unlock, text='Project-Pios 已锁定，请先解锁', font=("Arial", 13))
+        msg.place(relx=0.5, rely=0.3, anchor=CENTER)
+
+        unlocks = tkmacosx.Button(unlock, text='解锁', font=("Arial", 12), borderless=1, activebackground='black', command=check_unlock)
+        unlocks.place(relx=0.5, rely=0.6, anchor=CENTER)
+
+        unlock.mainloop()
+    else:
+        NSExperimentalAlert.destroy()
+        NSCanvas['bg'] = 'white'
+        NSMenuBar.place(relx=0.5, rely=0.012, anchor=CENTER)
+        NSWallpaper.place(x=0, y=0, relheight=1, relwidth=1)
+        NSHomeView.place(relx=0.5, rely=0.97, anchor=CENTER)
+        add_apps()
+        check_update()
+        pass
 
 def shutdown(event):
     NSCanvas.destroy()
@@ -1903,6 +1946,36 @@ def sleep():
         NSCanvas.after(ms=1000, func=check_language)
 
     def close(event):
+        if NSFaceID.get() == 1:
+            unlock = Toplevel()
+            unlock.geometry('250x250')
+            unlock.attributes('-topmost', True)
+
+            def check_unlock():
+                check = recognize('default')
+                if check == True:
+                    msg['text'] = 'Project-Pios已解锁'
+                    unlock.destroy()
+                    NSMenuBar.place(relx=0.5, rely=0.012, anchor=CENTER)
+                    NSHomeView.place(relx=0.5, rely=0.97, anchor=CENTER)
+                    def wait():
+                        NSPopupAlert.destroy()
+                        add_apps()
+
+                    NSCanvas.after(500, wait)
+                    pass
+                else:
+                    msg['text'] = '请重试'
+                    pass
+
+            msg = Label(unlock, text='Project-Pios 已锁定，请先解锁', font=("Arial", 13))
+            msg.place(relx=0.5, rely=0.3, anchor=CENTER)
+
+            unlocks = tkmacosx.Button(unlock, text='解锁', font=("Arial", 12), borderless=1, activebackground='black', command=check_unlock)
+            unlocks.place(relx=0.5, rely=0.6, anchor=CENTER)
+
+            unlock.mainloop()
+        else:
             NSMenuBar.place(relx=0.5, rely=0.012, anchor=CENTER)
             NSHomeView.place(relx=0.5, rely=0.97, anchor=CENTER)
             def wait():
@@ -1961,40 +2034,52 @@ def friends(event):
     def check_language():
         if NSLanguageValue.get() == 'en':
             NSFriendsMyScreentimeTitleContainer['text'] = 'Screen Time Usage'
+            NSFriendsMySecurityTitleContainer['text'] = 'Face ID'
+            NSFriendsMySecuritySetup['text'] = 'Setup'
             NSFriendsMyBack['text'] = 'Back'
         else:
             NSFriendsMyScreentimeTitleContainer['text'] = '屏幕使用时间'
+            NSFriendsMySecurityTitleContainer['text'] = '面容识别'
+            NSFriendsMySecuritySetup['text'] = '设置'
             NSFriendsMyBack['text'] = '返回'
         NSFriendsView.after(ms=1000, func=check_language)
 
     def check_mode():
         if NSDarkModeStat.get() == 1:
             NSFriendsView['bg'] = dark_theme['bg']
-            NSFriendsMyBack['bg'] = dark_theme['bg']
-            NSFriendsMyBack['fg'] = dark_theme['fg']
-            NSFriendsMyBack.config(activebackground='white', activeforeground='black')
-
             NSFriendsMyProfileBox['bg'] = dark_theme['bg']
-            NSFriendsMyProfileNameContainer['bg'] = rgbtohex(234, 234, 234)
-            NSFriendsMyProfileBirthdayContainer['bg'] = rgbtohex(234, 234, 234)
-
             NSFriendsMyScreentimeBox['bg'] = dark_theme['bg']
-            NSFriendsMyScreentimeTitleContainer['bg'] = rgbtohex(234, 234, 234)
-            NSFriendsMyScreentimeDataContainer['bg'] = rgbtohex(234, 234, 234)
+            NSFriendsMySecurityBox['bg'] = dark_theme['bg']
         else:
             NSFriendsView['bg'] = theme['bg']
-            NSFriendsMyBack['bg'] = theme['bg']
-            NSFriendsMyBack['fg'] = theme['fg']
-            NSFriendsMyBack.config(activebackground='black', activeforeground='white')
-
             NSFriendsMyProfileBox['bg'] = theme['bg']
-            NSFriendsMyProfileNameContainer['bg'] = rgbtohex(234, 234, 234)
-            NSFriendsMyProfileBirthdayContainer['bg'] = rgbtohex(234, 234, 234)
-
             NSFriendsMyScreentimeBox['bg'] = theme['bg']
-            NSFriendsMyScreentimeTitleContainer['bg'] = rgbtohex(234, 234, 234)
-            NSFriendsMyScreentimeDataContainer['bg'] = rgbtohex(234, 234, 234)
+            NSFriendsMySecurityBox['bg'] = theme['bg']
         NSFriendsView.after(ms=1000, func=check_mode)
+
+    def setup_face(event):
+        messagebox.showinfo(message='请看向摄像头')
+        setup()
+        messagebox.showinfo(message='成功！')
+        with open(os.getcwd() + '/system/Library/Security/Face/counter.txt', 'w') as file:
+            file.write('1')
+
+        test = Toplevel()
+        test.geometry('300x300')
+
+        def face_test():
+            check = recognize('default')
+            if check == True:
+                messagebox.showinfo(message='测试成功！')
+                test.destroy()
+            else:
+                messagebox.showerror(message='测试失败')
+                pass
+
+        test_face = tkmacosx.Button(test, text='测试面容识别', font=("Arial", 13), borderless=1, activebackground='black', command=face_test)
+        test_face.place(relx=0.5, rely=0.5, anchor=CENTER)
+
+        test.mainloop()
 
     NSFriendsMyProfileBox = RoundedButton(NSFriendsView, 380, 100, 20, 0, rgbtohex(234, 234, 234), 'white')
     NSFriendsMyProfileBox.place(relx=0.5, rely=0.13, anchor=CENTER)
@@ -2017,7 +2102,7 @@ def friends(event):
     NSFriendsMyScreentimeBox.place(relx=0.5, rely=0.28, anchor=CENTER)
 
     NSFriendsMyScreentimeTitleContainer = Label(NSFriendsView, text='屏幕使用时间', bg=rgbtohex(234, 234, 234), font=("Futura", 13))
-    NSFriendsMyScreentimeTitleContainer.place(relx=0.07, rely=0.225)
+    NSFriendsMyScreentimeTitleContainer.place(relx=0.15, rely=0.24, anchor=CENTER)
 
     with open(os.getcwd() + '/system/Library/ScreenTime/counter.txt', 'r') as txt:
         total = int(txt.read())
@@ -2025,6 +2110,19 @@ def friends(event):
     
     NSFriendsMyScreentimeDataContainer = Label(NSFriendsView, text='{}h {}m'.format(hours, mins), bg=rgbtohex(234, 234, 234), font=("Futura", 17))
     NSFriendsMyScreentimeDataContainer.place(relx=0.5, rely=0.28, anchor=CENTER)
+
+
+    # Face ID
+
+    NSFriendsMySecurityBox = RoundedButton(NSFriendsView, 380, 100, 20, 0, rgbtohex(234, 234, 234), 'white')
+    NSFriendsMySecurityBox.place(relx=0.5, rely=0.43, anchor=CENTER)
+
+    NSFriendsMySecurityTitleContainer = Label(NSFriendsView, text='面容识别', bg=rgbtohex(234, 234, 234), font=("Futura", 13))
+    NSFriendsMySecurityTitleContainer.place(relx=0.15, rely=0.39, anchor=CENTER)
+
+    NSFriendsMySecuritySetup = Label(NSFriendsView, text='设置', font=("Futura", 15), bg=rgbtohex(234, 234, 234))
+    NSFriendsMySecuritySetup.place(relx=0.5, rely=0.43, anchor=CENTER)
+    NSFriendsMySecuritySetup.bind("<Button-1>", setup_face)
 
     check_language()
     check_mode()
@@ -2261,6 +2359,12 @@ def save_screentime():
                     json.dump(data, file, indent=4)
     NSCanvas.after(ms=10000, func=save_screentime)
 
+def update_faceid():
+    with open(os.getcwd() + '/system/Library/Security/Face/counter.txt', 'r') as reading:
+        NSFaceID.set(int(reading.read()))
+
+    NSCanvas.after(ms=1000, func=update_faceid)
+
 NSCanvas = Canvas(root)
 NSCanvas.pack(fill=BOTH, expand=True)
 
@@ -2425,5 +2529,6 @@ check_bluetooth()
 check_wifi()
 update_screentime()
 save_screentime()
+update_faceid()
 root.bind("<Command-,>", simulator_settings)
 root.mainloop()
