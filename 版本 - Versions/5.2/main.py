@@ -4,7 +4,7 @@ from tkinter import simpledialog, messagebox
 from datetime import datetime
 from PIL import Image, ImageTk
 import requests
-import os
+import os, sys
 import tkmacosx
 import platform
 import socket
@@ -12,17 +12,30 @@ import re
 import uuid
 import psutil
 import webview
+from pyzbar import pyzbar
 import sys
 import shutil
 import arrow
 import webbrowser
 import pyscreenshot
 import yagmail
-from app import import_app, quit_app # Add custom app here
-from app2 import import_app2, quit_app2 # Add second custom app here
+from getpass import getuser
+from system.Software.update import update
+from system.Software.helpers import download_ocr, download_qrcode
+import csv
+import base64
+import json
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import subprocess
+from modules.RoundedButton import RoundedButton
+from system.Software.func import recognize, setup
+from App1.app import import_app, quit_app # Add custom app here
+from App2.app2 import import_app2, quit_app2 # Add second custom app here
 import objc
 
-#change all path from "/project_pios/FILE" to "/FILE" for github
+# change all path from "/FILE" to "/FILE" for github
+# In settings and friends app change name to getuser()
 
 # Custom App Icons
 NSCustomAppIcon1 = os.getcwd() + '/app1.png'
@@ -47,7 +60,7 @@ NSLocalVersion = StringVar()                  #
 #                                             #
 # U P D A T E   T H I S   E V E R Y T I M E ! #
 #                                             #
-NSLocalVersion.set('4.0.3')                   #
+NSLocalVersion.set('5.2')                     #
 ###############################################
 ##################################
 #                                #
@@ -56,6 +69,21 @@ NSLocalVersion.set('4.0.3')                   #
 #                                #
 #                                #
 ##################################
+
+# Launch the files when app starts
+path = os.getcwd() + '/system/Library/launch/'
+if len(os.listdir(path)) == 0:
+    pass
+else:
+    try:
+        files = os.listdir(path)
+        for file in files:
+            if file.startswith('.') and os.path.isfile(os.path.join(path, file)):
+                pass
+            else:
+                os.system('open {}'.format(path + file))
+    except:
+        pass
 
 dark_theme = {
     "bg": "black",
@@ -81,6 +109,19 @@ NSSettingsFrame = IntVar()
 
 NSUpdateAlert = 0
 
+path = os.getcwd() + '/system/Library/ScreenTime/counter.txt'
+if os.path.exists(path) == True:
+    with open(path, 'r') as file:
+        try:
+            NSScreenTimeCounter = int(file.read())
+        except:
+            NSScreenTimeCounter = 0
+            pass
+else:
+    with open(path, 'w') as file:
+        NSScreenTimeCounter = 0
+        file.write('0')
+
 NSLanguageValue = StringVar()
 try:
     with open(os.getcwd() + '/language.txt', 'r') as file:
@@ -103,22 +144,41 @@ NSBluetoothCount = 0
 response = os.popen('blueutil -p').read()
 if response == '1\n':
     NSBluetoothValue.set(1)
-    with open(os.getcwd() + '/system/wifi/bool.txt', 'w') as file:
+    with open(os.getcwd() + '/system/bluetooth/bool.txt', 'w') as file:
         file.truncate(0)
         file.write('true')
         pass
 else:
     NSBluetoothValue.set(0)
-    with open(os.getcwd() + '/system/wifi/bool.txt', 'w') as file:
+    with open(os.getcwd() + '/system/bluetooth/bool.txt', 'w') as file:
         file.truncate(0)
         file.write('false')
         pass
+
+try:
+    path = os.getcwd() + '/system/Library/Security/Face/counter.txt'
+    with open(path, 'r') as readfile:
+        NSFaceID = IntVar()
+        if readfile.read() == '1':
+            NSFaceID.set(1)
+        else:
+            NSFaceID.set(0)
+            pass
+except:
+    path = os.getcwd() + '/system/Library/Security/Face/counter.txt'
+    with open(path, 'w') as writefile:
+        writefile.write('0')
+        NSFaceID = IntVar()
+        NSFaceID.set(0)
 
 NSMenuCounter = 1
 NSAutoSwitchCounter = 1
 
 NSBrowserSearchEngine = IntVar()
 NSBrowserSearchEngine.set(0)
+
+def rgbtohex(r, g, b):
+    return f'#{r:02x}{g:02x}{b:02x}'
 
 def update_time():
     orig = str(datetime.now())
@@ -185,6 +245,7 @@ def pulldown_menu(event):
             NSWallpaperLabel['text'] = 'Wallpaper'
             NSClockLabel['text'] = 'Clock'
             NSScreenshotLabel['text'] = 'Screenshot'
+            NSSleepLabel['text'] = 'Sleep'
             pass
         else:
             NSWifiLabel['text'] = '网络'
@@ -193,6 +254,7 @@ def pulldown_menu(event):
             NSWallpaperLabel['text'] = '壁纸'
             NSClockLabel['text'] = '时间'
             NSScreenshotLabel['text'] = '截屏'
+            NSSleepLabel['text'] = '睡眠'
             pass
 
         NSCanvas.after(ms=1000, func=change_language)
@@ -221,6 +283,9 @@ def pulldown_menu(event):
         NSScreenshotControl.place(relx=0.1, rely=0.4, anchor=CENTER)
         NSScreenshotLabel.place(relx=0.1, rely=0.5, anchor=CENTER)
 
+        NSSleepControl.place(relx=0.3, rely=0.4, anchor=CENTER)
+        NSSleepLabel.place(relx=0.3, rely=0.5, anchor=CENTER)
+
         if NSWifiValue.get() == 1:
             NSWifiControl['bg'] = '#1b73e9'
         else:
@@ -244,6 +309,8 @@ def pulldown_menu(event):
         NSControlMenu.place_forget()
         NSScreenshotControl.place_forget()
         NSScreenshotLabel.place_forget()
+        NSSleepControl.place_forget()
+        NSSleepLabel.place_forget()
         pass
 
 def manage_wifi():
@@ -299,6 +366,8 @@ def return_home(event):
     NSClockLabel.place_forget()
     NSScreenshotControl.place_forget()
     NSScreenshotLabel.place_forget()
+    NSSleepControl.place_forget()
+    NSSleepLabel.place_forget()
     NSControlMenu.place_forget()
 
     destroy_apps()
@@ -325,10 +394,12 @@ def settings(event):
 
     def about_this_mac():
         machine_platform = '机器: ' + platform.machine()
-        machine_system = '系统: ' + platform.system()
+        #machine_system = '系统: ' + platform.system()
+        if platform.system() == 'Darwin':
+            machine_system = '系统: MacOS'
         machine_processor = '芯片: ' + platform.processor()
-        machine_ip = 'IP: ' + socket.gethostbyname(socket.gethostname())
         machine_hostname = '网络名称: ' + socket.gethostname()
+        machine_ip = 'IP: ' + socket.gethostbyname(machine_hostname.replace('网络名称: ', ''))
         machine_mac = 'MAC: ' + ':'.join(re.findall('..', '%012x' % uuid.getnode()))
         machine_ram = '缓存: ' + str(round(psutil.virtual_memory().total / (1024.0 **3))) + ' GB'
 
@@ -423,7 +494,7 @@ def settings(event):
                 NSSettingsAbout['text'] = 'About'
                 pass
             else:
-                NSSettingsProfile['text'] = '    胡家睿'
+                NSSettingsProfile['text'] = '    {}'.format(getuser())
                 NSSettingsWallpaper['text'] = '壁纸'
                 NSSettingsPrivacy['text'] = '隐私'
                 NSSettingsAbout['text'] = '关于本机'
@@ -481,7 +552,7 @@ def settings(event):
                 NSSettingsAbout['text'] = 'About'
                 pass
             else:
-                NSSettingsProfile['text'] = '    胡家睿'
+                NSSettingsProfile['text'] = '    {}'.format(getuser())
                 NSSettingsWallpaper['text'] = '壁纸'
                 NSSettingsPrivacy['text'] = '隐私'
                 NSSettingsAbout['text'] = '关于本机'
@@ -676,7 +747,7 @@ def settings(event):
                 NSSettingsAbout['text'] = 'About'
                 pass
             else:
-                NSSettingsProfile['text'] = '    胡家睿'
+                NSSettingsProfile['text'] = '    {}'.format(getuser())
                 NSSettingsWallpaper['text'] = '壁纸'
                 NSSettingsPrivacy['text'] = '隐私'
                 NSSettingsAbout['text'] = '关于本机'
@@ -748,7 +819,7 @@ def settings(event):
             NSSettingsAbout['text'] = 'About'
             pass
         else:
-            NSSettingsProfile['text'] = '    胡家睿'
+            NSSettingsProfile['text'] = '    {}'.format(getuser())
             NSSettingsSearchEngine['text'] = '浏览器'
             NSSettingsWallpaper['text'] = '壁纸'
             NSSettingsPrivacy['text'] = '隐私'
@@ -761,7 +832,7 @@ def settings(event):
     NSSettingsProfileimg = NSSettingsProfileimg.resize((50, 50), Image.ANTIALIAS)
     NSSettingsProfilepic = ImageTk.PhotoImage(NSSettingsProfileimg)
 
-    NSSettingsProfile = tkmacosx.Button(NSSettingsView, text='    胡家睿', borderless=1, font=("Futura", 20), height=80, width=400, activebackground='white', activeforeground='black', image=NSSettingsProfilepic, compound=LEFT, command=open_page)
+    NSSettingsProfile = tkmacosx.Button(NSSettingsView, text='    {}'.format(getuser()), borderless=1, font=("Futura", 20), height=80, width=400, activebackground='white', activeforeground='black', image=NSSettingsProfilepic, compound=LEFT, command=open_page)
     NSSettingsProfile.image = NSSettingsProfilepic
     NSSettingsProfile.place(relx=0.5, rely=0.1, anchor=CENTER)
 
@@ -923,12 +994,44 @@ def browser(event):
     NSBrowserURLQuery.bind('<Return>', launch_url_key)
 
 def close_experimental_alert():
-    NSExperimentalAlert.destroy()
-    NSCanvas['bg'] = 'white'
-    NSMenuBar.place(relx=0.5, rely=0.012, anchor=CENTER)
-    NSWallpaper.place(x=0, y=0, relheight=1, relwidth=1)
-    add_apps()
-    check_update()
+    if NSFaceID.get() == 1:
+        unlock = Toplevel()
+        unlock.geometry('250x250')
+        unlock.attributes('-topmost', True)
+
+        def check_unlock():
+            check = recognize('default')
+            if check == True:
+                msg['text'] = 'Project-Pios已解锁'
+                unlock.destroy()
+                NSExperimentalAlert.destroy()
+                NSCanvas['bg'] = 'white'
+                NSMenuBar.place(relx=0.5, rely=0.012, anchor=CENTER)
+                NSWallpaper.place(x=0, y=0, relheight=1, relwidth=1)
+                NSHomeView.place(relx=0.5, rely=0.97, anchor=CENTER)
+                add_apps()
+                check_update()
+                pass
+            else:
+                msg['text'] = '请重试'
+                pass
+
+        msg = Label(unlock, text='Project-Pios 已锁定，请先解锁', font=("Arial", 13))
+        msg.place(relx=0.5, rely=0.3, anchor=CENTER)
+
+        unlocks = tkmacosx.Button(unlock, text='解锁', font=("Arial", 12), borderless=1, activebackground='black', command=check_unlock)
+        unlocks.place(relx=0.5, rely=0.6, anchor=CENTER)
+
+        unlock.mainloop()
+    else:
+        NSExperimentalAlert.destroy()
+        NSCanvas['bg'] = 'white'
+        NSMenuBar.place(relx=0.5, rely=0.012, anchor=CENTER)
+        NSWallpaper.place(x=0, y=0, relheight=1, relwidth=1)
+        NSHomeView.place(relx=0.5, rely=0.97, anchor=CENTER)
+        add_apps()
+        check_update()
+        pass
 
 def shutdown(event):
     NSCanvas.destroy()
@@ -1140,6 +1243,8 @@ def takedown_pulldown_menu(event):
         NSControlMenu.place_forget()
         NSScreenshotControl.place_forget()
         NSScreenshotLabel.place_forget()
+        NSSleepControl.place_forget()
+        NSSleepLabel.place_forget()
     except:
         pass
 
@@ -1156,6 +1261,8 @@ def screenshot_takedown_pulldown_menu():
         NSControlMenu.place_forget()
         NSScreenshotControl.place_forget()
         NSScreenshotLabel.place_forget()
+        NSSleepControl.place_forget()
+        NSSleepLabel.place_forget()
     except:
         pass
 
@@ -1338,6 +1445,8 @@ def detect_darkmode():
         NSClockLabel['fg'] = dark_theme['fg']
         NSScreenshotLabel['bg'] = dark_theme['bg']
         NSScreenshotLabel['fg'] = dark_theme['fg']
+        NSSleepLabel['bg'] = dark_theme['bg']
+        NSSleepLabel['fg'] = dark_theme['fg']
         pass
     else:
         NSDarkModeStat.set(0)
@@ -1357,6 +1466,8 @@ def detect_darkmode():
         NSClockLabel['fg'] = theme['fg']
         NSScreenshotLabel['bg'] = theme['bg']
         NSScreenshotLabel['fg'] = theme['fg']
+        NSSleepLabel['bg'] = theme['bg']
+        NSSleepLabel['fg'] = theme['fg']
         pass
     
     root.after(ms=500, func=detect_darkmode)
@@ -1411,6 +1522,8 @@ def screenshot():
         NSClockLabel.place(relx=0.9, rely=0.2, anchor=CENTER)
         NSScreenshotControl.place(relx=0.1, rely=0.4, anchor=CENTER)
         NSScreenshotLabel.place(relx=0.1, rely=0.5, anchor=CENTER)
+        NSSleepControl.place(relx=0.3, rely=0.4, anchor=CENTER)
+        NSSleepLabel.place(relx=0.3, rely=0.5, anchor=CENTER)
     
     NSCanvas.after(1000, wait)
 
@@ -1524,32 +1637,56 @@ def email(event):
                 else:
                     username = open(os.getcwd() + '/system/email/email.txt', 'r').read()
                     word = open(os.getcwd() + '/system/email/password.txt', 'r').read()
+                    username = base64.b64decode(username).decode('utf-8')
+                    word = base64.b64decode(word).decode('utf-8')
                     pass
             with yagmail.SMTP(username, word) as yag:
                 if NSEmailCCBox.get() == '':
+                    # no cc
                     yag.send(to=NSEmailSenderEmailBox.get(), subject=NSEmailSubjectBox.get(), contents=NSEmailContent.get(1.0, END))
                     messagebox.showinfo(message=f'Email send to {NSEmailSenderEmailBox.get()}, from {username} was sent.')
                     clear()
 
                     #write credencials to file for next use
-                    with open(os.getcwd() + '/system/email/email.txt', 'w') as email, open(os.getcwd() + '/system/email/password.txt', 'w') as password:
+                    with open(os.getcwd() + '/system/email/email.txt', 'wb') as email, open(os.getcwd() + '/system/email/password.txt', 'wb') as password:
                         email.truncate(0)
                         password.truncate(0)
-                        email.write(username)
-                        password.write(word)
+                        email.write(base64.b64encode(username.encode('ascii')))
+                        password.write(base64.b64encode(word.encode('ascii')))
+
+                        #save to csv file, read than write
+                        with open(os.getcwd() + '/system/email/info.csv', 'a+') as file:
+                            writer = csv.writer(file)
+                            rows = [
+                                ['Time', 'From', 'To', 'Status', 'Subject'],
+                                [datetime.now(), username, NSEmailSenderEmailBox.get(), 'Sent', NSEmailSubjectBox.get()]
+                            ]
+                            writer.writerows(rows)
+                            clear()
                         pass
                 else:
                     pass
+                # yes cc
                 yag.send(to=NSEmailSenderEmailBox.get(), subject=NSEmailSubjectBox.get(), contents=NSEmailContent.get(1.0, END), cc=NSEmailCCBox.get())
                 messagebox.showinfo(message=f'Email send to {NSEmailSenderEmailBox.get()}, from {username} was sent.')
                 clear()
 
                 #write credencials to file for next use
-                with open(os.getcwd() + '/system/email/email.txt', 'w') as email, open(os.getcwd() + '/system/email/password.txt', 'w') as password:
+                with open(os.getcwd() + '/system/email/email.txt', 'wb') as email, open(os.getcwd() + '/system/email/password.txt', 'wb') as password:
                     email.truncate(0)
                     password.truncate(0)
-                    email.write(username)
-                    password.write(word)
+                    email.write(base64.b64encode(username.encode('ascii')))
+                    password.write(base64.b64encode(word.encode('ascii')))
+
+                    #save to csv file, read than write
+                    with open(os.getcwd() + '/system/email/info.csv', 'a+') as file:
+                        writer = csv.writer(file)
+                        rows = [
+                            ['Time', 'From', 'To', 'Status', 'Subject'],
+                            [datetime.now(), username, NSEmailSenderEmailBox.get(), 'Sent', NSEmailSubjectBox.get()]
+                        ]
+                        writer.writerows(rows)
+                        clear()
                     pass
         else:
             with open(os.getcwd() + '/system/email/email.txt', 'r') as email, open(os.getcwd() + '/system/email/password.txt', 'r') as password:
@@ -1560,33 +1697,102 @@ def email(event):
                 else:
                     username = open(os.getcwd() + '/system/email/email.txt', 'r').read()
                     word = open(os.getcwd() + '/system/email/password.txt', 'r').read()
+                    username = base64.b64decode(username).decode('utf-8')
+                    word = base64.b64decode(word).decode('utf-8')
                     pass
             with yagmail.SMTP(username, word) as yag:
                 if NSEmailCCBox.get() == '':
                     yag.send(to=NSEmailSenderEmailBox.get(), subject=NSEmailSubjectBox.get(), contents=NSEmailContent.get(1.0, END))
                     messagebox.showinfo(message=f'从 {username} 的邮件已发送。')
-                    clear()
 
                     #write credencials to file for next use
-                    with open(os.getcwd() + '/system/email/email.txt', 'w') as email, open(os.getcwd() + '/system/email/password.txt', 'w') as password:
+                    with open(os.getcwd() + '/system/email/email.txt', 'wb') as email, open(os.getcwd() + '/system/email/password.txt', 'wb') as password:
                         email.truncate(0)
                         password.truncate(0)
-                        email.write(username)
-                        password.write(word)
+                        email.write(base64.b64encode(username.encode('ascii')))
+                        password.write(base64.b64encode(word.encode('ascii')))
+
+                        #save to csv file, read than write
+                        with open(os.getcwd() + '/system/email/info.csv', 'a+') as file:
+                            writer = csv.writer(file)
+                            rows = [
+                                ['Time', 'From', 'To', 'Status', 'Subject'],
+                                [datetime.now(), username, NSEmailSenderEmailBox.get(), 'Sent', NSEmailSubjectBox.get()]
+                            ]
+                            writer.writerows(rows)
+                            clear()
                         pass
                 else:
                     pass
                 yag.send(to=NSEmailSenderEmailBox.get(), subject=NSEmailSubjectBox.get(), contents=NSEmailContent.get(1.0, END), cc=NSEmailCCBox.get())
                 messagebox.showinfo(message=f'从 {username} 的邮件已发送。')
-                clear()
 
                 #write credencials to file for next use
-                with open(os.getcwd() + '/system/email/email.txt', 'w') as email, open(os.getcwd() + '/system/email/password.txt', 'w') as password:
+                with open(os.getcwd() + '/system/email/email.txt', 'wb') as email, open(os.getcwd() + '/system/email/password.txt', 'wb') as password:
                     email.truncate(0)
                     password.truncate(0)
-                    email.write(username)
-                    password.write(word)
+                    email.write(base64.b64encode(username.encode('ascii')))
+                    password.write(base64.b64encode(word.encode('ascii')))
+
+                    #save to csv file, read than write
+                    with open(os.getcwd() + '/system/email/info.csv', 'a+') as file:
+                        writer = csv.writer(file)
+                        rows = [
+                            ['Time', 'From', 'To', 'Status', 'Subject'],
+                            [datetime.now(), username, NSEmailSenderEmailBox.get(), 'Sent', NSEmailSubjectBox.get()]
+                        ]
+                        writer.writerows(rows)
+                        clear()
                     pass
+
+    def check_darkmode():
+        if NSDarkModeStat.get() == 1:
+            NSEmailView['bg'] = dark_theme['bg']
+            NSEmailSenderEmailLabel['bg'] = dark_theme['bg']
+            NSEmailSenderEmailLabel['fg'] = dark_theme['fg']
+            NSEmailSenderEmailBox['bg'] = dark_theme['bg']
+            NSEmailSenderEmailBox['fg'] = dark_theme['fg']
+            NSEmailCCBox['bg'] = dark_theme['bg']
+            NSEmailCCBox['fg'] = dark_theme['fg']
+            NSEmailCCLabel['bg'] = dark_theme['bg']
+            NSEmailCCLabel['fg'] = dark_theme['fg']
+            NSEmailSubjectLabel['bg'] = dark_theme['bg']
+            NSEmailSubjectLabel['fg'] = dark_theme['fg']
+            NSEmailSubjectBox['bg'] = dark_theme['bg']
+            NSEmailSubjectBox['fg'] = dark_theme['fg']
+            NSEmailContent['bg'] = dark_theme['bg']
+            NSEmailContent['fg'] = dark_theme['fg']
+
+            NSEmailSend['bg'] = dark_theme['bg']
+            NSEmailSend['fg'] = dark_theme['fg']
+            NSEmailSend.config(activebackground='white', activeforeground='black')
+            NSEmailClear['bg'] = dark_theme['bg']
+            NSEmailClear['fg'] = dark_theme['fg']
+            NSEmailClear.config(activebackground='white', activeforeground='black')
+        else:
+            NSEmailView['bg'] = theme['bg']
+            NSEmailSenderEmailLabel['bg'] = theme['bg']
+            NSEmailSenderEmailLabel['fg'] = theme['fg']
+            NSEmailSenderEmailBox['bg'] = theme['bg']
+            NSEmailSenderEmailBox['fg'] = theme['fg']
+            NSEmailCCBox['bg'] = theme['bg']
+            NSEmailCCBox['fg'] = theme['fg']
+            NSEmailCCLabel['bg'] = theme['bg']
+            NSEmailCCLabel['fg'] = theme['fg']
+            NSEmailSubjectLabel['bg'] = theme['bg']
+            NSEmailSubjectLabel['fg'] = theme['fg']
+            NSEmailSubjectBox['bg'] = theme['bg']
+            NSEmailSubjectBox['fg'] = theme['fg']
+            NSEmailContent['bg'] = theme['bg']
+            NSEmailContent['fg'] = theme['fg']
+
+            NSEmailSend['bg'] = theme['bg']
+            NSEmailSend['fg'] = theme['fg']
+            NSEmailSend.config(activebackground='black', activeforeground='white')
+            NSEmailClear['bg'] = theme['bg']
+            NSEmailClear['fg'] = theme['fg']
+            NSEmailClear.config(activebackground='black', activeforeground='white')
+        NSEmailView.after(ms=1000, func=check_darkmode)
 
     NSEmailSenderEmailLabel = Label(NSEmailView, text='收件人:', font=("Futura", 15))
     NSEmailSenderEmailLabel.place(relx=0.1, rely=0.048, anchor=CENTER)
@@ -1616,6 +1822,7 @@ def email(event):
     NSEmailClear.place(relx=0.1, rely=0.97, anchor=CENTER)
 
     change_language()
+    check_darkmode()
 
 def check_update():
     global NSUpdateAlert
@@ -1630,8 +1837,26 @@ def check_update():
         if NSLocalVersion.get() != NSVersion.get():
             if NSLanguageValue.get() == 'en':
                 messagebox.showinfo(message='You have a update available. Please go to settings and click on profile. Follow instructions on github to update. \n\n Your version: {v1} \n Target version: {v2}'.format(v1 = NSLocalVersion.get(), v2 = NSVersion.get()))
+                value = messagebox.askquestion(title='Update', message='Update?')
+                if value == 'yes':
+                    messagebox.showinfo(message='Please wait...')
+                    update()
+                    root.quit()
+                    quit()
+                    exit()
+                else:
+                    pass
             else:
                 messagebox.showinfo(message='Project-Pios可以更新。请前往设置并单击用户，根据指示更新Project-Pios。\n\n 您的版本: {v1} \n 更新版本: {v2}'.format(v1 = NSLocalVersion.get(), v2 = NSVersion.get()))
+                value = messagebox.askquestion(title='更新', message='更新？')
+                if value == 'yes':
+                    messagebox.showinfo(message='请耐心等待...')
+                    update()
+                    root.quit()
+                    quit()
+                    exit()
+                else:
+                    pass
         else:
             pass
     else:
@@ -1646,6 +1871,7 @@ def remove_apps():
     APPEmail.place_forget()
     APPAdd.place_forget()
     APPAdd2.place_forget()
+    APPFriends.place_forget()
 
 def add_apps():
     APPSettings.place(relx=0.2, rely=0.85, anchor=CENTER)
@@ -1654,6 +1880,7 @@ def add_apps():
     APPEmail.place(relx=0.2, rely=0.75, anchor=CENTER)
     APPAdd.place(relx=0.5, rely=0.75, anchor=CENTER)
     APPAdd2.place(relx=0.8, rely=0.75, anchor=CENTER)
+    APPFriends.place(relx=0.2, rely=0.65, anchor=CENTER)
 
 def destroy_apps():
     try:
@@ -1675,23 +1902,468 @@ def destroy_apps():
     except:
         pass
     try:
-        global NSAppView
-        NSAppView.destroy()
+        quit_app()
     except:
         pass
     try:
-        global NSApp2View
-        NSApp2View.destroy()
+        quit_app2()
+    except:
+        pass
+    try:
+        NSFriendsView.destroy()
+    except:
+        pass
+    try:
+        NSFriendsCircleView.destroy()
     except:
         pass
 
 def add_app(event): # Manage custom app here
     remove_apps()
-    import_app(NSWallpaper)
+    import_app(NSWallpaper, launch_screen_time=1000)
 
 def add_app2(event): # Manage second custom app here
     remove_apps()
     import_app2(NSWallpaper)
+
+def sleep():
+    NSPopupAlert = Frame(NSWallpaper, bg='black')
+    NSPopupAlert.pack(fill=BOTH, expand=True)
+
+    remove_apps()
+    destroy_apps()
+    screenshot_takedown_pulldown_menu()
+    NSHomeView.place_forget()
+    NSMenuBar.place_forget()
+
+    def check_language():
+        if NSLanguageValue.get() == 'en':
+            hint['text'] = 'Double-click to exit'
+        else:
+            hint['text'] = '双击以退出'
+            pass
+
+        NSCanvas.after(ms=1000, func=check_language)
+
+    def close(event):
+        if NSFaceID.get() == 1:
+            unlock = Toplevel()
+            unlock.geometry('250x250')
+            unlock.attributes('-topmost', True)
+
+            def check_unlock():
+                check = recognize('default')
+                if check == True:
+                    msg['text'] = 'Project-Pios已解锁'
+                    unlock.destroy()
+                    NSMenuBar.place(relx=0.5, rely=0.012, anchor=CENTER)
+                    NSHomeView.place(relx=0.5, rely=0.97, anchor=CENTER)
+                    def wait():
+                        NSPopupAlert.destroy()
+                        add_apps()
+
+                    NSCanvas.after(500, wait)
+                    pass
+                else:
+                    msg['text'] = '请重试'
+                    pass
+
+            msg = Label(unlock, text='Project-Pios 已锁定，请先解锁', font=("Arial", 13))
+            msg.place(relx=0.5, rely=0.3, anchor=CENTER)
+
+            unlocks = tkmacosx.Button(unlock, text='解锁', font=("Arial", 12), borderless=1, activebackground='black', command=check_unlock)
+            unlocks.place(relx=0.5, rely=0.6, anchor=CENTER)
+
+            unlock.mainloop()
+        else:
+            NSMenuBar.place(relx=0.5, rely=0.012, anchor=CENTER)
+            NSHomeView.place(relx=0.5, rely=0.97, anchor=CENTER)
+            def wait():
+                NSPopupAlert.destroy()
+                add_apps()
+
+            NSCanvas.after(500, wait)
+
+    hint = Label(NSPopupAlert, text='双击以退出', font=("Futura", 18), bg='black', fg='white')
+    hint.place(relx=0.5, rely=0.4, anchor=CENTER)
+    
+    check_language()
+    NSPopupAlert.bind('<Double-1>', close)
+
+def check_qr():
+    # Look for qr codes in photos library
+    path = os.getcwd() + '/system/Library/Photos/'
+
+    if len(os.listdir(path)) == 1 and os.listdir(path)[0].startswith('.') == True or len(os.listdir(path)) == 0:
+        pass
+    else:
+        files = os.listdir(path)
+        for file in files:
+            if file.startswith('.') and os.path.isfile(os.path.join(path, file)):
+                pass
+            else:
+                img = Image.open(path + file)
+                out = pyzbar.decode(img)
+                for i in out:
+                    data = out[0].data.decode('utf-8')
+                    try:
+                        requests.get(data)
+                        if 'u.wechat.com' in data:
+                            if NSLanguageValue.get() == 'en':
+                                ans = messagebox.askyesno(message='Open WeChat Contact? \n\nWebsite: %s' % data)
+                                if ans == True:
+                                    webbrowser.open(data)
+                                    pass
+                            else:
+                                ans = messagebox.askyesno(message='打开微信联系人? \n\n网址: %s' % data)
+                                if ans == True:
+                                    webbrowser.open(data)
+                                    pass
+                    except:
+                        pass
+
+def friends(event):
+    global NSFriendsView
+    NSFriendsView = Frame(NSWallpaper)
+    NSFriendsView.pack(fill=BOTH, expand=True)
+    NSFriendsView.bind("<Button-1>", takedown_pulldown_menu)
+
+    remove_apps()
+    check_qr()
+
+    def check_language():
+        if NSLanguageValue.get() == 'en':
+            NSFriendsMyScreentimeTitleContainer['text'] = 'Screen Time Usage'
+            NSFriendsMySecurityTitleContainer['text'] = 'Face ID'
+            NSFriendsMySecuritySetup['text'] = 'Setup'
+            NSFriendsMyBack['text'] = 'Back'
+        else:
+            NSFriendsMyScreentimeTitleContainer['text'] = '屏幕使用时间'
+            NSFriendsMySecurityTitleContainer['text'] = '面容识别'
+            NSFriendsMySecuritySetup['text'] = '设置'
+            NSFriendsMyBack['text'] = '返回'
+        NSFriendsView.after(ms=1000, func=check_language)
+
+    def check_mode():
+        if NSDarkModeStat.get() == 1:
+            NSFriendsView['bg'] = dark_theme['bg']
+            NSFriendsMyProfileBox['bg'] = dark_theme['bg']
+            NSFriendsMyScreentimeBox['bg'] = dark_theme['bg']
+            NSFriendsMySecurityBox['bg'] = dark_theme['bg']
+        else:
+            NSFriendsView['bg'] = theme['bg']
+            NSFriendsMyProfileBox['bg'] = theme['bg']
+            NSFriendsMyScreentimeBox['bg'] = theme['bg']
+            NSFriendsMySecurityBox['bg'] = theme['bg']
+        NSFriendsView.after(ms=1000, func=check_mode)
+
+    def setup_face(event):
+        messagebox.showinfo(message='请看向摄像头')
+        setup()
+        messagebox.showinfo(message='成功！')
+        with open(os.getcwd() + '/system/Library/Security/Face/counter.txt', 'w') as file:
+            file.write('1')
+
+        test = Toplevel()
+        test.geometry('300x300')
+
+        def face_test():
+            check = recognize('default')
+            if check == True:
+                messagebox.showinfo(message='测试成功！')
+                test.destroy()
+            else:
+                messagebox.showerror(message='测试失败')
+                pass
+
+        test_face = tkmacosx.Button(test, text='测试面容识别', font=("Arial", 13), borderless=1, activebackground='black', command=face_test)
+        test_face.place(relx=0.5, rely=0.5, anchor=CENTER)
+
+        test.mainloop()
+
+    NSFriendsMyProfileBox = RoundedButton(NSFriendsView, 380, 100, 20, 0, rgbtohex(234, 234, 234), 'white')
+    NSFriendsMyProfileBox.place(relx=0.5, rely=0.13, anchor=CENTER)
+
+    NSFriendsMyProfileimg = Image.open(os.getcwd() + '/profile.png')
+    NSFriendsMyProfileimg = NSFriendsMyProfileimg.resize((50, 50), Image.ANTIALIAS)
+    NSFriendsMyProfilepic = ImageTk.PhotoImage(NSFriendsMyProfileimg)
+
+    NSFriendsMyProfileImageContainer = Label(NSFriendsView, image=NSFriendsMyProfilepic, font=("Futura", 20), bg=rgbtohex(234, 234, 234))
+    NSFriendsMyProfileImageContainer.image = NSFriendsMyProfilepic
+    NSFriendsMyProfileImageContainer.place(relx=0.2, rely=0.13, anchor=CENTER)
+    
+    NSFriendsMyProfileNameContainer = Label(NSFriendsView, text='{}'.format(getuser()), font=("Futura", 20), bg=rgbtohex(234, 234, 234))
+    NSFriendsMyProfileNameContainer.place(relx=0.4, rely=0.12, anchor=CENTER)
+
+    NSFriendsMyProfileBirthdayContainer = Label(NSFriendsView, text='0000/00/00', font=("Futura", 12), bg=rgbtohex(234, 234, 234), fg=rgbtohex(38, 39, 40))
+    NSFriendsMyProfileBirthdayContainer.place(relx=0.42, rely=0.15, anchor=CENTER)
+
+    NSFriendsMyScreentimeBox = RoundedButton(NSFriendsView, 380, 100, 20, 0, rgbtohex(234, 234, 234), 'white')
+    NSFriendsMyScreentimeBox.place(relx=0.5, rely=0.28, anchor=CENTER)
+
+    NSFriendsMyScreentimeTitleContainer = Label(NSFriendsView, text='屏幕使用时间', bg=rgbtohex(234, 234, 234), font=("Futura", 13))
+    NSFriendsMyScreentimeTitleContainer.place(relx=0.15, rely=0.24, anchor=CENTER)
+
+    with open(os.getcwd() + '/system/Library/ScreenTime/counter.txt', 'r') as txt:
+        total = int(txt.read())
+    hours, mins = divmod(total, 60)
+    
+    NSFriendsMyScreentimeDataContainer = Label(NSFriendsView, text='{}h {}m'.format(hours, mins), bg=rgbtohex(234, 234, 234), font=("Futura", 17))
+    NSFriendsMyScreentimeDataContainer.place(relx=0.5, rely=0.28, anchor=CENTER)
+
+
+    # Face ID
+
+    NSFriendsMySecurityBox = RoundedButton(NSFriendsView, 380, 100, 20, 0, rgbtohex(234, 234, 234), 'white')
+    NSFriendsMySecurityBox.place(relx=0.5, rely=0.43, anchor=CENTER)
+
+    NSFriendsMySecurityTitleContainer = Label(NSFriendsView, text='面容识别', bg=rgbtohex(234, 234, 234), font=("Futura", 13))
+    NSFriendsMySecurityTitleContainer.place(relx=0.15, rely=0.39, anchor=CENTER)
+
+    NSFriendsMySecuritySetup = Label(NSFriendsView, text='设置', font=("Futura", 15), bg=rgbtohex(234, 234, 234))
+    NSFriendsMySecuritySetup.place(relx=0.5, rely=0.43, anchor=CENTER)
+    NSFriendsMySecuritySetup.bind("<Button-1>", setup_face)
+
+    check_language()
+    check_mode()
+
+def update_screentime():
+    global NSScreenTimeCounter
+    NSScreenTimeCounter += 1
+    try:
+        with open(os.getcwd() + '/system/Library/ScreenTime/counter.txt', 'w') as out:
+            out.write(str(NSScreenTimeCounter))
+        with open(os.getcwd() + '/system/Library/ScreenTime/info.json', 'r') as file:
+            data = json.load(file)
+        today = str(datetime.today().weekday())
+        data[today] = NSScreenTimeCounter
+        with open(os.getcwd() + '/system/Library/ScreenTime/info.json', 'w') as file:
+            json.dump(data, file, indent=4)
+    except:
+        with open(os.getcwd() + '/system/Library/ScreenTime/info.json', 'w') as file:
+            data = {
+                '_comment': 'Number on the left is the weekday, and number on the right is how many minutes the app is used',
+                '1': 0,
+                '2': 0,
+                '3': 0,
+                '4': 0,
+                '5': 0,
+                '6': 0,
+                '7': 0
+            }
+            json.dump(data, file, indent=4)
+    NSCanvas.after(ms=60000, func=update_screentime)
+
+def simulator_settings(event):
+    preferences = Toplevel()
+    preferences.title('模拟器设置')
+    preferences.geometry('300x200')
+    preferences['bg'] = rgbtohex(235, 235, 235)
+    preferences.grab_set()
+
+    def check_mode():
+        if NSDarkModeStat.get() == 1:
+            preferences['bg'] = rgbtohex(40, 40, 40)
+
+            NSPreferencesScreenTimeLabel['bg'] = rgbtohex(40, 40, 40)
+            NSPreferencesScreenTimeLabel['fg'] = dark_theme['fg']
+            NSPreferencesScreenTimeButton['bg'] = rgbtohex(40, 40, 40)
+            NSPreferencesScreenTimeButton['fg'] = dark_theme['fg']
+            
+            NSPreferencesCleanCacheLabel['bg'] = rgbtohex(40, 40, 40)
+            NSPreferencesCleanCacheLabel['fg'] = dark_theme['fg']
+            NSPreferencesCleanCacheButton['bg'] = rgbtohex(40, 40, 40)
+            NSPreferencesCleanCacheButton['fg'] = dark_theme['fg']
+
+            NSPreferencesDownloadHelperButton['bg'] = rgbtohex(40, 40, 40)
+            NSPreferencesDownloadHelperButton['fg'] = dark_theme['fg']
+        else:
+            preferences['bg'] = rgbtohex(235, 235, 235)
+
+            NSPreferencesScreenTimeLabel['bg'] = rgbtohex(235, 235, 235)
+            NSPreferencesScreenTimeLabel['fg'] = theme['fg']
+            NSPreferencesScreenTimeButton['bg'] = rgbtohex(235, 235, 235)
+            NSPreferencesScreenTimeButton['fg'] = theme['fg']
+
+            NSPreferencesCleanCacheLabel['bg'] = rgbtohex(235, 235, 235)
+            NSPreferencesCleanCacheLabel['fg'] = theme['fg']
+            NSPreferencesCleanCacheButton['bg'] = rgbtohex(235, 235, 235)
+            NSPreferencesCleanCacheButton['fg'] = theme['fg']
+
+            NSPreferencesDownloadHelperButton['bg'] = rgbtohex(235, 235, 235)
+            NSPreferencesDownloadHelperButton['fg'] = theme['fg']
+        preferences.after(ms=1000, func=check_mode)
+
+    def check_language():
+        if NSLanguageValue.get() == 'en':
+            preferences.title('Simulator Preferences')
+
+            NSPreferencesScreenTimeLabel['text'] = 'Screen Time Usage'
+            NSPreferencesScreenTimeButton['text'] = 'Open'
+
+            NSPreferencesCleanCacheLabel['text'] = 'Clean Cache'
+            NSPreferencesCleanCacheButton['text'] = 'Clean'
+
+            NSPreferencesDownloadHelperButton['text'] = 'Download Helper'
+        else:
+            preferences.title('模拟器设置')
+
+            NSPreferencesScreenTimeLabel['text'] = '查看屏幕使用时间'
+            NSPreferencesScreenTimeButton['text'] = '查看'
+
+            NSPreferencesCleanCacheLabel['text'] = '清理缓存'
+            NSPreferencesCleanCacheButton['text'] = '清理'
+
+            NSPreferencesDownloadHelperButton['text'] = '下载帮手'
+        preferences.after(ms=1000, func=check_language)
+
+    def get_screentime():
+        screentime = Toplevel()
+        screentime.title('')
+        screentime.geometry('500x500')
+
+        with open(os.getcwd() + '/system/Library/ScreenTime/counter.txt', 'r') as txt:
+            total = int(txt.read())
+
+        hours, mins = divmod(total, 60)
+
+        with open(os.getcwd() + '/system/Library/ScreenTime/info.json', 'r') as infile:
+            data = json.load(infile)
+        x = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+        y = [data['1'], data['2'], data['3'], data['4'], data['5'], data['6'], data['7']]
+
+        fig = Figure(figsize=(10, 10), dpi=80)
+
+        plot1 = fig.add_subplot(111)
+        plot1.set_title('{}h {}m'.format(hours, mins), fontsize=20)
+        plot1.plot(x, y)
+
+        canvas = FigureCanvasTkAgg(fig, master=screentime)
+        canvas.draw()
+        canvas.get_tk_widget().pack()
+
+        screentime.mainloop()
+
+    def close():
+        preferences.grab_release()
+        preferences.destroy()
+
+    def clean_cache():
+        os.system('find . -type d -name  "__pycache__" -exec rm -r {} +')
+
+    def download_helper():
+        helper = Toplevel()
+        helper.title('帮手')
+        helper.geometry('500x400')
+        helper['bg'] = rgbtohex(235, 235, 235)
+        helper.grab_set()
+
+        def close():
+            helper.grab_release()
+            helper.destroy()
+
+        def install():
+            module = NSHelperSelection.get(NSHelperSelection.curselection())
+            if module == 'OCR - Optical Characters Recognition':
+                download_ocr()
+            elif module == 'Qr Code Scanner':
+                download_qrcode()
+
+        NSHelperText = Label(helper, text='下载帮手', font=("Arial", 12), bg=rgbtohex(235, 235, 235))
+        NSHelperText.place(relx=0.5, rely=0.05, anchor=CENTER)
+
+        NSHelperSelection = Listbox(helper, font=("Arial", 12), selectmode=SINGLE, width=70, height=15)
+        NSHelperSelection.place(relx=0.5, rely=0.45, anchor=CENTER)
+        NSHelperSelection.insert(END, 'OCR - Optical Characters Recognition')
+        NSHelperSelection.insert(END, 'Qr Code Scanner')
+
+        NSHelperInstall = tkmacosx.Button(helper, text='下载/运行', borderless=1, command=install)
+        NSHelperInstall.place(relx=0.5, rely=0.9, anchor=CENTER)
+
+        helper.protocol("WM_DELETE_WINDOW", close)
+        helper.mainloop()
+
+    NSPreferencesScreenTimeLabel = Label(preferences, text='查看屏幕使用时间', font=("Arial", 13))
+    NSPreferencesScreenTimeLabel.place(relx=0.25, rely=0.1, anchor=CENTER)
+
+    NSPreferencesScreenTimeButton = tkmacosx.Button(preferences, text='查看', font=("Arial", 13), borderless=1, command=get_screentime)
+    NSPreferencesScreenTimeButton.place(relx=0.8, rely=0.1, anchor=CENTER)
+
+    NSPreferencesDivider = ttk.Separator(preferences, orient=HORIZONTAL)
+    NSPreferencesDivider.place(relx=0.5, rely=0.23, anchor=CENTER, relwidth=0.9)
+
+    NSPreferencesCleanCacheLabel = Label(preferences, text='清理缓存', font=("Arial", 13))
+    NSPreferencesCleanCacheLabel.place(relx=0.25, rely=0.33, anchor=CENTER)
+
+    NSPreferencesCleanCacheButton = tkmacosx.Button(preferences, text='清理', font=("Arial", 13), borderless=1, command=clean_cache)
+    NSPreferencesCleanCacheButton.place(relx=0.8, rely=0.33, anchor=CENTER)
+
+    NSPreferencesDownloadHelperButton = tkmacosx.Button(preferences, text='下载帮手', font=("Arial", 13), borderless=1, command=download_helper)
+    NSPreferencesDownloadHelperButton.place(relx=0.5, rely=0.5, anchor=CENTER)
+
+    check_mode()
+    check_language()
+    preferences.protocol("WM_DELETE_WINDOW", close)
+    preferences.mainloop()
+
+def save_screentime():
+    if datetime.now().weekday() == 7:
+        if os.path.exists(os.getcwd() + '/system/Library/ScreenTime/History') == True:
+            with open(os.getcwd() + '/system/Library/ScreenTime/History/{}.csv'.format(datetime.now().date()), 'w') as file:
+                with open(os.getcwd() + '/system/Library/ScreenTime/info.json', 'r') as infile:
+                    data = json.load(infile)
+                writer = csv.writer(file)
+                rows = [
+                    ['Comment', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturaday', 'Sunday'],
+                    ['Screen Time history in minutes', data['1'], data['2'], data['3'], data['4'], data['5'], data['6'], data['7']]
+                ]
+                writer.writerows(rows)
+                os.remove(os.getcwd() + '/system/Library/ScreenTime/info.json')
+                with open(os.getcwd() + '/system/Library/ScreenTime/info.json', 'w') as file:
+                    data = {
+                        '_comment': 'Number on the left is the weekday, and number on the right is how many minutes the app is used',
+                        '1': 0,
+                        '2': 0,
+                        '3': 0,
+                        '4': 0,
+                        '5': 0,
+                        '6': 0,
+                        '7': 0
+                    }
+                    json.dump(data, file, indent=4)
+                with open(os.getcwd() + '/system/Library/ScreenTime/counter.txt', 'w') as f:
+                    f.truncate(0)
+        else:
+            os.mkdir(os.getcwd() + '/system/Library/ScreenTime/History')
+            with open(os.getcwd() + '/system/Library/ScreenTime/History/{}.csv'.format(datetime.now().date()), 'w') as file:
+                with open(os.getcwd() + '/system/Library/ScreenTime/info.json', 'r') as infile:
+                    data = json.load(infile)
+                writer = csv.writer(file)
+                rows = [
+                    ['Comment', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturaday', 'Sunday'],
+                    ['Screen Time history in minutes', data['1'], data['2'], data['3'], data['4'], data['5'], data['6'], data['7']]
+                ]
+                writer.writerows(rows)
+                os.remove(os.getcwd() + '/system/Library/ScreenTime/info.json')
+                with open(os.getcwd() + '/system/Library/ScreenTime/info.json', 'w') as file:
+                    data = {
+                        '_comment': 'Number on the left is the weekday, and number on the right is how many minutes the app is used',
+                        '1': 0,
+                        '2': 0,
+                        '3': 0,
+                        '4': 0,
+                        '5': 0,
+                        '6': 0,
+                        '7': 0
+                    }
+                    json.dump(data, file, indent=4)
+    NSCanvas.after(ms=10000, func=save_screentime)
+
+def update_faceid():
+    with open(os.getcwd() + '/system/Library/Security/Face/counter.txt', 'r') as reading:
+        NSFaceID.set(int(reading.read()))
+
+    NSCanvas.after(ms=1000, func=update_faceid)
 
 NSCanvas = Canvas(root)
 NSCanvas.pack(fill=BOTH, expand=True)
@@ -1767,9 +2439,12 @@ shotpic = ImageTk.PhotoImage(shotimg)
 NSScreenshotControl = tkmacosx.CircleButton(NSControlMenu, image=shotpic, borderless=1, radius=20, command=screenshot)
 NSScreenshotLabel = Label(NSControlMenu, text='截屏', bg=NSControlMenu['bg'])
 
-NSHomeView = Label(NSCanvas, text=' ', font=("Futura", 1), height=0, width=200, bg='#dddddd')
-NSHomeView.place(relx=0.5, rely=0.97, anchor=CENTER)
-NSHomeView.bind('<Button-1>', return_home)
+closeimg = Image.open(os.getcwd() + '/close.png')
+closeimg = closeimg.resize((25, 25), Image.ANTIALIAS)
+closepic = ImageTk.PhotoImage(closeimg)
+
+NSSleepControl = tkmacosx.CircleButton(NSControlMenu, image=closepic, borderless=1, radius=20, command=sleep)
+NSSleepLabel = Label(NSControlMenu, text='睡眠', bg=NSControlMenu['bg'])
 
 appsettingsimg = Image.open(os.getcwd() + '/settings.png')
 appsettingsimg = appsettingsimg.resize((40, 40), Image.ANTIALIAS)
@@ -1813,7 +2488,19 @@ APPAdd2 = Label(NSCanvas, text='', image=appadd2pic, border=0)
 APPAdd2.place(relx=0.8, rely=0.75, anchor=CENTER)
 APPAdd2.bind('<Button-1>', add_app2)
 
+appfriendsimg = Image.open(os.getcwd() + '/friends.jpg')
+appfriendsimg = appfriendsimg.resize((40, 40), Image.ANTIALIAS)
+appfriendspic = ImageTk.PhotoImage(appfriendsimg)
+APPFriends = Label(NSCanvas, text='', image=appfriendspic, border=0)
+APPFriends.place(relx=0.2, rely=0.65, anchor=CENTER)
+APPFriends.bind('<Button-1>', friends)
+
+NSHomeView = Label(NSCanvas, text=' ', font=("Futura", 1), height=0, width=200, bg='#dddddd')
+NSHomeView.place(relx=0.5, rely=0.97, anchor=CENTER)
+NSHomeView.bind('<Button-1>', return_home)
+
 NSWallpaper.place_forget()
+NSHomeView.place_forget()
 remove_apps()
 NSMenuBar.place_forget()
 NSCanvas['bg'] = '#b3b3b3'
@@ -1840,4 +2527,8 @@ update_languages()
 autoswitch_wallpaper()
 check_bluetooth()
 check_wifi()
+update_screentime()
+save_screentime()
+update_faceid()
+root.bind("<Command-,>", simulator_settings)
 root.mainloop()
