@@ -8,3 +8,6 @@ pyscreenshot==2.3
 yagmail==0.14.245
 pyzbar==0.1.8
 matplotlib==3.3.4
+face-recognition==1.3.0
+opencv-python==4.5.1.48
+numpy==1.20.1

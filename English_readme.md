@@ -56,6 +56,9 @@ Change language by changing the language.txt from "zh-cn" to "en".
 
 <a name="version"></a>
 ## Versions
+- **Version 5.2**
+   - Added face recognition for locking Project-Pios
+   - Fixed bug for auto-cleaning cache
 - **Version 5.1**
    - Reviewed Friends App, screentime usage are available in there
    - Change screentime chart from plt.show() into tkinter figure. (in simulator settings only)
