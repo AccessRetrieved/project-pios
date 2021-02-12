@@ -37,6 +37,7 @@ PC Users currently not supported
 <a name="bugs"></a>
 ## Known Bugs
 1. [See](https://github.com/AccessRetrieved/Project-Pios/blob/main/dlib_error_solution.md) Dlib installation error solution
+2. Face Recognition temporary supports chinese only
 
 <a name="language"></a>
 ## Change Language
