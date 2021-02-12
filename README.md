@@ -14,6 +14,10 @@
 ### 屏幕过于小的电脑不支持
 用PC的暂时不支持
 
+#### 设置面容识别
+1. 打开Project-Pios
+2. 朋友 > 面容识别 > 设置
+
 <a name="install"></a>
 ## 下载和运行
 1. [下载](https://www.python.org/ftp/python/3.9.1/python-3.9.1-macosx10.9.pkg) python3.9

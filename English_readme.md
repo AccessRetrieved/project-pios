@@ -14,6 +14,10 @@ Operating system with python. [Switch to Chinese Readme](https://github.com/Acce
 ### Computers with a small screen not supported
 PC Users currently not supported
 
+#### Setup Face Unlock
+1. Open Project-Pios
+2. Friends > Face ID > Setup
+
 <a name="install"></a>
 ## Installing an executing
 1. [Download](https://www.python.org/ftp/python/3.9.1/python-3.9.1-macosx10.9.pkg) python3.9

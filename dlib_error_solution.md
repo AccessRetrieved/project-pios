@@ -1,9 +1,5 @@
 ## Solve Dlib installation
-`git clone https://github.com/davisking/dlib.git`
-`cd dlib`
-`python3 setup.py install`
+Xcode needs to be installed
 
 ## dlib下载问题
-`git clone https://github.com/davisking/dlib.git`
-`cd dlib`
-`python3 setup.py install`
+下载Xcode
