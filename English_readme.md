@@ -60,6 +60,9 @@ Change language by changing the language.txt from "zh-cn" to "en".
 
 <a name="version"></a>
 ## Versions
+- **Version 5.3**
+   - Added keyboard
+   - Fixed some known bugs
 - **Version 5.2**
    - Added face recognition for locking Project-Pios
    - Fixed bug for auto-cleaning cache

@@ -30,6 +30,8 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import subprocess
 from modules.RoundedButton import RoundedButton
 from system.Software.func import recognize, setup
+import rumps
+from system.Software.pios_keyboard import show
 from App1.app import import_app, quit_app # Add custom app here
 from App2.app2 import import_app2, quit_app2 # Add second custom app here
 import objc
@@ -106,6 +108,10 @@ NSDarkModeStat = IntVar()
 NSAutoSwitchWallpaperStat = IntVar()
 
 NSSettingsFrame = IntVar()
+
+cmd = 'pmset -g batt | grep -Eo "\d+%" | cut -d% -f1'
+get_bat = IntVar()
+get_bat.set(int(os.popen(cmd).read().replace('\n', '')))
 
 NSUpdateAlert = 0
 
@@ -218,7 +224,7 @@ def update_wifi():
 
 def update_bluetooth():
     status = os.popen('blueutil -p').read()
-    
+
     if status == '1\n':
         bimg = Image.open(os.getcwd() + '/bluetooth.png')
         bimg = bimg.resize((15, 15), Image.ANTIALIAS)
@@ -246,6 +252,7 @@ def pulldown_menu(event):
             NSClockLabel['text'] = 'Clock'
             NSScreenshotLabel['text'] = 'Screenshot'
             NSSleepLabel['text'] = 'Sleep'
+            NSBatteryLabel['text'] = '{}'.format(str(get_bat.get()) + '%')
             pass
         else:
             NSWifiLabel['text'] = '网络'
@@ -255,6 +262,7 @@ def pulldown_menu(event):
             NSClockLabel['text'] = '时间'
             NSScreenshotLabel['text'] = '截屏'
             NSSleepLabel['text'] = '睡眠'
+            NSBatteryLabel['text'] = '{}'.format(str(get_bat.get()) + '%')
             pass
 
         NSCanvas.after(ms=1000, func=change_language)
@@ -286,6 +294,8 @@ def pulldown_menu(event):
         NSSleepControl.place(relx=0.3, rely=0.4, anchor=CENTER)
         NSSleepLabel.place(relx=0.3, rely=0.5, anchor=CENTER)
 
+        NSDisplayDate.place(relx=0.5, rely=0.8, anchor=CENTER)
+
         if NSWifiValue.get() == 1:
             NSWifiControl['bg'] = '#1b73e9'
         else:
@@ -311,6 +321,7 @@ def pulldown_menu(event):
         NSScreenshotLabel.place_forget()
         NSSleepControl.place_forget()
         NSSleepLabel.place_forget()
+        NSDisplayDate.place_forget()
         pass
 
 def manage_wifi():
@@ -368,10 +379,11 @@ def return_home(event):
     NSScreenshotLabel.place_forget()
     NSSleepControl.place_forget()
     NSSleepLabel.place_forget()
+    NSDisplayDate.place_forget()
     NSControlMenu.place_forget()
 
     destroy_apps()
-    
+
     try:
         quit_app()
     except:
@@ -862,6 +874,7 @@ def browser(event):
 
     def on(event):
         NSBrowserURLQuery.delete(0, END)
+        show(NSBrowserView)
 
     def wrap_by_word(s, n):
         a = s.split()
@@ -964,7 +977,7 @@ def browser(event):
     def open_baidu():
         webview.create_window(title='', url='https://www.baidu.com', confirm_close=False, text_select=True, width=800, height=620, frameless=True)
         webview.start()
-    
+
     def open_google():
         webview.create_window(title='', url='https://www.google.com', confirm_close=False, text_select=True, width=800, height=620, frameless=True)
         webview.start()
@@ -996,7 +1009,10 @@ def browser(event):
 def close_experimental_alert():
     if NSFaceID.get() == 1:
         unlock = Toplevel()
-        unlock.geometry('250x250')
+        unlock.grab_set()
+        x = root.winfo_x() + root.winfo_width() + 4
+        y = root.winfo_y()
+        unlock.geometry('250x250+{}+{}'.format(x, y))
         unlock.attributes('-topmost', True)
 
         def check_unlock():
@@ -1014,14 +1030,24 @@ def close_experimental_alert():
                 pass
             else:
                 msg['text'] = '请重试'
+                msg_en['text'] = 'Try Again'
                 pass
+
+        def move(event):
+            x = root.winfo_x() + root.winfo_width() + 4
+            y = root.winfo_y()
+            unlock.geometry('250x250+{}+{}'.format(x, y))
 
         msg = Label(unlock, text='Project-Pios 已锁定，请先解锁', font=("Arial", 13))
         msg.place(relx=0.5, rely=0.3, anchor=CENTER)
 
+        msg_en = Label(unlock, text='Project-Pios is locked, please unlock first', font=("Arial", 13))
+        msg_en.place(relx=0.5, rely=0.4, anchor=CENTER)
+
         unlocks = tkmacosx.Button(unlock, text='解锁', font=("Arial", 12), borderless=1, activebackground='black', command=check_unlock)
         unlocks.place(relx=0.5, rely=0.6, anchor=CENTER)
 
+        root.bind("<Configure>", move)
         unlock.mainloop()
     else:
         NSExperimentalAlert.destroy()
@@ -1245,6 +1271,7 @@ def takedown_pulldown_menu(event):
         NSScreenshotLabel.place_forget()
         NSSleepControl.place_forget()
         NSSleepLabel.place_forget()
+        NSDisplayDate.place_forget()
     except:
         pass
 
@@ -1263,6 +1290,7 @@ def screenshot_takedown_pulldown_menu():
         NSScreenshotLabel.place_forget()
         NSSleepControl.place_forget()
         NSSleepLabel.place_forget()
+        NSDisplayDate.place_forget()
     except:
         pass
 
@@ -1447,6 +1475,8 @@ def detect_darkmode():
         NSScreenshotLabel['fg'] = dark_theme['fg']
         NSSleepLabel['bg'] = dark_theme['bg']
         NSSleepLabel['fg'] = dark_theme['fg']
+        NSDisplayDate['bg'] = dark_theme['bg']
+        NSDisplayDate['fg'] = dark_theme['fg']
         pass
     else:
         NSDarkModeStat.set(0)
@@ -1468,8 +1498,10 @@ def detect_darkmode():
         NSScreenshotLabel['fg'] = theme['fg']
         NSSleepLabel['bg'] = theme['bg']
         NSSleepLabel['fg'] = theme['fg']
+        NSDisplayDate['bg'] = theme['bg']
+        NSDisplayDate['fg'] = theme['fg']
         pass
-    
+
     root.after(ms=500, func=detect_darkmode)
 
 def change_language():
@@ -1499,13 +1531,13 @@ def update_languages():
         else:
             NSLanguageValue.set('zh-cn')
             pass
-    
+
     NSCanvas.after(ms=1000, func=update_languages)
 
 def screenshot():
     screenshot_takedown_pulldown_menu()
     def wait():
-        img = pyscreenshot.grab(bbox=(root.winfo_x(), root.winfo_y(), 400, 800))
+        img = pyscreenshot.grab(bbox=(root.winfo_x(), root.winfo_y(), root.winfo_x() + 400, root.winfo_y() + 830))
         img.show()
 
         NSCanvas['bg'] = '#4d4d4d'
@@ -1524,7 +1556,8 @@ def screenshot():
         NSScreenshotLabel.place(relx=0.1, rely=0.5, anchor=CENTER)
         NSSleepControl.place(relx=0.3, rely=0.4, anchor=CENTER)
         NSSleepLabel.place(relx=0.3, rely=0.5, anchor=CENTER)
-    
+        NSBatteryLabel.place(relx=0.9, rely=0.5, anchor=CENTER)
+
     NSCanvas.after(1000, wait)
 
 def autoswitch_wallpaper():
@@ -1592,7 +1625,7 @@ def check_wifi():
                 file.truncate(0)
                 file.write('false')
                 pass
-    
+
     NSCanvas.after(ms=1000, func=check_wifi)
 
 def email(event):
@@ -1798,22 +1831,26 @@ def email(event):
     NSEmailSenderEmailLabel.place(relx=0.1, rely=0.048, anchor=CENTER)
     NSEmailSenderEmailBox = Entry(NSEmailView, width=33)
     NSEmailSenderEmailBox.place(relx=0.6, rely=0.045, anchor=CENTER)
+    NSEmailSenderEmailBox.bind("<FocusIn>", lambda event: show(NSEmailView))
 
     NSEmailCCLabel = Label(NSEmailView, text='CC:', font=("Futura", 15))
     NSEmailCCLabel.place(relx=0.1, rely=0.093, anchor=CENTER)
     NSEmailCCBox = Entry(NSEmailView, width=33)
     NSEmailCCBox.place(relx=0.6, rely=0.093, anchor=CENTER)
+    NSEmailCCBox.bind("<FocusIn>", lambda event: show(NSEmailView))
 
     NSEmailSubjectLabel = Label(NSEmailView, text='Subject:', font=("Futura", 15))
     NSEmailSubjectLabel.place(relx=0.1, rely=0.138, anchor=CENTER)
     NSEmailSubjectBox = Entry(NSEmailView, width=33)
     NSEmailSubjectBox.place(relx=0.6, rely=0.138, anchor=CENTER)
+    NSEmailSubjectBox.bind("<FocusIn>", lambda event: show(NSEmailView))
 
     NSEmailSendDivider = ttk.Separator(NSEmailView)
     NSEmailSendDivider.place(relx=0.05, rely=0.17, relwidth=0.9)
 
     NSEmailContent = Text(NSEmailView, width=56, height=43, font=("Arial", 12))
     NSEmailContent.place(relx=0.5, rely=0.56, anchor=CENTER)
+    NSEmailContent.bind("<FocusIn>", lambda event: show(NSEmailView))
 
     NSEmailSend = tkmacosx.Button(NSEmailView, text='发送', borderless=1, bg='white', fg='black', activebackground='black', activeforeground='white', width=60, command=send)
     NSEmailSend.place(relx=0.9, rely=0.97, anchor=CENTER)
@@ -1894,10 +1931,12 @@ def destroy_apps():
     except:
         pass
     try:
+        global NSClockView
         NSClockView.destroy()
     except:
         pass
     try:
+        global NSEmailView
         NSEmailView.destroy()
     except:
         pass
@@ -1910,11 +1949,8 @@ def destroy_apps():
     except:
         pass
     try:
+        global NSFriendsView
         NSFriendsView.destroy()
-    except:
-        pass
-    try:
-        NSFriendsCircleView.destroy()
     except:
         pass
 
@@ -1948,7 +1984,10 @@ def sleep():
     def close(event):
         if NSFaceID.get() == 1:
             unlock = Toplevel()
-            unlock.geometry('250x250')
+            unlock.grab_set()
+            x = root.winfo_x() + root.winfo_width() + 4
+            y = root.winfo_y()
+            unlock.geometry('250x250+{}+{}'.format(x, y))
             unlock.attributes('-topmost', True)
 
             def check_unlock():
@@ -1966,14 +2005,24 @@ def sleep():
                     pass
                 else:
                     msg['text'] = '请重试'
+                    msg_en['text'] = 'Try Again'
                     pass
+
+            def move(event):
+                x = root.winfo_x() + root.winfo_width() + 4
+                y = root.winfo_y()
+                unlock.geometry('250x250+{}+{}'.format(x, y))
 
             msg = Label(unlock, text='Project-Pios 已锁定，请先解锁', font=("Arial", 13))
             msg.place(relx=0.5, rely=0.3, anchor=CENTER)
 
+            msg_en = Label(unlock, text='Project-Pios is locked, please unlock first', font=("Arial", 13))
+            msg_en.place(relx=0.5, rely=0.4, anchor=CENTER)
+
             unlocks = tkmacosx.Button(unlock, text='解锁', font=("Arial", 12), borderless=1, activebackground='black', command=check_unlock)
             unlocks.place(relx=0.5, rely=0.6, anchor=CENTER)
 
+            root.bind("<Configure>", move)
             unlock.mainloop()
         else:
             NSMenuBar.place(relx=0.5, rely=0.012, anchor=CENTER)
@@ -1986,7 +2035,7 @@ def sleep():
 
     hint = Label(NSPopupAlert, text='双击以退出', font=("Futura", 18), bg='black', fg='white')
     hint.place(relx=0.5, rely=0.4, anchor=CENTER)
-    
+
     check_language()
     NSPopupAlert.bind('<Double-1>', close)
 
@@ -2034,14 +2083,14 @@ def friends(event):
     def check_language():
         if NSLanguageValue.get() == 'en':
             NSFriendsMyScreentimeTitleContainer['text'] = 'Screen Time Usage'
+            NSFriendsMyScreentimeTitleContainer.place_configure(relx=0.2, rely=0.24, anchor=CENTER)
             NSFriendsMySecurityTitleContainer['text'] = 'Face ID'
-            NSFriendsMySecuritySetup['text'] = 'Setup'
-            NSFriendsMyBack['text'] = 'Back'
+            NSFriendsMySecuritySetup['text'] = 'Setup - Secondary double click to close'
         else:
             NSFriendsMyScreentimeTitleContainer['text'] = '屏幕使用时间'
+            NSFriendsMyScreentimeTitleContainer.place_configure(relx=0.15, rely=0.24, anchor=CENTER)
             NSFriendsMySecurityTitleContainer['text'] = '面容识别'
-            NSFriendsMySecuritySetup['text'] = '设置'
-            NSFriendsMyBack['text'] = '返回'
+            NSFriendsMySecuritySetup['text'] = '设置 - 右键双击以关闭'
         NSFriendsView.after(ms=1000, func=check_language)
 
     def check_mode():
@@ -2058,28 +2107,119 @@ def friends(event):
         NSFriendsView.after(ms=1000, func=check_mode)
 
     def setup_face(event):
-        messagebox.showinfo(message='请看向摄像头')
-        setup()
-        messagebox.showinfo(message='成功！')
-        with open(os.getcwd() + '/system/Library/Security/Face/counter.txt', 'w') as file:
-            file.write('1')
+        with open(os.getcwd() + '/system/Library/Security/Face/pass.txt', 'r') as files:
+            if files.read() == '':
+                passcode = rumps.Window(title='设置密码', message='请输入密码').run()
+                with open(os.getcwd() + '/system/Library/Security/Face/pass.txt', 'w') as file:
+                    file.write(passcode.text)
+                messagebox.showinfo(message='请看向摄像头')
+                setup()
+                check = recognize('default')
+                if check == True:
+                    pass
+                else:
+                    messagebox.showerror(message='无法识别，请重试')
+                    setup()
+                messagebox.showinfo(message='成功！')
+                with open(os.getcwd() + '/system/Library/Security/Face/counter.txt', 'w') as file:
+                    file.write('1')
 
-        test = Toplevel()
-        test.geometry('300x300')
+                view = Toplevel()
+                view.resizable(0, 0)
 
-        def face_test():
+                img = Image.open(os.getcwd() + '/system/Library/Security/Face/known_people/default.jpg')
+                width, height = img.size
+                img = img.resize((width // 2, height // 2), Image.ANTIALIAS)
+                pic = ImageTk.PhotoImage(img)
+
+                lb = Label(view, text='', image = pic)
+                lb.image = pic
+                lb.pack(fill=BOTH, expand=True)
+
+                test = Toplevel()
+                test.geometry('300x300')
+
+                def face_test():
+                    check = recognize('default')
+                    if check == True:
+                        messagebox.showinfo(message='测试成功！')
+                        view.destroy()
+                        test.destroy()
+                    else:
+                        messagebox.showerror(message='测试失败')
+                        pass
+
+                test_face = tkmacosx.Button(test, text='测试面容识别', font=("Arial", 13), borderless=1, activebackground='black', command=face_test)
+                test_face.place(relx=0.5, rely=0.5, anchor=CENTER)
+
+                test.mainloop()
+
+                view.mainloop()
+            else:
+                filess = open(os.getcwd() + '/system/Library/Security/Face/pass.txt', 'r')
+                enter_pass = rumps.Window(title='输入密码', message='设置前需要进行验证').run()
+                if filess.read() == enter_pass.text:
+                    messagebox.showinfo(message='请看向摄像头')
+                    setup()
+                    check = recognize('default')
+                    if check == True:
+                        pass
+                    else:
+                        messagebox.showerror(message='无法识别，请重试')
+                        setup()
+                    messagebox.showinfo(message='成功！')
+                    with open(os.getcwd() + '/system/Library/Security/Face/counter.txt', 'w') as file:
+                        file.write('1')
+
+                    view = Toplevel()
+                    view.resizable(0, 0)
+
+                    img = Image.open(os.getcwd() + '/system/Library/Security/Face/known_people/default.jpg')
+                    width, height = img.size
+                    img = img.resize((width // 2, height // 2), Image.ANTIALIAS)
+                    pic = ImageTk.PhotoImage(img)
+
+                    lb = Label(view, text='', image = pic)
+                    lb.image = pic
+                    lb.pack(fill=BOTH, expand=True)
+
+                    test = Toplevel()
+                    test.geometry('300x300')
+
+                    def face_test():
+                        check = recognize('default')
+                        if check == True:
+                            messagebox.showinfo(message='测试成功！')
+                            view.destroy()
+                            test.destroy()
+                        else:
+                            messagebox.showerror(message='测试失败')
+                            pass
+
+                    test_face = tkmacosx.Button(test, text='测试面容识别', font=("Arial", 13), borderless=1, activebackground='black', command=face_test)
+                    test_face.place(relx=0.5, rely=0.5, anchor=CENTER)
+
+                    test.mainloop()
+
+                    view.mainloop()
+                else:
+                    print(files.read(), enter_pass.text)
+                    messagebox.showerror(message='密码错误')
+
+    def close_face(event):
+        if NSFaceID.get() == 1:
+            messagebox.showinfo(message='关闭前需要进行验证')
             check = recognize('default')
             if check == True:
-                messagebox.showinfo(message='测试成功！')
-                test.destroy()
+                NSFaceID.set(0)
+                with open(os.getcwd() + '/system/Library/Security/Face/counter.txt', 'w') as writefile:
+                    writefile.write('0')
+                    messagebox.showinfo(message='面容已成功关闭')
             else:
-                messagebox.showerror(message='测试失败')
+                messagebox.showerror(message='验证失败')
                 pass
-
-        test_face = tkmacosx.Button(test, text='测试面容识别', font=("Arial", 13), borderless=1, activebackground='black', command=face_test)
-        test_face.place(relx=0.5, rely=0.5, anchor=CENTER)
-
-        test.mainloop()
+        else:
+            messagebox.showerror(message='面容识别已关闭')
 
     NSFriendsMyProfileBox = RoundedButton(NSFriendsView, 380, 100, 20, 0, rgbtohex(234, 234, 234), 'white')
     NSFriendsMyProfileBox.place(relx=0.5, rely=0.13, anchor=CENTER)
@@ -2091,7 +2231,7 @@ def friends(event):
     NSFriendsMyProfileImageContainer = Label(NSFriendsView, image=NSFriendsMyProfilepic, font=("Futura", 20), bg=rgbtohex(234, 234, 234))
     NSFriendsMyProfileImageContainer.image = NSFriendsMyProfilepic
     NSFriendsMyProfileImageContainer.place(relx=0.2, rely=0.13, anchor=CENTER)
-    
+
     NSFriendsMyProfileNameContainer = Label(NSFriendsView, text='{}'.format(getuser()), font=("Futura", 20), bg=rgbtohex(234, 234, 234))
     NSFriendsMyProfileNameContainer.place(relx=0.4, rely=0.12, anchor=CENTER)
 
@@ -2107,7 +2247,7 @@ def friends(event):
     with open(os.getcwd() + '/system/Library/ScreenTime/counter.txt', 'r') as txt:
         total = int(txt.read())
     hours, mins = divmod(total, 60)
-    
+
     NSFriendsMyScreentimeDataContainer = Label(NSFriendsView, text='{}h {}m'.format(hours, mins), bg=rgbtohex(234, 234, 234), font=("Futura", 17))
     NSFriendsMyScreentimeDataContainer.place(relx=0.5, rely=0.28, anchor=CENTER)
 
@@ -2120,9 +2260,10 @@ def friends(event):
     NSFriendsMySecurityTitleContainer = Label(NSFriendsView, text='面容识别', bg=rgbtohex(234, 234, 234), font=("Futura", 13))
     NSFriendsMySecurityTitleContainer.place(relx=0.15, rely=0.39, anchor=CENTER)
 
-    NSFriendsMySecuritySetup = Label(NSFriendsView, text='设置', font=("Futura", 15), bg=rgbtohex(234, 234, 234))
+    NSFriendsMySecuritySetup = Label(NSFriendsView, text='设置 - 右键双击以关闭', font=("Futura", 15), bg=rgbtohex(234, 234, 234))
     NSFriendsMySecuritySetup.place(relx=0.5, rely=0.43, anchor=CENTER)
     NSFriendsMySecuritySetup.bind("<Button-1>", setup_face)
+    NSFriendsMySecuritySetup.bind("<Double-Button-2>", close_face)
 
     check_language()
     check_mode()
@@ -2169,7 +2310,7 @@ def simulator_settings(event):
             NSPreferencesScreenTimeLabel['fg'] = dark_theme['fg']
             NSPreferencesScreenTimeButton['bg'] = rgbtohex(40, 40, 40)
             NSPreferencesScreenTimeButton['fg'] = dark_theme['fg']
-            
+
             NSPreferencesCleanCacheLabel['bg'] = rgbtohex(40, 40, 40)
             NSPreferencesCleanCacheLabel['fg'] = dark_theme['fg']
             NSPreferencesCleanCacheButton['bg'] = rgbtohex(40, 40, 40)
@@ -2250,6 +2391,11 @@ def simulator_settings(event):
 
     def clean_cache():
         os.system('find . -type d -name  "__pycache__" -exec rm -r {} +')
+        try:
+            with open(os.getcwd() + '/system/Software/keyboard/tip.txt', 'w') as infile:
+                infile.write(0)
+        except:
+            pass
 
     def download_helper():
         helper = Toplevel()
@@ -2365,6 +2511,12 @@ def update_faceid():
 
     NSCanvas.after(ms=1000, func=update_faceid)
 
+def update_battery():
+    cmd = 'pmset -g batt | grep -Eo "\d+%" | cut -d% -f1'
+    get_bat.set(int(os.popen(cmd).read().replace('\n', '')))
+
+    NSCanvas.after(ms=1000, func=update_battery)
+
 NSCanvas = Canvas(root)
 NSCanvas.pack(fill=BOTH, expand=True)
 
@@ -2384,9 +2536,8 @@ NSDisplayTime = Label(NSMenuBar, text='', bg=NSMenuBar['bg'], font=("Futura", 12
 NSDisplayTime.place(relx=0.5, rely=0.5, anchor=CENTER)
 NSDisplayTime.bind('<Button-1>', pulldown_menu)
 
-NSDisplayDate = Label(NSMenuBar, text='', bg=NSMenuBar['bg'], font=("Futura", 12))
-NSDisplayDate.place(relx=0.9, rely=0.5, anchor=CENTER)
-NSDisplayDate.bind('<Button-1>', pulldown_menu)
+NSBatteryLabel = Label(NSMenuBar, text='{}'.format(str(get_bat.get()) + '%'), bg=NSMenuBar['bg'], font=("Futura", 12))
+NSBatteryLabel.place(relx=0.95, rely=0.5, anchor=CENTER)
 
 NSSignalWidget = Label(NSMenuBar, text='', bg=NSMenuBar['bg'])
 NSSignalWidget.place(relx=0.05, rely=0.5, anchor=CENTER)
@@ -2445,6 +2596,9 @@ closepic = ImageTk.PhotoImage(closeimg)
 
 NSSleepControl = tkmacosx.CircleButton(NSControlMenu, image=closepic, borderless=1, radius=20, command=sleep)
 NSSleepLabel = Label(NSControlMenu, text='睡眠', bg=NSControlMenu['bg'])
+
+NSDisplayDate = Label(NSControlMenu, text='', bg=NSMenuBar['bg'], font=("Arial", 15))
+NSDisplayDate.bind('<Button-1>', pulldown_menu)
 
 appsettingsimg = Image.open(os.getcwd() + '/settings.png')
 appsettingsimg = appsettingsimg.resize((40, 40), Image.ANTIALIAS)
@@ -2530,5 +2684,6 @@ check_wifi()
 update_screentime()
 save_screentime()
 update_faceid()
+update_battery()
 root.bind("<Command-,>", simulator_settings)
 root.mainloop()

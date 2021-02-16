@@ -6,6 +6,6 @@ root = Tk()
 root.geometry('400x800')
 root.title('Project-Pios Simulator')
 
-import_app(root, 500)   
+import_app(root, 500)
 
 root.mainloop()
