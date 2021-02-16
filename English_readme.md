@@ -3,7 +3,7 @@
 Operating system with python. [Switch to Chinese Readme](https://github.com/AccessRetrieved/project-pios/blob/main/README.md)
 
 ## Table of contents
-1. [Wiki](https://github.com/AccessRetrieved/Project-Pios/wiki)
+1. [Project-Pios Wiki](https://github.com/AccessRetrieved/Project-Pios/wiki)
 2. [Installing and executing](#install)
 3. [Known Bugs](#bugs)
 4. ['Language'](#language)
