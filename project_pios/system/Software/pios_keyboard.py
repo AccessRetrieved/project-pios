@@ -5,27 +5,6 @@ import keyboard
 import os
 
 def show(window):
-    if os.path.exists(os.getcwd() + '/project_pios/system/Software/keyboard') == True:
-        if os.path.exists(os.getcwd() + '/project_pios/system/Software/keyboard/tip.txt') == True:
-            with open(os.getcwd() + '/project_pios/system/Software/keyboard/tip.txt', 'r') as readfile:
-                if readfile.read() == '1':
-                    pass
-                else:
-                    showinfo(message='右键第一排字母可以打符号, 右键退格键可以清空')
-                    with open(os.getcwd() + '/project_pios/system/Software/keyboard/tip.txt', 'w') as file:
-                        file.write('1')
-        else:
-            with open(os.getcwd() + '/project_pios/system/Software/keyboard/tip.txt', 'w') as file:
-                file.write('1')
-                showinfo(message='右键第一排字母可以打符号, 右键退格键可以清空')
-                pass
-    else:
-        os.mkdir(os.getcwd() + '/project_pios/system/Software/keyboard')
-        with open(os.getcwd() + '/project_pios/system/Software/keyboard/tip.txt', 'w') as file:
-            file.write('1')
-            showinfo(message='右键第一排字母可以打符号, 右键退格键可以清空')
-            pass
-
     try:
         hides()
     except:
@@ -34,6 +13,8 @@ def show(window):
     global keyboards
     keyboards = Frame(window, bg='#ececec')
     keyboards.place(relx=0.5, rely=0.75, anchor=CENTER, relwidth=0.995, relheight=0.4)
+
+    hints = Frame(window, bg='#ececec')
 
     def switch_numbers(event):
         q.place_forget()
@@ -272,6 +253,51 @@ def show(window):
     backspace.bind('<Button-2>', clear)
     numbers.bind("<Button-1>", switch_numbers)
     hide.bind("<Button-1>", unshow)
+
+    if os.path.exists(os.getcwd() + '/project_pios/system/Software/keyboard') == True:
+        if os.path.exists(os.getcwd() + '/project_pios/system/Software/keyboard/tip.txt') == True:
+            with open(os.getcwd() + '/project_pios/system/Software/keyboard/tip.txt', 'r') as readfile:
+                if readfile.read() == '1':
+                    pass
+                else:
+                    def remove(event):
+                        hints.destroy()
+                        keyboards.place(relx=0.5, rely=0.75, anchor=CENTER, relwidth=0.995, relheight=0.4)
+                    keyboards.place_forget()
+                    hints.place(relx=0.5, rely=0.75, anchor=CENTER, relwidth=0.995, relheight=0.4)
+                    hints.bind("<Button-1>", remove)
+                    hint = Label(hints, text='右键第一排字母可以打符号, 右键退格键可以清空', bg='#ececec')
+                    hint.place(relx=0.5, rely=0.5, anchor=CENTER)
+                    hint.bind("<Button-1>", remove)
+                    with open(os.getcwd() + '/project_pios/system/Software/keyboard/tip.txt', 'w') as file:
+                        file.write('1')
+        else:
+            with open(os.getcwd() + '/project_pios/system/Software/keyboard/tip.txt', 'w') as file:
+                file.write('1')
+                def remove(event):
+                    hints.destroy()
+                    keyboards.place(relx=0.5, rely=0.75, anchor=CENTER, relwidth=0.995, relheight=0.4)
+                keyboards.place_forget()
+                hints.place(relx=0.5, rely=0.75, anchor=CENTER, relwidth=0.995, relheight=0.4)
+                hints.bind("<Button-1>", remove)
+                hint = Label(hints, text='右键第一排字母可以打符号, 右键退格键可以清空', bg='#ececec')
+                hint.place(relx=0.5, rely=0.5, anchor=CENTER)
+                hint.bind("<Button-1>", remove)
+                pass
+    else:
+        os.mkdir(os.getcwd() + '/project_pios/system/Software/keyboard')
+        with open(os.getcwd() + '/project_pios/system/Software/keyboard/tip.txt', 'w') as file:
+            file.write('1')
+            def remove(event):
+                hints.destroy()
+                keyboards.place(relx=0.5, rely=0.75, anchor=CENTER, relwidth=0.995, relheight=0.4)
+            keyboards.place_forget()
+            hints.place(relx=0.5, rely=0.75, anchor=CENTER, relwidth=0.995, relheight=0.4)
+            hints.bind("<Button-1>", remove)
+            hint = Label(hints, text='右键第一排字母可以打符号, 右键退格键可以清空', bg='#ececec')
+            hint.place(relx=0.5, rely=0.5, anchor=CENTER)
+            hint.bind("<Button-1>", remove)
+            pass
 
 def hides():
     global keyboards
