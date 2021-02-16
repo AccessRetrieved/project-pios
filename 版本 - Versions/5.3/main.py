@@ -34,17 +34,17 @@ import rumps
 from system.Software.pios_keyboard import show
 from App1.app import import_app, quit_app # Add custom app here
 from App2.app2 import import_app2, quit_app2 # Add second custom app here
-from config import *
 import objc
 
 # change all path from "/FILE" to "/FILE" for github
+# In settings and friends app change name to getuser()
 
 # Custom App Icons
 NSCustomAppIcon1 = os.getcwd() + '/app1.png'
 NSCustomAppIcon2 = os.getcwd() + '/app2.png'
 
 root = Tk()
-root.geometry('{}x{}'.format(window_width, window_height))
+root.geometry('400x800')
 root.title('')
 #root.config(cursor='none')
 #root.tk.call("::tk::unsupported::MacWindowStyle", "style", root._w, "plain", "none")
@@ -62,7 +62,7 @@ NSLocalVersion = StringVar()                  #
 #                                             #
 # U P D A T E   T H I S   E V E R Y T I M E ! #
 #                                             #
-NSLocalVersion.set('5.4')                     #
+NSLocalVersion.set('5.2')                     #
 ###############################################
 ##################################
 #                                #
@@ -73,22 +73,19 @@ NSLocalVersion.set('5.4')                     #
 ##################################
 
 # Launch the files when app starts
-if auto_launch == True:
-    path = os.getcwd() + '/system/Library/launch/'
-    if len(os.listdir(path)) == 0:
-        pass
-    else:
-        try:
-            files = os.listdir(path)
-            for file in files:
-                if file.startswith('.') and os.path.isfile(os.path.join(path, file)):
-                    pass
-                else:
-                    subprocess.call(['open', '{}'.format(path + file).replace(' ', '\ ')])
-        except:
-            pass
-else:
+path = os.getcwd() + '/system/Library/launch/'
+if len(os.listdir(path)) == 0:
     pass
+else:
+    try:
+        files = os.listdir(path)
+        for file in files:
+            if file.startswith('.') and os.path.isfile(os.path.join(path, file)):
+                pass
+            else:
+                os.system('open {}'.format(path + file))
+    except:
+        pass
 
 dark_theme = {
     "bg": "black",
@@ -509,7 +506,7 @@ def settings(event):
                 NSSettingsAbout['text'] = 'About'
                 pass
             else:
-                NSSettingsProfile['text'] = '    {}'.format(name)
+                NSSettingsProfile['text'] = '    {}'.format(getuser())
                 NSSettingsWallpaper['text'] = '壁纸'
                 NSSettingsPrivacy['text'] = '隐私'
                 NSSettingsAbout['text'] = '关于本机'
@@ -567,7 +564,7 @@ def settings(event):
                 NSSettingsAbout['text'] = 'About'
                 pass
             else:
-                NSSettingsProfile['text'] = '    {}'.format(name)
+                NSSettingsProfile['text'] = '    {}'.format(getuser())
                 NSSettingsWallpaper['text'] = '壁纸'
                 NSSettingsPrivacy['text'] = '隐私'
                 NSSettingsAbout['text'] = '关于本机'
@@ -762,7 +759,7 @@ def settings(event):
                 NSSettingsAbout['text'] = 'About'
                 pass
             else:
-                NSSettingsProfile['text'] = '    {}'.format(name)
+                NSSettingsProfile['text'] = '    {}'.format(getuser())
                 NSSettingsWallpaper['text'] = '壁纸'
                 NSSettingsPrivacy['text'] = '隐私'
                 NSSettingsAbout['text'] = '关于本机'
@@ -823,7 +820,7 @@ def settings(event):
         NSSettingsView.after(ms=10, func=change_mode)
 
     def open_page():
-        webbrowser.open(profile_url)
+        webbrowser.open('https://github.com/AccessRetrieved/project-pios')
 
     def change_language():
         if NSLanguageValue.get() == 'en':
@@ -834,7 +831,7 @@ def settings(event):
             NSSettingsAbout['text'] = 'About'
             pass
         else:
-            NSSettingsProfile['text'] = '    {}'.format(name)
+            NSSettingsProfile['text'] = '    {}'.format(getuser())
             NSSettingsSearchEngine['text'] = '浏览器'
             NSSettingsWallpaper['text'] = '壁纸'
             NSSettingsPrivacy['text'] = '隐私'
@@ -847,7 +844,7 @@ def settings(event):
     NSSettingsProfileimg = NSSettingsProfileimg.resize((50, 50), Image.ANTIALIAS)
     NSSettingsProfilepic = ImageTk.PhotoImage(NSSettingsProfileimg)
 
-    NSSettingsProfile = tkmacosx.Button(NSSettingsView, text='    {}'.format(name), borderless=1, font=("Futura", 20), height=80, width=400, activebackground='white', activeforeground='black', image=NSSettingsProfilepic, compound=LEFT, command=open_page)
+    NSSettingsProfile = tkmacosx.Button(NSSettingsView, text='    {}'.format(getuser()), borderless=1, font=("Futura", 20), height=80, width=400, activebackground='white', activeforeground='black', image=NSSettingsProfilepic, compound=LEFT, command=open_page)
     NSSettingsProfile.image = NSSettingsProfilepic
     NSSettingsProfile.place(relx=0.5, rely=0.1, anchor=CENTER)
 
@@ -2235,7 +2232,7 @@ def friends(event):
     NSFriendsMyProfileImageContainer.image = NSFriendsMyProfilepic
     NSFriendsMyProfileImageContainer.place(relx=0.2, rely=0.13, anchor=CENTER)
 
-    NSFriendsMyProfileNameContainer = Label(NSFriendsView, text='{}'.format(name), font=("Futura", 20), bg=rgbtohex(234, 234, 234))
+    NSFriendsMyProfileNameContainer = Label(NSFriendsView, text='{}'.format(getuser()), font=("Futura", 20), bg=rgbtohex(234, 234, 234))
     NSFriendsMyProfileNameContainer.place(relx=0.4, rely=0.12, anchor=CENTER)
 
     NSFriendsMyProfileBirthdayContainer = Label(NSFriendsView, text='0000/00/00', font=("Futura", 12), bg=rgbtohex(234, 234, 234), fg=rgbtohex(38, 39, 40))
@@ -2299,13 +2296,6 @@ def update_screentime():
     NSCanvas.after(ms=60000, func=update_screentime)
 
 def simulator_settings(event):
-    
-    if NSLanguageValue.get() == 'en':
-        messagebox.showinfo(message='For more settings, consult config.py')
-    else:
-        messagebox.showinfo(message='查看config.py以更改更多设置')
-        pass
-
     preferences = Toplevel()
     preferences.title('模拟器设置')
     preferences.geometry('300x200')

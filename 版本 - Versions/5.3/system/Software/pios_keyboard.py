@@ -5,23 +5,23 @@ import keyboard
 import os
 
 def show(window):
-    if os.path.exists(os.getcwd() + '/project_pios/system/Software/keyboard') == True:
-        if os.path.exists(os.getcwd() + '/project_pios/system/Software/keyboard/tip.txt') == True:
-            with open(os.getcwd() + '/project_pios/system/Software/keyboard/tip.txt', 'r') as readfile:
+    if os.path.exists(os.getcwd() + '/system/Software/keyboard') == True:
+        if os.path.exists(os.getcwd() + '/system/Software/keyboard/tip.txt') == True:
+            with open(os.getcwd() + '/system/Software/keyboard/tip.txt', 'r') as readfile:
                 if readfile.read() == '1':
                     pass
                 else:
                     showinfo(message='右键第一排字母可以打符号, 右键退格键可以清空')
-                    with open(os.getcwd() + '/project_pios/system/Software/keyboard/tip.txt', 'w') as file:
+                    with open(os.getcwd() + '/system/Software/keyboard/tip.txt', 'w') as file:
                         file.write('1')
         else:
-            with open(os.getcwd() + '/project_pios/system/Software/keyboard/tip.txt', 'w') as file:
+            with open(os.getcwd() + '/system/Software/keyboard/tip.txt', 'w') as file:
                 file.write('1')
                 showinfo(message='右键第一排字母可以打符号, 右键退格键可以清空')
                 pass
     else:
-        os.mkdir(os.getcwd() + '/project_pios/system/Software/keyboard')
-        with open(os.getcwd() + '/project_pios/system/Software/keyboard/tip.txt', 'w') as file:
+        os.mkdir(os.getcwd() + '/system/Software/keyboard')
+        with open(os.getcwd() + '/system/Software/keyboard/tip.txt', 'w') as file:
             file.write('1')
             showinfo(message='右键第一排字母可以打符号, 右键退格键可以清空')
             pass

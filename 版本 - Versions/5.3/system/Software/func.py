@@ -11,7 +11,7 @@ def recognize(username):
     known_face_encodings = []
     known_face_names = []
     dirname = os.path.dirname(__file__)
-    path = os.getcwd() + '/project_pios/system/Library/Security/Face/known_people/'
+    path = os.getcwd() + '/system/Library/Security/Face/known_people/'
 
     list_of_files = [f for f in glob.glob(path+'*.jpg')]
     number_files = len(list_of_files)
@@ -81,7 +81,7 @@ def setup():
     cam = cv2.VideoCapture(0)
 
     ret, frame = cam.read()
-    img_name = os.getcwd() + '/project_pios/system/Library/Security/Face/known_people/default.jpg'
+    img_name = os.getcwd() + '/system/Library/Security/Face/known_people/default.jpg'
     cv2.imwrite(img_name, frame)
 
     cam.release()
