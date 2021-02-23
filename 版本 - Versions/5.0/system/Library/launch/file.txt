@@ -1,5 +1,0 @@
-Example File.
-
-This file will be launch at the startup of Project-Pios.
-
-Any file placed in the directory /system/Library/launch will be launched.
