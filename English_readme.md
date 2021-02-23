@@ -61,6 +61,11 @@ Change language by changing the language.txt from "zh-cn" to "en".
 
 <a name="version"></a>
 ## Versions
+- **Version 5.5**
+   - Added gui update
+   - Fixed some update bugs
+- **Version 5.4**
+   - Fixed some known bugs
 - **Version 5.3**
    - Added keyboard
    - Fixed some known bugs

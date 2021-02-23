@@ -35,19 +35,22 @@ from system.Software.pios_keyboard import show
 from App1.app import import_app, quit_app # Add custom app here
 from App2.app2 import import_app2, quit_app2 # Add second custom app here
 from config import *
-import objc
+import random
+import string
+import objc #Add this to github to make it look better
 
-# change all path from "/FILE" to "/FILE" for github
+# change all path from "/project_pios/FILE" to "/FILE" for github
+# In settings and friends app change name to getuser()
 
 # Custom App Icons
-NSCustomAppIcon1 = os.getcwd() + '/app1.png'
-NSCustomAppIcon2 = os.getcwd() + '/app2.png'
+NSCustomAppIcon1 = os.getcwd() + '/project_pios/app1.png'
+NSCustomAppIcon2 = os.getcwd() + '/project_pios/app2.png'
 
 root = Tk()
 root.geometry('{}x{}'.format(window_width, window_height))
 root.title('')
 #root.config(cursor='none')
-#root.tk.call("::tk::unsupported::MacWindowStyle", "style", root._w, "plain", "none")
+#x
 root.resizable(0, 0)
 
 ##################################
@@ -62,7 +65,7 @@ NSLocalVersion = StringVar()                  #
 #                                             #
 # U P D A T E   T H I S   E V E R Y T I M E ! #
 #                                             #
-NSLocalVersion.set('5.4')                     #
+NSLocalVersion.set('5.5')                     #
 ###############################################
 ##################################
 #                                #
@@ -74,7 +77,7 @@ NSLocalVersion.set('5.4')                     #
 
 # Launch the files when app starts
 if auto_launch == True:
-    path = os.getcwd() + '/system/Library/launch/'
+    path = os.getcwd() + '/project_pios/system/Library/launch/'
     if len(os.listdir(path)) == 0:
         pass
     else:
@@ -103,7 +106,7 @@ theme = {
 NSWifiValue = IntVar()
 NSWifiCount = 0
 os.system('networksetup -setairportpower en0 on')
-with open(os.getcwd() + '/system/wifi/bool.txt', 'w') as file:
+with open(os.getcwd() + '/project_pios/system/wifi/bool.txt', 'w') as file:
     file.truncate(0)
     file.write('true')
 
@@ -118,7 +121,7 @@ get_bat.set(int(os.popen(cmd).read().replace('\n', '')))
 
 NSUpdateAlert = 0
 
-path = os.getcwd() + '/system/Library/ScreenTime/counter.txt'
+path = os.getcwd() + '/project_pios/system/Library/ScreenTime/counter.txt'
 if os.path.exists(path) == True:
     with open(path, 'r') as file:
         try:
@@ -133,7 +136,7 @@ else:
 
 NSLanguageValue = StringVar()
 try:
-    with open(os.getcwd() + '/language.txt', 'r') as file:
+    with open(os.getcwd() + '/project_pios/language.txt', 'r') as file:
         if file.read() == 'en':
             NSLanguageValue.set('en')
             pass
@@ -153,19 +156,19 @@ NSBluetoothCount = 0
 response = os.popen('blueutil -p').read()
 if response == '1\n':
     NSBluetoothValue.set(1)
-    with open(os.getcwd() + '/system/bluetooth/bool.txt', 'w') as file:
+    with open(os.getcwd() + '/project_pios/system/bluetooth/bool.txt', 'w') as file:
         file.truncate(0)
         file.write('true')
         pass
 else:
     NSBluetoothValue.set(0)
-    with open(os.getcwd() + '/system/bluetooth/bool.txt', 'w') as file:
+    with open(os.getcwd() + '/project_pios/system/bluetooth/bool.txt', 'w') as file:
         file.truncate(0)
         file.write('false')
         pass
 
 try:
-    path = os.getcwd() + '/system/Library/Security/Face/counter.txt'
+    path = os.getcwd() + '/project_pios/system/Library/Security/Face/counter.txt'
     with open(path, 'r') as readfile:
         NSFaceID = IntVar()
         if readfile.read() == '1':
@@ -174,11 +177,16 @@ try:
             NSFaceID.set(0)
             pass
 except:
-    path = os.getcwd() + '/system/Library/Security/Face/counter.txt'
+    path = os.getcwd() + '/project_pios/system/Library/Security/Face/counter.txt'
     with open(path, 'w') as writefile:
         writefile.write('0')
         NSFaceID = IntVar()
         NSFaceID.set(0)
+
+try:
+    os.mkdir(os.getcwd() + '/project_pios/system/Library/Cache')
+except:
+    pass
 
 NSMenuCounter = 1
 NSAutoSwitchCounter = 1
@@ -212,7 +220,7 @@ def update_wifi():
     url = 'http://google.com'
     try:
         response = requests.get(url, timeout=timeout)
-        pic = Image.open(os.getcwd() + '/wifi.png')
+        pic = Image.open(os.getcwd() + '/project_pios/wifi.png')
         pic = pic.resize((25, 25), Image.ANTIALIAS)
         img = ImageTk.PhotoImage(pic)
         NSSignalWidget.config(image = img)
@@ -229,7 +237,7 @@ def update_bluetooth():
     status = os.popen('blueutil -p').read()
 
     if status == '1\n':
-        bimg = Image.open(os.getcwd() + '/bluetooth.png')
+        bimg = Image.open(os.getcwd() + '/project_pios/bluetooth.png')
         bimg = bimg.resize((15, 15), Image.ANTIALIAS)
         bpic = ImageTk.PhotoImage(bimg)
         NSBlueSignalWidget.config(image = bpic)
@@ -334,14 +342,14 @@ def manage_wifi():
         os.system('networksetup -setairportpower en0 on')
         NSWifiValue.set(1)
         NSWifiControl['bg'] = '#1b73e9'
-        with open(os.getcwd() + '/system/wifi/bool.txt', 'w') as file:
+        with open(os.getcwd() + '/project_pios/system/wifi/bool.txt', 'w') as file:
             file.truncate(0)
             file.write('true')
     else:
         os.system('networksetup -setairportpower en0 off')
         NSWifiValue.set(0)
         NSWifiControl['bg'] = '#dcdcdc'
-        with open(os.getcwd() + '/system/wifi/bool.txt', 'w') as file:
+        with open(os.getcwd() + '/project_pios/system/wifi/bool.txt', 'w') as file:
             file.truncate(0)
             file.write('false')
 
@@ -352,14 +360,14 @@ def manage_bluetooth():
         os.system('blueutil -p on')
         NSBluetoothControl['bg'] = '#1b73e9'
         NSBluetoothValue.set(1)
-        with open(os.getcwd() + '/system/bluetooth/bool.txt', 'w') as file:
+        with open(os.getcwd() + '/project_pios/system/bluetooth/bool.txt', 'w') as file:
             file.truncate(0)
             file.write('true')
     else:
         os.system('blueutil -p off')
         NSBluetoothControl['bg'] = '#dcdcdc'
         NSBluetoothValue.set(0)
-        with open(os.getcwd() + '/system/bluetooth/bool.txt', 'w') as file:
+        with open(os.getcwd() + '/project_pios/system/bluetooth/bool.txt', 'w') as file:
             file.truncate(0)
             file.write('false')
 
@@ -584,83 +592,83 @@ def settings(event):
         NSPopupAlert.bind('<Button-1>', takedown_pulldown_menu)
 
         def w1(event):
-            img = Image.open(os.getcwd() + '/wallpaper/1.jpg')
-            shutil.copy(src=os.getcwd() + '/wallpaper/1.jpg', dst=os.getcwd() + '/wallpaper.jpg')
+            img = Image.open(os.getcwd() + '/project_pios/wallpaper/1.jpg')
+            shutil.copy(src=os.getcwd() + '/project_pios/wallpaper/1.jpg', dst=os.getcwd() + '/project_pios/wallpaper.jpg')
             pic = ImageTk.PhotoImage(img)
             NSWallpaper.config(image = pic)
             NSWallpaper.image = pic
         def w2(event):
-            img = Image.open(os.getcwd() + '/wallpaper/2.jpg')
-            shutil.copy(src=os.getcwd() + '/wallpaper/2.jpg', dst=os.getcwd() + '/wallpaper.jpg')
+            img = Image.open(os.getcwd() + '/project_pios/wallpaper/2.jpg')
+            shutil.copy(src=os.getcwd() + '/project_pios/wallpaper/2.jpg', dst=os.getcwd() + '/project_pios/wallpaper.jpg')
             pic = ImageTk.PhotoImage(img)
             NSWallpaper.config(image = pic)
             NSWallpaper.image = pic
         def w3(event):
-            img = Image.open(os.getcwd() + '/wallpaper/3.jpg')
-            shutil.copy(src=os.getcwd() + '/wallpaper/3.jpg', dst=os.getcwd() + '/wallpaper.jpg')
+            img = Image.open(os.getcwd() + '/project_pios/wallpaper/3.jpg')
+            shutil.copy(src=os.getcwd() + '/project_pios/wallpaper/3.jpg', dst=os.getcwd() + '/project_pios/wallpaper.jpg')
             pic = ImageTk.PhotoImage(img)
             NSWallpaper.config(image = pic)
             NSWallpaper.image = pic
         def w4(event):
-            img = Image.open(os.getcwd() + '/wallpaper/4.jpg')
-            shutil.copy(src=os.getcwd() + '/wallpaper/4.jpg', dst=os.getcwd() + '/wallpaper.jpg')
+            img = Image.open(os.getcwd() + '/project_pios/wallpaper/4.jpg')
+            shutil.copy(src=os.getcwd() + '/project_pios/wallpaper/4.jpg', dst=os.getcwd() + '/project_pios/wallpaper.jpg')
             pic = ImageTk.PhotoImage(img)
             NSWallpaper.config(image = pic)
             NSWallpaper.image = pic
         def w5(event):
-            img = Image.open(os.getcwd() + '/wallpaper/5.jpg')
-            shutil.copy(src=os.getcwd() + '/wallpaper/5.jpg', dst=os.getcwd() + '/wallpaper.jpg')
+            img = Image.open(os.getcwd() + '/project_pios/wallpaper/5.jpg')
+            shutil.copy(src=os.getcwd() + '/project_pios/wallpaper/5.jpg', dst=os.getcwd() + '/project_pios/wallpaper.jpg')
             pic = ImageTk.PhotoImage(img)
             NSWallpaper.config(image = pic)
             NSWallpaper.image = pic
         def w6(event):
-            img = Image.open(os.getcwd() + '/wallpaper/6.jpg')
-            shutil.copy(src=os.getcwd() + '/wallpaper/6.jpg', dst=os.getcwd() + '/wallpaper.jpg')
+            img = Image.open(os.getcwd() + '/project_pios/wallpaper/6.jpg')
+            shutil.copy(src=os.getcwd() + '/project_pios/wallpaper/6.jpg', dst=os.getcwd() + '/project_pios/wallpaper.jpg')
             pic = ImageTk.PhotoImage(img)
             NSWallpaper.config(image = pic)
             NSWallpaper.image = pic
         def w7(event):
-            img = Image.open(os.getcwd() + '/wallpaper/7.jpg')
-            shutil.copy(src=os.getcwd() + '/wallpaper/7.jpg', dst=os.getcwd() + '/wallpaper.jpg')
+            img = Image.open(os.getcwd() + '/project_pios/wallpaper/7.jpg')
+            shutil.copy(src=os.getcwd() + '/project_pios/wallpaper/7.jpg', dst=os.getcwd() + '/project_pios/wallpaper.jpg')
             pic = ImageTk.PhotoImage(img)
             NSWallpaper.config(image = pic)
             NSWallpaper.image = pic
         def w8(event):
-            img = Image.open(os.getcwd() + '/wallpaper/8.jpg')
-            shutil.copy(src=os.getcwd() + '/wallpaper/8.jpg', dst=os.getcwd() + '/wallpaper.jpg')
+            img = Image.open(os.getcwd() + '/project_pios/wallpaper/8.jpg')
+            shutil.copy(src=os.getcwd() + '/project_pios/wallpaper/8.jpg', dst=os.getcwd() + '/project_pios/wallpaper.jpg')
             pic = ImageTk.PhotoImage(img)
             NSWallpaper.config(image = pic)
             NSWallpaper.image = pic
         def w9(event):
-            img = Image.open(os.getcwd() + '/wallpaper/9.jpg')
-            shutil.copy(src=os.getcwd() + '/wallpaper/9.jpg', dst=os.getcwd() + '/wallpaper.jpg')
+            img = Image.open(os.getcwd() + '/project_pios/wallpaper/9.jpg')
+            shutil.copy(src=os.getcwd() + '/project_pios/wallpaper/9.jpg', dst=os.getcwd() + '/project_pios/wallpaper.jpg')
             pic = ImageTk.PhotoImage(img)
             NSWallpaper.config(image = pic)
             NSWallpaper.image = pic
         def w10(event):
-            img = Image.open(os.getcwd() + '/wallpaper/10.jpg')
-            shutil.copy(src=os.getcwd() + '/wallpaper/10.jpg', dst=os.getcwd() + '/wallpaper.jpg')
+            img = Image.open(os.getcwd() + '/project_pios/wallpaper/10.jpg')
+            shutil.copy(src=os.getcwd() + '/project_pios/wallpaper/10.jpg', dst=os.getcwd() + '/project_pios/wallpaper.jpg')
             pic = ImageTk.PhotoImage(img)
             NSWallpaper.config(image = pic)
             NSWallpaper.image = pic
         def w11(event):
-            img = Image.open(os.getcwd() + '/wallpaper/original/11.jpg')
-            shutil.copy(src=os.getcwd() + '/wallpaper/original/11.jpg', dst=os.getcwd() + '/wallpaper.jpg')
+            img = Image.open(os.getcwd() + '/project_pios/wallpaper/original/11.jpg')
+            shutil.copy(src=os.getcwd() + '/project_pios/wallpaper/original/11.jpg', dst=os.getcwd() + '/project_pios/wallpaper.jpg')
             pic = ImageTk.PhotoImage(img)
             NSWallpaper.config(image = pic)
             NSWallpaper.image = pic
 
-        wall1img = Image.open(os.getcwd() + '/wallpaper/1.jpg')
-        wall2img = Image.open(os.getcwd() + '/wallpaper/2.jpg')
-        wall3img = Image.open(os.getcwd() + '/wallpaper/3.jpg')
-        wall4img = Image.open(os.getcwd() + '/wallpaper/4.jpg')
-        wall5img = Image.open(os.getcwd() + '/wallpaper/5.jpg')
-        wall6img = Image.open(os.getcwd() + '/wallpaper/6.jpg')
-        wall7img = Image.open(os.getcwd() + '/wallpaper/7.jpg')
-        wall8img = Image.open(os.getcwd() + '/wallpaper/8.jpg')
-        wall9img = Image.open(os.getcwd() + '/wallpaper/9.jpg')
-        wall10img = Image.open(os.getcwd() + '/wallpaper/10.jpg')
-        wall11img = Image.open(os.getcwd() + '/wallpaper/11.jpg')
+        wall1img = Image.open(os.getcwd() + '/project_pios/wallpaper/1.jpg')
+        wall2img = Image.open(os.getcwd() + '/project_pios/wallpaper/2.jpg')
+        wall3img = Image.open(os.getcwd() + '/project_pios/wallpaper/3.jpg')
+        wall4img = Image.open(os.getcwd() + '/project_pios/wallpaper/4.jpg')
+        wall5img = Image.open(os.getcwd() + '/project_pios/wallpaper/5.jpg')
+        wall6img = Image.open(os.getcwd() + '/project_pios/wallpaper/6.jpg')
+        wall7img = Image.open(os.getcwd() + '/project_pios/wallpaper/7.jpg')
+        wall8img = Image.open(os.getcwd() + '/project_pios/wallpaper/8.jpg')
+        wall9img = Image.open(os.getcwd() + '/project_pios/wallpaper/9.jpg')
+        wall10img = Image.open(os.getcwd() + '/project_pios/wallpaper/10.jpg')
+        wall11img = Image.open(os.getcwd() + '/project_pios/wallpaper/11.jpg')
         wall1img = wall1img.resize((40, 70), Image.ANTIALIAS)
         wall2img = wall2img.resize((40, 70), Image.ANTIALIAS)
         wall3img = wall3img.resize((40, 70), Image.ANTIALIAS)
@@ -843,7 +851,7 @@ def settings(event):
 
         NSSettingsView.after(ms=1000, func=change_language)
 
-    NSSettingsProfileimg = Image.open(os.getcwd() + '/profile.png')
+    NSSettingsProfileimg = Image.open(os.getcwd() + '/project_pios/profile.png')
     NSSettingsProfileimg = NSSettingsProfileimg.resize((50, 50), Image.ANTIALIAS)
     NSSettingsProfilepic = ImageTk.PhotoImage(NSSettingsProfileimg)
 
@@ -1080,7 +1088,7 @@ def wallpaper():
         if NSLanguageValue.get() == 'en':
             NSPopupTitle['text'] = 'Select:'
             NSPopupAlertClose['text'] = 'Close'
-            with open(os.getcwd() + '/wallpaper.txt', 'r') as file:
+            with open(os.getcwd() + '/project_pios/wallpaper.txt', 'r') as file:
                 if file.read() == 'true':
                     NSSetupAutoSwitchWallpaper['text'] = '✓'
                 else:
@@ -1090,7 +1098,7 @@ def wallpaper():
         else:
             NSPopupTitle['text'] = '选择壁纸: '
             NSPopupAlertClose['text'] = '关闭'
-            with open(os.getcwd() + '/wallpaper.txt', 'r') as file:
+            with open(os.getcwd() + '/project_pios/wallpaper.txt', 'r') as file:
                 if file.read() == 'true':
                     NSSetupAutoSwitchWallpaper['text'] = '✓'
                 else:
@@ -1106,90 +1114,90 @@ def wallpaper():
 
         if NSAutoSwitchCounter % 2 == 0:
             NSSetupAutoSwitchWallpaper['text'] = '✓'
-            with open(os.getcwd() + '/wallpaper.txt', 'w') as file:
+            with open(os.getcwd() + '/project_pios/wallpaper.txt', 'w') as file:
                 file.truncate(0)
                 file.write('true')
                 pass
             pass
         else:
             NSSetupAutoSwitchWallpaper['text'] = '自动调整'
-            with open(os.getcwd() + '/wallpaper.txt', 'w') as file:
+            with open(os.getcwd() + '/project_pios/wallpaper.txt', 'w') as file:
                 file.truncate(0)
                 file.write('false')
                 pass
             pass
 
     def w1(event):
-        img = Image.open(os.getcwd() + '/wallpaper/1.jpg')
-        shutil.copy(src=os.getcwd() + '/wallpaper/1.jpg', dst=os.getcwd() + '/wallpaper.jpg')
+        img = Image.open(os.getcwd() + '/project_pios/wallpaper/1.jpg')
+        shutil.copy(src=os.getcwd() + '/project_pios/wallpaper/1.jpg', dst=os.getcwd() + '/project_pios/wallpaper.jpg')
         pic = ImageTk.PhotoImage(img)
         NSWallpaper.config(image = pic)
         NSWallpaper.image = pic
     def w2(event):
-        img = Image.open(os.getcwd() + '/wallpaper/2.jpg')
-        shutil.copy(src=os.getcwd() + '/wallpaper/2.jpg', dst=os.getcwd() + '/wallpaper.jpg')
+        img = Image.open(os.getcwd() + '/project_pios/wallpaper/2.jpg')
+        shutil.copy(src=os.getcwd() + '/project_pios/wallpaper/2.jpg', dst=os.getcwd() + '/project_pios/wallpaper.jpg')
         pic = ImageTk.PhotoImage(img)
         NSWallpaper.config(image = pic)
         NSWallpaper.image = pic
     def w3(event):
-        img = Image.open(os.getcwd() + '/wallpaper/3.jpg')
-        shutil.copy(src=os.getcwd() + '/wallpaper/3.jpg', dst=os.getcwd() + '/wallpaper.jpg')
+        img = Image.open(os.getcwd() + '/project_pios/wallpaper/3.jpg')
+        shutil.copy(src=os.getcwd() + '/project_pios/wallpaper/3.jpg', dst=os.getcwd() + '/project_pios/wallpaper.jpg')
         pic = ImageTk.PhotoImage(img)
         NSWallpaper.config(image = pic)
         NSWallpaper.image = pic
     def w4(event):
-        img = Image.open(os.getcwd() + '/wallpaper/4.jpg')
-        shutil.copy(src=os.getcwd() + '/wallpaper/4.jpg', dst=os.getcwd() + '/wallpaper.jpg')
+        img = Image.open(os.getcwd() + '/project_pios/wallpaper/4.jpg')
+        shutil.copy(src=os.getcwd() + '/project_pios/wallpaper/4.jpg', dst=os.getcwd() + '/project_pios/wallpaper.jpg')
         pic = ImageTk.PhotoImage(img)
         NSWallpaper.config(image = pic)
         NSWallpaper.image = pic
     def w5(event):
-        img = Image.open(os.getcwd() + '/wallpaper/5.jpg')
-        shutil.copy(src=os.getcwd() + '/wallpaper/5.jpg', dst=os.getcwd() + '/wallpaper.jpg')
+        img = Image.open(os.getcwd() + '/project_pios/wallpaper/5.jpg')
+        shutil.copy(src=os.getcwd() + '/project_pios/wallpaper/5.jpg', dst=os.getcwd() + '/project_pios/wallpaper.jpg')
         pic = ImageTk.PhotoImage(img)
         NSWallpaper.config(image = pic)
         NSWallpaper.image = pic
     def w6(event):
-        img = Image.open(os.getcwd() + '/wallpaper/6.jpg')
-        shutil.copy(src=os.getcwd() + '/wallpaper/6.jpg', dst=os.getcwd() + '/wallpaper.jpg')
+        img = Image.open(os.getcwd() + '/project_pios/wallpaper/6.jpg')
+        shutil.copy(src=os.getcwd() + '/project_pios/wallpaper/6.jpg', dst=os.getcwd() + '/project_pios/wallpaper.jpg')
         pic = ImageTk.PhotoImage(img)
         NSWallpaper.config(image = pic)
         NSWallpaper.image = pic
     def w7(event):
-        img = Image.open(os.getcwd() + '/wallpaper/7.jpg')
-        shutil.copy(src=os.getcwd() + '/wallpaper/7.jpg', dst=os.getcwd() + '/wallpaper.jpg')
+        img = Image.open(os.getcwd() + '/project_pios/wallpaper/7.jpg')
+        shutil.copy(src=os.getcwd() + '/project_pios/wallpaper/7.jpg', dst=os.getcwd() + '/project_pios/wallpaper.jpg')
         pic = ImageTk.PhotoImage(img)
         NSWallpaper.config(image = pic)
         NSWallpaper.image = pic
     def w8(event):
-        img = Image.open(os.getcwd() + '/wallpaper/8.jpg')
-        shutil.copy(src=os.getcwd() + '/wallpaper/8.jpg', dst=os.getcwd() + '/wallpaper.jpg')
+        img = Image.open(os.getcwd() + '/project_pios/wallpaper/8.jpg')
+        shutil.copy(src=os.getcwd() + '/project_pios/wallpaper/8.jpg', dst=os.getcwd() + '/project_pios/wallpaper.jpg')
         pic = ImageTk.PhotoImage(img)
         NSWallpaper.config(image = pic)
         NSWallpaper.image = pic
     def w9(event):
-        img = Image.open(os.getcwd() + '/wallpaper/9.jpg')
-        shutil.copy(src=os.getcwd() + '/wallpaper/9.jpg', dst=os.getcwd() + '/wallpaper.jpg')
+        img = Image.open(os.getcwd() + '/project_pios/wallpaper/9.jpg')
+        shutil.copy(src=os.getcwd() + '/project_pios/wallpaper/9.jpg', dst=os.getcwd() + '/project_pios/wallpaper.jpg')
         pic = ImageTk.PhotoImage(img)
         NSWallpaper.config(image = pic)
         NSWallpaper.image = pic
     def w10(event):
-        img = Image.open(os.getcwd() + '/wallpaper/10.jpg')
-        shutil.copy(src=os.getcwd() + '/wallpaper/10.jpg', dst=os.getcwd() + '/wallpaper.jpg')
+        img = Image.open(os.getcwd() + '/project_pios/wallpaper/10.jpg')
+        shutil.copy(src=os.getcwd() + '/project_pios/wallpaper/10.jpg', dst=os.getcwd() + '/project_pios/wallpaper.jpg')
         pic = ImageTk.PhotoImage(img)
         NSWallpaper.config(image = pic)
         NSWallpaper.image = pic
 
-    wall1img = Image.open(os.getcwd() + '/wallpaper/1.jpg')
-    wall2img = Image.open(os.getcwd() + '/wallpaper/2.jpg')
-    wall3img = Image.open(os.getcwd() + '/wallpaper/3.jpg')
-    wall4img = Image.open(os.getcwd() + '/wallpaper/4.jpg')
-    wall5img = Image.open(os.getcwd() + '/wallpaper/5.jpg')
-    wall6img = Image.open(os.getcwd() + '/wallpaper/6.jpg')
-    wall7img = Image.open(os.getcwd() + '/wallpaper/7.jpg')
-    wall8img = Image.open(os.getcwd() + '/wallpaper/8.jpg')
-    wall9img = Image.open(os.getcwd() + '/wallpaper/9.jpg')
-    wall10img = Image.open(os.getcwd() + '/wallpaper/10.jpg')
+    wall1img = Image.open(os.getcwd() + '/project_pios/wallpaper/1.jpg')
+    wall2img = Image.open(os.getcwd() + '/project_pios/wallpaper/2.jpg')
+    wall3img = Image.open(os.getcwd() + '/project_pios/wallpaper/3.jpg')
+    wall4img = Image.open(os.getcwd() + '/project_pios/wallpaper/4.jpg')
+    wall5img = Image.open(os.getcwd() + '/project_pios/wallpaper/5.jpg')
+    wall6img = Image.open(os.getcwd() + '/project_pios/wallpaper/6.jpg')
+    wall7img = Image.open(os.getcwd() + '/project_pios/wallpaper/7.jpg')
+    wall8img = Image.open(os.getcwd() + '/project_pios/wallpaper/8.jpg')
+    wall9img = Image.open(os.getcwd() + '/project_pios/wallpaper/9.jpg')
+    wall10img = Image.open(os.getcwd() + '/project_pios/wallpaper/10.jpg')
     wall1img = wall1img.resize((40, 70), Image.ANTIALIAS)
     wall2img = wall2img.resize((40, 70), Image.ANTIALIAS)
     wall3img = wall3img.resize((40, 70), Image.ANTIALIAS)
@@ -1522,7 +1530,7 @@ def change_language():
     NSCanvas.after(ms=1000, func=change_language)
 
 def update_languages():
-    with open(os.getcwd() + '/language.txt', 'r') as file:
+    with open(os.getcwd() + '/project_pios/language.txt', 'r') as file:
         if file.read() == 'en':
             NSLanguageValue.set('en')
         elif file.read() == 'en\n':
@@ -1564,24 +1572,24 @@ def screenshot():
     NSCanvas.after(1000, wait)
 
 def autoswitch_wallpaper():
-    with open(os.getcwd() + '/wallpaper.txt', 'r') as file:
+    with open(os.getcwd() + '/project_pios/wallpaper.txt', 'r') as file:
         if file.read() == 'true':
             NSAutoSwitchWallpaperStat.set(1)
             if NSDarkModeStat.get() == 1:
-                wallimg = Image.open(os.getcwd() + '/wallpaper/9.jpg')
-                shutil.copy(src=os.getcwd() + '/wallpaper/9.jpg', dst=os.getcwd() + '/dark_wallpaper.jpg')
+                wallimg = Image.open(os.getcwd() + '/project_pios/wallpaper/9.jpg')
+                shutil.copy(src=os.getcwd() + '/project_pios/wallpaper/9.jpg', dst=os.getcwd() + '/project_pios/dark_wallpaper.jpg')
                 pic = ImageTk.PhotoImage(wallimg)
                 NSWallpaper.config(image = pic)
                 NSWallpaper.image = pic
             else:
-                wallimg = Image.open(os.getcwd() + '/wallpaper/6.jpg')
-                shutil.copy(src=os.getcwd() + '/wallpaper/6.jpg', dst=os.getcwd() + '/light_wallpaper.jpg')
+                wallimg = Image.open(os.getcwd() + '/project_pios/wallpaper/6.jpg')
+                shutil.copy(src=os.getcwd() + '/project_pios/wallpaper/6.jpg', dst=os.getcwd() + '/project_pios/light_wallpaper.jpg')
                 pic = ImageTk.PhotoImage(wallimg)
                 NSWallpaper.config(image = pic)
                 NSWallpaper.image = pic
         else:
             NSAutoSwitchWallpaperStat.set(0)
-            wallimg = Image.open(os.getcwd() + '/wallpaper.jpg')
+            wallimg = Image.open(os.getcwd() + '/project_pios/wallpaper.jpg')
             pic = ImageTk.PhotoImage(wallimg)
             NSWallpaper.config(image = pic)
             NSWallpaper.image = pic
@@ -1590,12 +1598,12 @@ def autoswitch_wallpaper():
     NSCanvas.after(ms=1000, func=autoswitch_wallpaper)
 
 def check_bluetooth():
-    with open(os.getcwd() + '/system/bluetooth/bool.txt', 'r') as file:
+    with open(os.getcwd() + '/project_pios/system/bluetooth/bool.txt', 'r') as file:
         if file.read() == 'true':
             os.system('blueutil -p on')
             NSBluetoothControl['bg'] = '#1b73e9'
             NSBluetoothValue.set(1)
-            with open(os.getcwd() + '/system/bluetooth/bool.txt', 'w') as file:
+            with open(os.getcwd() + '/project_pios/system/bluetooth/bool.txt', 'w') as file:
                 file.truncate(0)
                 file.write('true')
                 pass
@@ -1603,7 +1611,7 @@ def check_bluetooth():
             os.system('blueutil -p off')
             NSBluetoothControl['bg'] = '#dcdcdc'
             NSBluetoothValue.set(0)
-            with open(os.getcwd() + '/system/bluetooth/bool.txt', 'w') as file:
+            with open(os.getcwd() + '/project_pios/system/bluetooth/bool.txt', 'w') as file:
                 file.truncate(0)
                 file.write('false')
                 pass
@@ -1611,12 +1619,12 @@ def check_bluetooth():
     NSCanvas.after(ms=1000, func=check_bluetooth)
 
 def check_wifi():
-    with open(os.getcwd() + '/system/wifi/bool.txt', 'r') as file:
+    with open(os.getcwd() + '/project_pios/system/wifi/bool.txt', 'r') as file:
         if file.read() == 'true':
             os.system('networksetup -setairportpower en0 on')
             NSWifiValue.set(1)
             NSWifiControl['bg'] = '#1b73e9'
-            with open(os.getcwd() + '/system/wifi/bool.txt', 'w') as file:
+            with open(os.getcwd() + '/project_pios/system/wifi/bool.txt', 'w') as file:
                 file.truncate(0)
                 file.write('true')
                 pass
@@ -1624,7 +1632,7 @@ def check_wifi():
             os.system('networksetup -setairportpower en0 off')
             NSWifiValue.set(0)
             NSWifiControl['bg'] = '#dcdcdc'
-            with open(os.getcwd() + '/system/wifi/bool.txt', 'w') as file:
+            with open(os.getcwd() + '/project_pios/system/wifi/bool.txt', 'w') as file:
                 file.truncate(0)
                 file.write('false')
                 pass
@@ -1659,20 +1667,20 @@ def email(event):
         NSEmailSubjectBox.delete(0, END)
         NSEmailContent.delete(1.0, END)
 
-        with open(os.getcwd() + '/system/email/email.txt', 'w') as email, open(os.getcwd() + '/system/email/password.txt', 'w') as password:
+        with open(os.getcwd() + '/project_pios/system/email/email.txt', 'w') as email, open(os.getcwd() + '/project_pios/system/email/password.txt', 'w') as password:
             email.truncate(0)
             password.truncate(0)
 
     def send():
         if NSLanguageValue.get() == 'en':
-            with open(os.getcwd() + '/system/email/email.txt', 'r') as email, open(os.getcwd() + '/system/email/password.txt', 'r') as password:
+            with open(os.getcwd() + '/project_pios/system/email/email.txt', 'r') as email, open(os.getcwd() + '/project_pios/system/email/password.txt', 'r') as password:
                 if email.read() == '' or password.read() == '':
                     username = simpledialog.askstring(title='Sign In', prompt='Email')
                     word = simpledialog.askstring(title='Sign In', prompt='Password')
                     pass
                 else:
-                    username = open(os.getcwd() + '/system/email/email.txt', 'r').read()
-                    word = open(os.getcwd() + '/system/email/password.txt', 'r').read()
+                    username = open(os.getcwd() + '/project_pios/system/email/email.txt', 'r').read()
+                    word = open(os.getcwd() + '/project_pios/system/email/password.txt', 'r').read()
                     username = base64.b64decode(username).decode('utf-8')
                     word = base64.b64decode(word).decode('utf-8')
                     pass
@@ -1681,17 +1689,23 @@ def email(event):
                     # no cc
                     yag.send(to=NSEmailSenderEmailBox.get(), subject=NSEmailSubjectBox.get(), contents=NSEmailContent.get(1.0, END))
                     messagebox.showinfo(message=f'Email send to {NSEmailSenderEmailBox.get()}, from {username} was sent.')
-                    clear()
 
                     #write credencials to file for next use
-                    with open(os.getcwd() + '/system/email/email.txt', 'wb') as email, open(os.getcwd() + '/system/email/password.txt', 'wb') as password:
+                    with open(os.getcwd() + '/project_pios/system/email/email.txt', 'wb') as email, open(os.getcwd() + '/project_pios/system/email/password.txt', 'wb') as password:
                         email.truncate(0)
                         password.truncate(0)
                         email.write(base64.b64encode(username.encode('ascii')))
                         password.write(base64.b64encode(word.encode('ascii')))
+                        
+                        #generate cache history
+                        random_path = os.getcwd() + '/project_pios/system/Library/Cache/%s' % ''.join(random.choice(string.ascii_letters + string.digits) for i in range(20))
+                        os.mkdir(random_path)
+                        with open(random_path + '/content.pica', 'w') as writecontent:
+                            writecontent.write(NSEmailContent.get(1.0, END))
+
 
                         #save to csv file, read than write
-                        with open(os.getcwd() + '/system/email/info.csv', 'a+') as file:
+                        with open(os.getcwd() + '/project_pios/system/email/info.csv', 'a+') as file:
                             writer = csv.writer(file)
                             rows = [
                                 ['Time', 'From', 'To', 'Status', 'Subject'],
@@ -1708,14 +1722,20 @@ def email(event):
                 clear()
 
                 #write credencials to file for next use
-                with open(os.getcwd() + '/system/email/email.txt', 'wb') as email, open(os.getcwd() + '/system/email/password.txt', 'wb') as password:
+                with open(os.getcwd() + '/project_pios/system/email/email.txt', 'wb') as email, open(os.getcwd() + '/project_pios/system/email/password.txt', 'wb') as password:
                     email.truncate(0)
                     password.truncate(0)
                     email.write(base64.b64encode(username.encode('ascii')))
                     password.write(base64.b64encode(word.encode('ascii')))
 
+                    #generate cache history
+                    random_path = os.getcwd() + '/project_pios/system/Library/Cache/%s' % ''.join(random.choice(string.ascii_letters + string.digits) for i in range(20))
+                    os.mkdir(random_path)
+                    with open(random_path + '/content.pica', 'w') as writecontent:
+                        writecontent.write(NSEmailContent.get(1.0, END))
+
                     #save to csv file, read than write
-                    with open(os.getcwd() + '/system/email/info.csv', 'a+') as file:
+                    with open(os.getcwd() + '/project_pios/system/email/info.csv', 'a+') as file:
                         writer = csv.writer(file)
                         rows = [
                             ['Time', 'From', 'To', 'Status', 'Subject'],
@@ -1725,14 +1745,14 @@ def email(event):
                         clear()
                     pass
         else:
-            with open(os.getcwd() + '/system/email/email.txt', 'r') as email, open(os.getcwd() + '/system/email/password.txt', 'r') as password:
+            with open(os.getcwd() + '/project_pios/system/email/email.txt', 'r') as email, open(os.getcwd() + '/project_pios/system/email/password.txt', 'r') as password:
                 if email.read() == '' or password.read() == '':
                     username = simpledialog.askstring(title='登录', prompt='邮箱')
                     word = simpledialog.askstring(title='登录', prompt='密码')
                     pass
                 else:
-                    username = open(os.getcwd() + '/system/email/email.txt', 'r').read()
-                    word = open(os.getcwd() + '/system/email/password.txt', 'r').read()
+                    username = open(os.getcwd() + '/project_pios/system/email/email.txt', 'r').read()
+                    word = open(os.getcwd() + '/project_pios/system/email/password.txt', 'r').read()
                     username = base64.b64decode(username).decode('utf-8')
                     word = base64.b64decode(word).decode('utf-8')
                     pass
@@ -1742,14 +1762,20 @@ def email(event):
                     messagebox.showinfo(message=f'从 {username} 的邮件已发送。')
 
                     #write credencials to file for next use
-                    with open(os.getcwd() + '/system/email/email.txt', 'wb') as email, open(os.getcwd() + '/system/email/password.txt', 'wb') as password:
+                    with open(os.getcwd() + '/project_pios/system/email/email.txt', 'wb') as email, open(os.getcwd() + '/project_pios/system/email/password.txt', 'wb') as password:
                         email.truncate(0)
                         password.truncate(0)
                         email.write(base64.b64encode(username.encode('ascii')))
                         password.write(base64.b64encode(word.encode('ascii')))
 
+                        #generate cache history
+                        random_path = os.getcwd() + '/project_pios/system/Library/Cache/%s' % ''.join(random.choice(string.ascii_letters + string.digits) for i in range(20))
+                        os.mkdir(random_path)
+                        with open(random_path + '/content.pica', 'w') as writecontent:
+                            writecontent.write(NSEmailContent.get(1.0, END))
+
                         #save to csv file, read than write
-                        with open(os.getcwd() + '/system/email/info.csv', 'a+') as file:
+                        with open(os.getcwd() + '/project_pios/system/email/info.csv', 'a+') as file:
                             writer = csv.writer(file)
                             rows = [
                                 ['Time', 'From', 'To', 'Status', 'Subject'],
@@ -1764,14 +1790,20 @@ def email(event):
                 messagebox.showinfo(message=f'从 {username} 的邮件已发送。')
 
                 #write credencials to file for next use
-                with open(os.getcwd() + '/system/email/email.txt', 'wb') as email, open(os.getcwd() + '/system/email/password.txt', 'wb') as password:
+                with open(os.getcwd() + '/project_pios/system/email/email.txt', 'wb') as email, open(os.getcwd() + '/project_pios/system/email/password.txt', 'wb') as password:
                     email.truncate(0)
                     password.truncate(0)
                     email.write(base64.b64encode(username.encode('ascii')))
                     password.write(base64.b64encode(word.encode('ascii')))
 
+                    #generate cache history
+                    random_path = os.getcwd() + '/project_pios/system/Library/Cache/%s' % ''.join(random.choice(string.ascii_letters + string.digits) for i in range(20))
+                    os.mkdir(random_path)
+                    with open(random_path + '/content.pica', 'w') as writecontent:
+                        writecontent.write(NSEmailContent.get(1.0, END))
+
                     #save to csv file, read than write
-                    with open(os.getcwd() + '/system/email/info.csv', 'a+') as file:
+                    with open(os.getcwd() + '/project_pios/system/email/info.csv', 'a+') as file:
                         writer = csv.writer(file)
                         rows = [
                             ['Time', 'From', 'To', 'Status', 'Subject'],
@@ -1876,10 +1908,9 @@ def check_update():
     if NSUpdateAlert == 1:
         if NSLocalVersion.get() != NSVersion.get():
             if NSLanguageValue.get() == 'en':
-                messagebox.showinfo(message='You have a update available. Please go to settings and click on profile. Follow instructions on github to update. \n\n Your version: {v1} \n Target version: {v2}'.format(v1 = NSLocalVersion.get(), v2 = NSVersion.get()))
+                messagebox.showinfo(message='You have a update available. \n\n Your version: {v1} \n Target version: {v2}'.format(v1 = NSLocalVersion.get(), v2 = NSVersion.get()))
                 value = messagebox.askquestion(title='Update', message='Update?')
                 if value == 'yes':
-                    messagebox.showinfo(message='Please wait...')
                     update()
                     root.quit()
                     quit()
@@ -1887,10 +1918,9 @@ def check_update():
                 else:
                     pass
             else:
-                messagebox.showinfo(message='Project-Pios可以更新。请前往设置并单击用户，根据指示更新Project-Pios。\n\n 您的版本: {v1} \n 更新版本: {v2}'.format(v1 = NSLocalVersion.get(), v2 = NSVersion.get()))
+                messagebox.showinfo(message='Project-Pios可以更新。\n\n 您的版本: {v1} \n 更新版本: {v2}'.format(v1 = NSLocalVersion.get(), v2 = NSVersion.get()))
                 value = messagebox.askquestion(title='更新', message='更新？')
                 if value == 'yes':
-                    messagebox.showinfo(message='请耐心等待...')
                     update()
                     root.quit()
                     quit()
@@ -2044,7 +2074,7 @@ def sleep():
 
 def check_qr():
     # Look for qr codes in photos library
-    path = os.getcwd() + '/system/Library/Photos/'
+    path = os.getcwd() + '/project_pios/system/Library/Photos/'
 
     if len(os.listdir(path)) == 1 and os.listdir(path)[0].startswith('.') == True or len(os.listdir(path)) == 0:
         pass
@@ -2110,10 +2140,10 @@ def friends(event):
         NSFriendsView.after(ms=1000, func=check_mode)
 
     def setup_face(event):
-        with open(os.getcwd() + '/system/Library/Security/Face/pass.txt', 'r') as files:
+        with open(os.getcwd() + '/project_pios/system/Library/Security/Face/pass.txt', 'r') as files:
             if files.read() == '':
                 passcode = rumps.Window(title='设置密码', message='请输入密码').run()
-                with open(os.getcwd() + '/system/Library/Security/Face/pass.txt', 'w') as file:
+                with open(os.getcwd() + '/project_pios/system/Library/Security/Face/pass.txt', 'w') as file:
                     file.write(passcode.text)
                 messagebox.showinfo(message='请看向摄像头')
                 setup()
@@ -2124,13 +2154,13 @@ def friends(event):
                     messagebox.showerror(message='无法识别，请重试')
                     setup()
                 messagebox.showinfo(message='成功！')
-                with open(os.getcwd() + '/system/Library/Security/Face/counter.txt', 'w') as file:
+                with open(os.getcwd() + '/project_pios/system/Library/Security/Face/counter.txt', 'w') as file:
                     file.write('1')
 
                 view = Toplevel()
                 view.resizable(0, 0)
 
-                img = Image.open(os.getcwd() + '/system/Library/Security/Face/known_people/default.jpg')
+                img = Image.open(os.getcwd() + '/project_pios/system/Library/Security/Face/known_people/default.jpg')
                 width, height = img.size
                 img = img.resize((width // 2, height // 2), Image.ANTIALIAS)
                 pic = ImageTk.PhotoImage(img)
@@ -2159,7 +2189,7 @@ def friends(event):
 
                 view.mainloop()
             else:
-                filess = open(os.getcwd() + '/system/Library/Security/Face/pass.txt', 'r')
+                filess = open(os.getcwd() + '/project_pios/system/Library/Security/Face/pass.txt', 'r')
                 enter_pass = rumps.Window(title='输入密码', message='设置前需要进行验证').run()
                 if filess.read() == enter_pass.text:
                     messagebox.showinfo(message='请看向摄像头')
@@ -2171,13 +2201,13 @@ def friends(event):
                         messagebox.showerror(message='无法识别，请重试')
                         setup()
                     messagebox.showinfo(message='成功！')
-                    with open(os.getcwd() + '/system/Library/Security/Face/counter.txt', 'w') as file:
+                    with open(os.getcwd() + '/project_pios/system/Library/Security/Face/counter.txt', 'w') as file:
                         file.write('1')
 
                     view = Toplevel()
                     view.resizable(0, 0)
 
-                    img = Image.open(os.getcwd() + '/system/Library/Security/Face/known_people/default.jpg')
+                    img = Image.open(os.getcwd() + '/project_pios/system/Library/Security/Face/known_people/default.jpg')
                     width, height = img.size
                     img = img.resize((width // 2, height // 2), Image.ANTIALIAS)
                     pic = ImageTk.PhotoImage(img)
@@ -2215,7 +2245,7 @@ def friends(event):
             check = recognize('default')
             if check == True:
                 NSFaceID.set(0)
-                with open(os.getcwd() + '/system/Library/Security/Face/counter.txt', 'w') as writefile:
+                with open(os.getcwd() + '/project_pios/system/Library/Security/Face/counter.txt', 'w') as writefile:
                     writefile.write('0')
                     messagebox.showinfo(message='面容已成功关闭')
             else:
@@ -2227,7 +2257,7 @@ def friends(event):
     NSFriendsMyProfileBox = RoundedButton(NSFriendsView, 380, 100, 20, 0, rgbtohex(234, 234, 234), 'white')
     NSFriendsMyProfileBox.place(relx=0.5, rely=0.13, anchor=CENTER)
 
-    NSFriendsMyProfileimg = Image.open(os.getcwd() + '/profile.png')
+    NSFriendsMyProfileimg = Image.open(os.getcwd() + '/project_pios/profile.png')
     NSFriendsMyProfileimg = NSFriendsMyProfileimg.resize((50, 50), Image.ANTIALIAS)
     NSFriendsMyProfilepic = ImageTk.PhotoImage(NSFriendsMyProfileimg)
 
@@ -2247,7 +2277,7 @@ def friends(event):
     NSFriendsMyScreentimeTitleContainer = Label(NSFriendsView, text='屏幕使用时间', bg=rgbtohex(234, 234, 234), font=("Futura", 13))
     NSFriendsMyScreentimeTitleContainer.place(relx=0.15, rely=0.24, anchor=CENTER)
 
-    with open(os.getcwd() + '/system/Library/ScreenTime/counter.txt', 'r') as txt:
+    with open(os.getcwd() + '/project_pios/system/Library/ScreenTime/counter.txt', 'r') as txt:
         total = int(txt.read())
     hours, mins = divmod(total, 60)
 
@@ -2275,16 +2305,16 @@ def update_screentime():
     global NSScreenTimeCounter
     NSScreenTimeCounter += 1
     try:
-        with open(os.getcwd() + '/system/Library/ScreenTime/counter.txt', 'w') as out:
+        with open(os.getcwd() + '/project_pios/system/Library/ScreenTime/counter.txt', 'w') as out:
             out.write(str(NSScreenTimeCounter))
-        with open(os.getcwd() + '/system/Library/ScreenTime/info.json', 'r') as file:
+        with open(os.getcwd() + '/project_pios/system/Library/ScreenTime/info.json', 'r') as file:
             data = json.load(file)
         today = str(datetime.today().weekday())
         data[today] = NSScreenTimeCounter
-        with open(os.getcwd() + '/system/Library/ScreenTime/info.json', 'w') as file:
+        with open(os.getcwd() + '/project_pios/system/Library/ScreenTime/info.json', 'w') as file:
             json.dump(data, file, indent=4)
     except:
-        with open(os.getcwd() + '/system/Library/ScreenTime/info.json', 'w') as file:
+        with open(os.getcwd() + '/project_pios/system/Library/ScreenTime/info.json', 'w') as file:
             data = {
                 '_comment': 'Number on the left is the weekday, and number on the right is how many minutes the app is used',
                 '1': 0,
@@ -2373,12 +2403,12 @@ def simulator_settings(event):
         screentime.title('')
         screentime.geometry('500x500')
 
-        with open(os.getcwd() + '/system/Library/ScreenTime/counter.txt', 'r') as txt:
+        with open(os.getcwd() + '/project_pios/system/Library/ScreenTime/counter.txt', 'r') as txt:
             total = int(txt.read())
 
         hours, mins = divmod(total, 60)
 
-        with open(os.getcwd() + '/system/Library/ScreenTime/info.json', 'r') as infile:
+        with open(os.getcwd() + '/project_pios/system/Library/ScreenTime/info.json', 'r') as infile:
             data = json.load(infile)
         x = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
         y = [data['1'], data['2'], data['3'], data['4'], data['5'], data['6'], data['7']]
@@ -2402,7 +2432,7 @@ def simulator_settings(event):
     def clean_cache():
         os.system('find . -type d -name  "__pycache__" -exec rm -r {} +')
         try:
-            with open(os.getcwd() + '/system/Software/keyboard/tip.txt', 'w') as infile:
+            with open(os.getcwd() + '/project_pios/system/Software/keyboard/tip.txt', 'w') as infile:
                 infile.write(0)
         except:
             pass
@@ -2464,9 +2494,9 @@ def simulator_settings(event):
 
 def save_screentime():
     if datetime.now().weekday() == 7:
-        if os.path.exists(os.getcwd() + '/system/Library/ScreenTime/History') == True:
-            with open(os.getcwd() + '/system/Library/ScreenTime/History/{}.csv'.format(datetime.now().date()), 'w') as file:
-                with open(os.getcwd() + '/system/Library/ScreenTime/info.json', 'r') as infile:
+        if os.path.exists(os.getcwd() + '/project_pios/system/Library/ScreenTime/History') == True:
+            with open(os.getcwd() + '/project_pios/system/Library/ScreenTime/History/{}.csv'.format(datetime.now().date()), 'w') as file:
+                with open(os.getcwd() + '/project_pios/system/Library/ScreenTime/info.json', 'r') as infile:
                     data = json.load(infile)
                 writer = csv.writer(file)
                 rows = [
@@ -2474,8 +2504,8 @@ def save_screentime():
                     ['Screen Time history in minutes', data['1'], data['2'], data['3'], data['4'], data['5'], data['6'], data['7']]
                 ]
                 writer.writerows(rows)
-                os.remove(os.getcwd() + '/system/Library/ScreenTime/info.json')
-                with open(os.getcwd() + '/system/Library/ScreenTime/info.json', 'w') as file:
+                os.remove(os.getcwd() + '/project_pios/system/Library/ScreenTime/info.json')
+                with open(os.getcwd() + '/project_pios/system/Library/ScreenTime/info.json', 'w') as file:
                     data = {
                         '_comment': 'Number on the left is the weekday, and number on the right is how many minutes the app is used',
                         '1': 0,
@@ -2487,12 +2517,12 @@ def save_screentime():
                         '7': 0
                     }
                     json.dump(data, file, indent=4)
-                with open(os.getcwd() + '/system/Library/ScreenTime/counter.txt', 'w') as f:
+                with open(os.getcwd() + '/project_pios/system/Library/ScreenTime/counter.txt', 'w') as f:
                     f.truncate(0)
         else:
-            os.mkdir(os.getcwd() + '/system/Library/ScreenTime/History')
-            with open(os.getcwd() + '/system/Library/ScreenTime/History/{}.csv'.format(datetime.now().date()), 'w') as file:
-                with open(os.getcwd() + '/system/Library/ScreenTime/info.json', 'r') as infile:
+            os.mkdir(os.getcwd() + '/project_pios/system/Library/ScreenTime/History')
+            with open(os.getcwd() + '/project_pios/system/Library/ScreenTime/History/{}.csv'.format(datetime.now().date()), 'w') as file:
+                with open(os.getcwd() + '/project_pios/system/Library/ScreenTime/info.json', 'r') as infile:
                     data = json.load(infile)
                 writer = csv.writer(file)
                 rows = [
@@ -2500,8 +2530,8 @@ def save_screentime():
                     ['Screen Time history in minutes', data['1'], data['2'], data['3'], data['4'], data['5'], data['6'], data['7']]
                 ]
                 writer.writerows(rows)
-                os.remove(os.getcwd() + '/system/Library/ScreenTime/info.json')
-                with open(os.getcwd() + '/system/Library/ScreenTime/info.json', 'w') as file:
+                os.remove(os.getcwd() + '/project_pios/system/Library/ScreenTime/info.json')
+                with open(os.getcwd() + '/project_pios/system/Library/ScreenTime/info.json', 'w') as file:
                     data = {
                         '_comment': 'Number on the left is the weekday, and number on the right is how many minutes the app is used',
                         '1': 0,
@@ -2516,7 +2546,7 @@ def save_screentime():
     NSCanvas.after(ms=10000, func=save_screentime)
 
 def update_faceid():
-    with open(os.getcwd() + '/system/Library/Security/Face/counter.txt', 'r') as reading:
+    with open(os.getcwd() + '/project_pios/system/Library/Security/Face/counter.txt', 'r') as reading:
         NSFaceID.set(int(reading.read()))
 
     NSCanvas.after(ms=1000, func=update_faceid)
@@ -2530,7 +2560,7 @@ def update_battery():
 NSCanvas = Canvas(root)
 NSCanvas.pack(fill=BOTH, expand=True)
 
-wallpic = Image.open(os.getcwd() + '/wallpaper.jpg')
+wallpic = Image.open(os.getcwd() + '/project_pios/wallpaper.jpg')
 pic = ImageTk.PhotoImage(wallpic)
 
 NSWallpaper = Label(NSCanvas, text='', image=pic)
@@ -2555,7 +2585,7 @@ NSSignalWidget.place(relx=0.05, rely=0.5, anchor=CENTER)
 NSBlueSignalWidget = Label(NSMenuBar, text='', bg=NSMenuBar['bg'])
 NSBlueSignalWidget.place(relx=0.1, rely=0.5, anchor=CENTER)
 
-img = Image.open(os.getcwd() + '/wifi.png')
+img = Image.open(os.getcwd() + '/project_pios/wifi.png')
 img = img.resize((25, 25), Image.ANTIALIAS)
 pic = ImageTk.PhotoImage(img)
 
@@ -2564,14 +2594,14 @@ NSControlMenu = Frame(NSCanvas, height=300, width=400, bg='white')
 NSWifiControl = tkmacosx.CircleButton(NSControlMenu, image=pic, borderless=1, radius=20, command=manage_wifi)
 NSWifiLabel = Label(NSControlMenu, text='网络', bg=NSControlMenu['bg'])
 
-blueimg = Image.open(os.getcwd() + '/bluetooth.png')
+blueimg = Image.open(os.getcwd() + '/project_pios/bluetooth.png')
 blueimg = blueimg.resize((20, 20), Image.ANTIALIAS)
 bluepic = ImageTk.PhotoImage(blueimg)
 
 NSBluetoothControl = tkmacosx.CircleButton(NSControlMenu, image=bluepic, borderless=1, radius=20, command=manage_bluetooth)
 NSBluetoothLabel = Label(NSControlMenu, text='蓝牙', bg=NSControlMenu['bg'])
 
-shutimg = Image.open(os.getcwd() + '/shutdown.png')
+shutimg = Image.open(os.getcwd() + '/project_pios/shutdown.png')
 shutimg = shutimg.resize((25, 25), Image.ANTIALIAS)
 shutpic = ImageTk.PhotoImage(shutimg)
 
@@ -2579,28 +2609,28 @@ NSShutdownControl = tkmacosx.CircleButton(NSControlMenu, image=shutpic, borderle
 NSShutdownLabel = Label(NSControlMenu, text='关机', bg=NSControlMenu['bg'])
 NSShutdownControl.bind('<Double-1>', shutdown)
 
-wallimg = Image.open(os.getcwd() + '/wallpaper_icon.png')
+wallimg = Image.open(os.getcwd() + '/project_pios/wallpaper_icon.png')
 wallimg = wallimg.resize((25, 25), Image.ANTIALIAS)
 wallpic = ImageTk.PhotoImage(wallimg)
 
 NSWallpaperControl = tkmacosx.CircleButton(NSControlMenu, image=wallpic, borderless=1, radius=20, command=wallpaper)
 NSWallpaperLabel = Label(NSControlMenu, text='壁纸', bg=NSControlMenu['bg'])
 
-clockimg = Image.open(os.getcwd() + '/clock.png')
+clockimg = Image.open(os.getcwd() + '/project_pios/clock.png')
 clockimg = clockimg.resize((25, 25), Image.ANTIALIAS)
 clockpic = ImageTk.PhotoImage(clockimg)
 
 NSClockControl = tkmacosx.CircleButton(NSControlMenu, image=clockpic, borderless=1, radius=20, command=control_clock)
 NSClockLabel = Label(NSControlMenu, text='时间', bg=NSControlMenu['bg'])
 
-shotimg = Image.open(os.getcwd() + '/screenshot.png')
+shotimg = Image.open(os.getcwd() + '/project_pios/screenshot.png')
 shotimg = shotimg.resize((25, 25), Image.ANTIALIAS)
 shotpic = ImageTk.PhotoImage(shotimg)
 
 NSScreenshotControl = tkmacosx.CircleButton(NSControlMenu, image=shotpic, borderless=1, radius=20, command=screenshot)
 NSScreenshotLabel = Label(NSControlMenu, text='截屏', bg=NSControlMenu['bg'])
 
-closeimg = Image.open(os.getcwd() + '/close.png')
+closeimg = Image.open(os.getcwd() + '/project_pios/close.png')
 closeimg = closeimg.resize((25, 25), Image.ANTIALIAS)
 closepic = ImageTk.PhotoImage(closeimg)
 
@@ -2610,28 +2640,28 @@ NSSleepLabel = Label(NSControlMenu, text='睡眠', bg=NSControlMenu['bg'])
 NSDisplayDate = Label(NSControlMenu, text='', bg=NSMenuBar['bg'], font=("Arial", 15))
 NSDisplayDate.bind('<Button-1>', pulldown_menu)
 
-appsettingsimg = Image.open(os.getcwd() + '/settings.png')
+appsettingsimg = Image.open(os.getcwd() + '/project_pios/settings.png')
 appsettingsimg = appsettingsimg.resize((40, 40), Image.ANTIALIAS)
 appsettingspic = ImageTk.PhotoImage(appsettingsimg)
 APPSettings = Label(NSCanvas, text='', image=appsettingspic, border=0)
 APPSettings.place(relx=0.2, rely=0.85, anchor=CENTER)
 APPSettings.bind('<Button-1>', settings)
 
-appbrowserimg = Image.open(os.getcwd() + '/browser.png')
+appbrowserimg = Image.open(os.getcwd() + '/project_pios/browser.png')
 appbrowserimg = appbrowserimg.resize((40, 40), Image.ANTIALIAS)
 appbrowserpic = ImageTk.PhotoImage(appbrowserimg)
 APPBrowser = Label(NSCanvas, text='', image=appbrowserpic, border=0)
 APPBrowser.place(relx=0.5, rely=0.85, anchor=CENTER)
 APPBrowser.bind('<Button-1>', browser)
 
-appclockimg = Image.open(os.getcwd() + '/clock.png')
+appclockimg = Image.open(os.getcwd() + '/project_pios/clock.png')
 appclockimg = appclockimg.resize((40, 40), Image.ANTIALIAS)
 appclockpic = ImageTk.PhotoImage(appclockimg)
 APPClock = Label(NSCanvas, text='', image=appclockpic, border=0)
 APPClock.place(relx=0.8, rely=0.85, anchor=CENTER)
 APPClock.bind('<Button-1>', clock)
 
-appemailimg = Image.open(os.getcwd() + '/email.png')
+appemailimg = Image.open(os.getcwd() + '/project_pios/email.png')
 appemailimg = appemailimg.resize((40, 40), Image.ANTIALIAS)
 appemailpic = ImageTk.PhotoImage(appemailimg)
 APPEmail = Label(NSCanvas, text='', image=appemailpic, border=0)
@@ -2652,7 +2682,7 @@ APPAdd2 = Label(NSCanvas, text='', image=appadd2pic, border=0)
 APPAdd2.place(relx=0.8, rely=0.75, anchor=CENTER)
 APPAdd2.bind('<Button-1>', add_app2)
 
-appfriendsimg = Image.open(os.getcwd() + '/friends.jpg')
+appfriendsimg = Image.open(os.getcwd() + '/project_pios/friends.jpg')
 appfriendsimg = appfriendsimg.resize((40, 40), Image.ANTIALIAS)
 appfriendspic = ImageTk.PhotoImage(appfriendsimg)
 APPFriends = Label(NSCanvas, text='', image=appfriendspic, border=0)
