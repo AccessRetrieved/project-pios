@@ -39,6 +39,7 @@
 ## 已知问题
 1. [查看](https://github.com/AccessRetrieved/Project-Pios/blob/main/dlib_error_solution.md)dlib下载问题解决方案
 2. 面容识别暂时只支持中文
+3. ~~给深色模式添加图片~~
 
 <a name="language"></a>
 ## 更改语言
