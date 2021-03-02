@@ -39,6 +39,7 @@ PC Users currently not supported
 ## Known Bugs
 1. [See](https://github.com/AccessRetrieved/Project-Pios/blob/main/dlib_error_solution.md) Dlib installation error solution
 2. Face Recognition temporary supports chinese only
+3. ~~Images and icons for dark mode~~
 
 <a name="language"></a>
 ## Change Language
