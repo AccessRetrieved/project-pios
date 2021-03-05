@@ -17,7 +17,7 @@ Operating system with python. [Switch to Chinese Readme](https://github.com/Acce
 ***
 
 ### Computers with a small screen not supported
-PC Users currently not supported
+PC Users is not supported and will not be.
 
 #### Setup Face Unlock
 1. Open Project-Pios
