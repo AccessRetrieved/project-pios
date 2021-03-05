@@ -3,13 +3,17 @@
 安卓和苹果结合的简单操作系统。 [切换到英文介绍](https://github.com/AccessRetrieved/project-pios/blob/main/English_readme.md)
 
 ## 目录
-1. [Project-Pios百科](https://github.com/AccessRetrieved/Project-Pios/wiki)
-2. [下载和运行](#install)
-3. [已知问题](#bugs)
-4. [语言](#language)
-5. [图片介绍](#images)
-6. [帮手](#helpers)
-7. [版本](#version)
+<details open="open">
+    <summary>目录</summary>
+      1. [Project-Pios百科](https://github.com/AccessRetrieved/Project-Pios/wiki)
+      2. [下载和运行](#install)
+      3. [已知问题](#bugs)
+      4. [语言](#language)
+      5. [图片介绍](#images)
+      6. [帮手](#helpers)
+      7. [版本](#version)
+   </summary>
+</details>
 ***
 
 ### 屏幕过于小的电脑不支持

@@ -3,13 +3,17 @@
 Operating system with python. [Switch to Chinese Readme](https://github.com/AccessRetrieved/project-pios/blob/main/README.md)
 
 ## Table of contents
-1. [Project-Pios Wiki](https://github.com/AccessRetrieved/Project-Pios/wiki)
-2. [Installing and executing](#install)
-3. [Known Bugs](#bugs)
-4. ['Language'](#language)
-5. [Images](#images)
-6. [Add-Ons](#helpers)
-7. [Versions](#version)
+<details open="open">
+    <summary>Table of Contents</summary>
+      1. [Project-Pios Wiki](https://github.com/AccessRetrieved/Project-Pios/wiki)
+      2. [Installing and executing](#install)
+      3. [Known Bugs](#bugs)
+      4. ['Language'](#language)
+      5. [Images](#images)
+      6. [Add-Ons](#helpers)
+      7. [Versions](#version)
+   </summary>
+</details>
 ***
 
 ### Computers with a small screen not supported
