@@ -37,7 +37,7 @@ from App2.app2 import import_app2, quit_app2 # Add second custom app here
 from config import *
 import random
 import string
-import objc #Add this to github to make it look better
+import objc
 
 # change all path from "/project_pios/FILE" to "/FILE" for github
 # In settings and friends app change name to getuser()
